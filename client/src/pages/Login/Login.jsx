@@ -58,7 +58,7 @@ export default function LoginFormContent() {
 
         <div className="flex justify-between items-center text-sm text-gray-600">
           <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox h-4 w-4 text-blue-600" />
+            <input type="checkbox" className="form-checkbox h-4 w-4 accent-customPurple" />
             <span>Remember me</span>
           </label>
           <button
@@ -66,7 +66,7 @@ export default function LoginFormContent() {
               e.preventDefault();
               handleOpenModal("forgotPassword");
             }}
-            className="text-blue-600 hover:underline"
+            className="text-customPurple hover:underline"
           >
             Forgot Password?
           </button>
@@ -81,7 +81,7 @@ export default function LoginFormContent() {
         Don't have an account?{" "}
         <button
           onClick={() => handleOpenModal("signup")}
-          className="text-blue-600 hover:underline"
+          className="text-customPurple hover:underline"
         >
           Sign Up
         </button>

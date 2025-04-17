@@ -1,5 +1,6 @@
 // Thuc
 import React from "react";
+import Button from "../components/Button";
 export default function ContactFormContent() {
   return (
     <div className="w-full max-w-md rounded-2xl p-6 sm:p-8">
@@ -41,12 +42,7 @@ export default function ContactFormContent() {
         </div>
 
         <div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition duration-200"
-          >
-            Send Message
-          </button>
+        <Button position="center" width="full">Seen Message</Button>
         </div>
       </form>
     </div>

@@ -5,6 +5,7 @@ import ContactFormContent from "./pages/Contact";
 import LoginFormContent from "./pages/Login/Login";
 import { useModal } from "./Appwrapper";
 import Footer from "./components/Footer";
+import Header from "./components/Header";
 
 function App() {
   const { openModal } = useModal();
@@ -36,20 +37,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <nav>
-          <ul className="flex gap-4 p-4">
-            <li>
-              <button onClick={() => handleOpenModal("contact")} className="text-blue-600 underline">
-                Contact
-              </button>
-              </li>
-            <li>
-              <button onClick={() => handleOpenModal("login")} className="text-blue-600 underline">
-                Login
-              </button>
-            </li>
-          </ul>
-        </nav>
+        <Header />
 
         <Routes>
           <Route path="*" element={<h1>404 Not Found</h1>} />

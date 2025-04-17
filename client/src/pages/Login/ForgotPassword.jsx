@@ -2,6 +2,7 @@
 import React from "react";
 import { useModal } from "../../Appwrapper";
 import LoginFormContent from "./Login";
+import Button from "../../components/Button";
 
 export default function ForgotPasswordFormContent() {
   const { openModal } = useModal();
@@ -41,12 +42,7 @@ export default function ForgotPasswordFormContent() {
         </div>
 
         <div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition duration-200"
-          >
-            Send Reset Link
-          </button>
+          <Button position="center" width="full">Send Reset Link</Button>
         </div>
       </form>
 

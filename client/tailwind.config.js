@@ -12,6 +12,9 @@ module.exports = {
           '100%': { opacity: 1, transform: 'scale(1)' },
         },
       },
+      colors: {
+        customPurple: "#6D7AB5",
+      },
     },
   },
   plugins: [],
