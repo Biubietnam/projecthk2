@@ -37,7 +37,7 @@ const Button = ({
   const handleMouseEnter = (e) => {
     if (!disabled) {
       Object.assign(e.currentTarget.style, hoverStyle)
-      e.currentTarget.style.transform = "translateY(-2px) scale(1.05)"
+      e.currentTarget.style.transform = "translateY(0px) scale(1.01)"
     }
   }
 
