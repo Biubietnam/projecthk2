@@ -3,7 +3,7 @@ import React from "react";
 import { useModal } from "../../Appwrapper";
 import ForgotPasswordFormContent from "./ForgotPassword";
 import SignUpFormContent from "./SignUp";
-
+import  Button from "../../components/Button";
 export default function LoginFormContent() {
   const { openModal } = useModal();
   const handleOpenModal = (type) => {
@@ -72,13 +72,8 @@ export default function LoginFormContent() {
           </button>
         </div>
 
-        <div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition duration-200"
-          >
-            Sign In
-          </button>
+        <div className="flex justify-center">
+          <Button position="center" width="full">Sign In</Button>
         </div>
       </form>
 
