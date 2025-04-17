@@ -7,7 +7,6 @@ export default function ContactFormContent() {
       <p className="text-sm text-gray-500 text-center mb-6">We'd love to hear from you</p>
 
       <form className="space-y-5">
-        {/* name */}
         <div>
           <label htmlFor="name" className="block text-sm text-gray-600 mb-1">Name</label>
           <input
@@ -19,7 +18,6 @@ export default function ContactFormContent() {
           />
         </div>
 
-        {/* email */}
         <div>
           <label htmlFor="email" className="block text-sm text-gray-600 mb-1">Email</label>
           <input
@@ -31,7 +29,6 @@ export default function ContactFormContent() {
           />
         </div>
 
-        {/* message */}
         <div>
           <label htmlFor="message" className="block text-sm text-gray-600 mb-1">Message</label>
           <textarea
@@ -43,7 +40,6 @@ export default function ContactFormContent() {
           ></textarea>
         </div>
 
-        {/* submit */}
         <div>
           <button
             type="submit"

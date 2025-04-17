@@ -4,6 +4,7 @@ import React from "react";
 import ContactFormContent from "./pages/Contact";
 import LoginFormContent from "./pages/Login/Login";
 import { useModal } from "./Appwrapper";
+import Footer from "./components/Footer";
 
 function App() {
   const { openModal } = useModal();
@@ -53,6 +54,7 @@ function App() {
         <Routes>
           <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
+        <Footer />
       </div>
     </Router>
   );
