@@ -26,8 +26,14 @@ export default function ForgotPasswordFormContent() {
   }
   return (
     <div className="bg-white w-full max-w-md rounded-2xl p-6 sm:p-8">
-      <h1 className="text-2xl font-semibold text-gray-800 text-center mb-2">Forgot Password</h1>
-      <p className="text-sm text-gray-500 text-center mb-6">Enter your email to reset your password</p>
+      <div className="text-center mb-4">
+        <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 leading-snug">
+          Enter your email
+        </h1>
+        <h2 className="text-base sm:text-lg text-gray-600 mt-1">
+          to reset your password
+        </h2>
+      </div>
 
       <form className="space-y-5">
         <div>

@@ -47,6 +47,11 @@ export default function Header() {
                                 Contact
                             </button>
                         </li>
+                        <li>
+                            <Link to="/gearshop" className="text-[#5A678F] hover:underline transition">
+                                Gear Shop
+                            </Link>
+                        </li>
                     </ul>
                 </nav>
 
