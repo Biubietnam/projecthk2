@@ -15,6 +15,9 @@ module.exports = {
       colors: {
         customPurple: "#6D7AB5",
       },
+      fontFamily: {
+        poetsen: ['"Poetsen One"', 'sans-serif'],
+      },
     },
   },
   plugins: [],

@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useModal } from "../Appwrapper";
 import ContactFormContent from "../pages/Contact";
 import LoginFormContent from "../pages/Login/Login";
-import AboutUsContent from "../pages/AboutUs";
 
 export default function Header() {
     const { openModal } = useModal();
@@ -47,19 +46,16 @@ export default function Header() {
                                 Contact
                             </button>
                         </li>
-                        <li>
+                    </ul>
+                </nav>
+
+                <div className="flex items-center space-x-4">
                             <button
                                 onClick={() => handleOpenModal("login")}
                                 className="text-[#5A678F] hover:underline transition"
                             >
                                 Login
                             </button>
-                        </li>
-                    </ul>
-                </nav>
-
-                <div className="flex items-center space-x-4">
-                    <button className="text-sm text-[#5A678F] hover:underline">Login</button>
                     <button className="bg-[#5A678F] text-white px-4 py-1.5 rounded-lg text-sm hover:bg-[#4a5778] transition">
                         Cart
                     </button>
