@@ -8,7 +8,7 @@ import GearShop from "./pages/shop/gearshop";
 function App() {
   return (
     <Router>
-      <div className="App font-poetsen">
+      <div className="App font-winky">
         <Header />
 
         <Routes>
