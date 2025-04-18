@@ -11,7 +11,7 @@ export default function Footer() {
         switch (type) {
             case "contact":
                 title = "Contact";
-                body = <ContactFormContent />;
+                body = <ContactFormContent />;  
                 break;
             default:
                 title = "Unknown";
@@ -24,7 +24,7 @@ export default function Footer() {
         });
     };
     return (
-        <footer className="bg-gray-900 text-white py-6">
+        <footer className="bg-[#5A678F] text-white py-6">
             <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center">
                 <p className="text-sm text-center sm:text-left">
                     &copy; {new Date().getFullYear()} Your Website. All rights reserved.

@@ -48,7 +48,7 @@ export default function ForgotPasswordFormContent() {
 
       <p className="text-sm text-center text-gray-500 mt-6">
         Remembered your password?{" "}
-        <button onClick={() => handleOpenModal("login")} className="text-blue-600 underline">
+        <button onClick={() => handleOpenModal("login")} className="text-customPurple underline">
           Back to Login
         </button>
       </p>
