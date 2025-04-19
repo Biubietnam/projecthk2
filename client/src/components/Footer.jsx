@@ -41,7 +41,7 @@ export default function Footer() {
                         About
                     </a>
                     <Link to="/contact" className="hover:text-gray-400 text-sm transition-colors duration-200">
-                        Contact
+                        Contact Us
                     </Link>
                     <button onClick={() => handleOpenModal("feedback")} className="hover:text-gray-400 text-sm transition-colors duration-200">
                         Feedback
