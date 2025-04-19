@@ -24,7 +24,7 @@ export default function Modal({
           <X className="h-5 w-5 text-gray-500" />
         </button>
 
-        <h2 className="text-lg font-semibold text-gray-800 mb-4 pr-8">{title}</h2>
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 pr-8">{title}</h2>
 
         <div className="text-sm text-gray-700 mb-6">{children}</div>
 

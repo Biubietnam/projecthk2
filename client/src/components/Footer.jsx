@@ -1,7 +1,9 @@
 // Thuc 
+import { Link } from "react-router-dom";
 import React from "react";
 import { useModal } from "../Appwrapper";
-import ContactFormContent from "../pages/Contact";
+import ContactFormContent from "./Feedback";
+import FeedbackFormContent from "./Feedback";
 
 export default function Footer() {
     const { openModal } = useModal();
@@ -12,6 +14,10 @@ export default function Footer() {
             case "contact":
                 title = "Contact";
                 body = <ContactFormContent />;  
+                break;
+            case "feedback":
+                title = "Feedback";
+                body = <FeedbackFormContent />;  
                 break;
             default:
                 title = "Unknown";
@@ -34,8 +40,11 @@ export default function Footer() {
                     <a href="#" className="hover:text-gray-400 text-sm transition-colors duration-200">
                         About
                     </a>
-                    <button onClick={() => handleOpenModal("contact")} className="hover:text-gray-400 text-sm transition-colors duration-200">
+                    <Link to="/contact" className="hover:text-gray-400 text-sm transition-colors duration-200">
                         Contact
+                    </Link>
+                    <button onClick={() => handleOpenModal("feedback")} className="hover:text-gray-400 text-sm transition-colors duration-200">
+                        Feedback
                     </button>
                     <a href="#" className="hover:text-gray-400 text-sm transition-colors duration-200">
                         Privacy
