@@ -30,7 +30,7 @@ export default function LoginFormContent() {
   }
   return (
     <div className="bg-white w-full max-w-md rounded-2xl p-6 sm:p-8">
-      <h1 className="text-2xl font-semibold text-gray-800 text-center mb-2">Welcome Back</h1>
+      <h1 className="text-2xl font-semibold text-gray-700 text-center mb-2">Welcome Back</h1>
       <p className="text-sm text-gray-500 text-center mb-6">Please sign in to your account</p>
 
       <form className="space-y-5">

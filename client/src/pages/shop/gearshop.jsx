@@ -6,19 +6,19 @@ const products = [
     {
         id: 1,
         name: 'LED Collar for Dogs and Cats',
-        price: '150,000 VND',
+        price: '6$',
         imageUrl: 'https://via.placeholder.com/150',
     },
     {
         id: 2,
         name: 'Hoodie for Dogs',
-        price: '250,000 VND',
+        price: '10$',
         imageUrl: 'https://via.placeholder.com/150',
     },
     {
         id: 3,
         name: 'Backpack Carrier for Cats',
-        price: '500,000 VND',
+        price: '20$',
         imageUrl: 'https://via.placeholder.com/150',
     },
 ];

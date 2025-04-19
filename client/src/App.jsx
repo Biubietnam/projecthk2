@@ -9,6 +9,7 @@ import PetVet from "./pages/Booking/petVet";
 import PetGrooming from "./pages/Booking/petGrooming";
 import PetEvents from "./pages/Booking/petEvent";
 import PetAdvice from "./pages/Booking/petAdvice";
+import Contact from "./pages/Contact";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/petGrooming" element={<PetGrooming />} />
           <Route path="/petEvent" element={<PetEvents />} />
           <Route path="/petAdvice" element={<PetAdvice />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
         <Footer />
       </div>
