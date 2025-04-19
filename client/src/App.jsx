@@ -4,7 +4,7 @@ import React from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import GearShop from "./pages/shop/gearshop";
-import Booking from "./pages/booking/booking";
+import Booking from "./pages/Booking";
 
 function App() {
   return (
