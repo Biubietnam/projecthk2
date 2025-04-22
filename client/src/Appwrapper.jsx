@@ -1,5 +1,5 @@
 // Thuc 
-import React, { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext } from "react";
 import Modal from "./components/Modal";
 
 const ModalContext = createContext();
@@ -11,12 +11,10 @@ export default function AppWrapper({ children }) {
   const [modalContent, setModalContent] = useState({
     title: "",
     body: null,
-    showConfirm: false,
-    onConfirm: null,
   });
 
-  const openModal = ({ title, body, showConfirm = false, onConfirm = null }) => {
-    setModalContent({ title, body, showConfirm, onConfirm });
+  const openModal = ({ title, body }) => {
+    setModalContent({ title, body });
     setIsModalOpen(true);
   };
 
@@ -29,12 +27,7 @@ export default function AppWrapper({ children }) {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        onConfirm={() => {
-          if (modalContent.onConfirm) modalContent.onConfirm();
-          closeModal();
-        }}
         title={modalContent.title}
-        showConfirm={modalContent.showConfirm}
       >
         {modalContent.body}
       </Modal>

@@ -1,15 +1,12 @@
 "use client"
-import Button from "../components/Button"
+//Thuc
 import { X } from "lucide-react"
 
 export default function Modal({
   isOpen,
   onClose,
-  onConfirm,
   title,
   children,
-  showConfirm = false,
-  showCancel = true,
 }) {
   if (!isOpen) return null
 
@@ -27,14 +24,6 @@ export default function Modal({
         <h2 className="text-lg font-semibold text-gray-700 mb-4 pr-8">{title}</h2>
 
         <div className="text-sm text-gray-700 mb-6">{children}</div>
-
-        <div className="flex justify-end gap-3">
-          {showConfirm && (
-            <button onClick={onConfirm} className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-sm text-white">
-              Confirm
-            </button>
-          )}
-        </div>
       </div>
     </div>
   )

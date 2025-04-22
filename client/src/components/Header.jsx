@@ -28,7 +28,6 @@ export default function Header() {
         openModal({
             title,
             body,
-            showConfirm: false,
         });
     };
     return (
