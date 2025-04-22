@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 const Button = ({
   children,
@@ -14,40 +14,47 @@ const Button = ({
   ...props
 }) => {
   // Width classes based on the width prop
-  const widthClasses = width === "full" ? "w-full" : width === "auto" ? "w-auto" : `w-[${width}]`
+  const widthClasses =
+    width === "full" ? "w-full" : width === "auto" ? "w-auto" : `w-[${width}]`;
 
   // Position classes based on the position prop
   const positionClasses =
-    position === "center" ? "mx-auto" : position === "right" ? "ml-auto" : position === "left" ? "mr-auto" : ""
+    position === "center"
+      ? "mx-auto"
+      : position === "right"
+      ? "ml-auto"
+      : position === "left"
+      ? "mr-auto"
+      : "";
 
   // Create style object for custom colors
   const buttonStyle = {
     backgroundColor: color,
     color: textColor,
     // We'll handle hover effects with JavaScript
-  }
+  };
 
   // Create hover style object
   const hoverStyle = {
     backgroundColor: hoverColor,
     boxShadow: `0 10px 15px -3px ${color}30`,
-  }
+  };
 
   // Handle hover events
   const handleMouseEnter = (e) => {
     if (!disabled) {
-      Object.assign(e.currentTarget.style, hoverStyle)
-      e.currentTarget.style.transform = "translateY(0px) scale(1.01)"
+      Object.assign(e.currentTarget.style, hoverStyle);
+      e.currentTarget.style.transform = "translateY(0px) scale(1.01)";
     }
-  }
+  };
 
   const handleMouseLeave = (e) => {
     if (!disabled) {
-      e.currentTarget.style.backgroundColor = color
-      e.currentTarget.style.boxShadow = "none"
-      e.currentTarget.style.transform = "translateY(0) scale(1)"
+      e.currentTarget.style.backgroundColor = color;
+      e.currentTarget.style.boxShadow = "none";
+      e.currentTarget.style.transform = "translateY(0) scale(1)";
     }
-  }
+  };
 
   return (
     <button
@@ -82,7 +89,7 @@ const Button = ({
     >
       {children}
     </button>
-  )
-}
+  );
+};
 
-export default Button
+export default Button;
