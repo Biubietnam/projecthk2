@@ -7,7 +7,7 @@ import GearShop from "./pages/shop/GearShop";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/shop/ProductDetail";
 
-function App() {
+export default function App() {
   return (
     <Router>
       <div className="App font-winky">
@@ -24,5 +24,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;
