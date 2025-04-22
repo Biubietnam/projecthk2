@@ -71,7 +71,7 @@ export default function SignUpFormContent() {
 
       <p className="text-sm text-center text-gray-500 mt-6">
         Already have an account?{" "}
-              <button onClick={() => handleOpenModal("login")} className="text-customPurple underline">
+              <button onClick={() => handleOpenModal("login")} className="text-customPurple hover:underline">
                 Sign In
               </button>
       </p>

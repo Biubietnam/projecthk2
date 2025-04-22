@@ -27,12 +27,8 @@ export default function ForgotPasswordFormContent() {
   return (
     <div className="bg-white w-full max-w-md rounded-2xl p-6 sm:p-8">
       <div className="text-center mb-4">
-        <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 leading-snug">
-          Enter your email
-        </h1>
-        <h2 className="text-base sm:text-lg text-gray-600 mt-1">
-          to reset your password
-        </h2>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center mb-2">Enter your email</h1>
+        <p className="text-sm text-gray-500 text-center mb-6">to reset your password</p>
       </div>
 
       <form className="space-y-5">
@@ -54,7 +50,7 @@ export default function ForgotPasswordFormContent() {
 
       <p className="text-sm text-center text-gray-500 mt-6">
         Remembered your password?{" "}
-        <button onClick={() => handleOpenModal("login")} className="text-customPurple underline">
+        <button onClick={() => handleOpenModal("login")} className="text-customPurple hover:underline">
           Back to Login
         </button>
       </p>
