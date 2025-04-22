@@ -6,7 +6,7 @@ export default function AskAI() {
   const [response, setResponse] = useState('');
 
   const handleAsk = async () => {
-    const res = await axios.post('http://localhost:8000/web/ask-ai', {
+    const res = await axios.post('http://localhost:8000/api/ask-ai', {
       message: userInput
     });
     setResponse(res.data.answer);
