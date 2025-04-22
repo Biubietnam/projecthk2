@@ -12,7 +12,7 @@ export default function Modal({
 
   return (
     <div className="App fixed inset-0 z-50 flex items-center justify-center bg-black/50 font-winky">
-      <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative">
+      <div className="bg-white rounded-xl shadow-lg max-w-lg w-[90%] p-6 pb-[-0%] relative max-h-[90%]">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -21,7 +21,7 @@ export default function Modal({
           <X className="h-5 w-5 text-gray-500" />
         </button>
 
-        <h2 className="text-lg font-semibold text-gray-700 mb-4 pr-8">{title}</h2>
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center ">{title}</h2>
 
         <div className="text-sm text-gray-700 mb-6">{children}</div>
       </div>
