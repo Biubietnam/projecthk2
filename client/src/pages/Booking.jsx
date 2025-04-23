@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 // Tạo ra array chứa object của 4 thẻ trang
 const cards = [
