@@ -1,9 +1,8 @@
-function PetVet() {
+function PetHotel() {
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-20">
-      <h1>Pet Vet</h1>
-      <p>Details about the pet vet will go here.</p>
+      <h1>Pet Hotel</h1>
     </div>
   );
 }
-export default PetVet;
+export default PetHotel;
