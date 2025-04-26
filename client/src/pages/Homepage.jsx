@@ -96,7 +96,7 @@ export default function HomePage() {
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <a
                   href="/appointments"
-                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-md bg-[#6D7AB5] px-4 py-2 text-sm font-medium text-white hover:bg-[#5A678F] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Book Appointment <ArrowRightIcon className="h-4 w-4 ml-1" />
                 </a>
@@ -133,7 +133,7 @@ export default function HomePage() {
             <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
               <div className="p-6">
                 <div className="flex flex-row items-center gap-4">
-                  <div className="bg-blue-600 p-2 rounded-full">
+                  <div className="bg-[#6D7AB5] p-2 rounded-full">
                     <PawPrintIcon className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold">Veterinary Care</h3>
@@ -150,7 +150,7 @@ export default function HomePage() {
             <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
               <div className="p-6">
                 <div className="flex flex-row items-center gap-4">
-                  <div className="bg-blue-600 p-2 rounded-full">
+                  <div className="bg-[#6D7AB5] p-2 rounded-full">
                     <CalendarIcon className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold">Appointments</h3>
@@ -165,7 +165,7 @@ export default function HomePage() {
             <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
               <div className="p-6">
                 <div className="flex flex-row items-center gap-4">
-                  <div className="bg-blue-600 p-2 rounded-full">
+                  <div className="bg-[#6D7AB5] p-2 rounded-full">
                     <ShoppingBagIcon className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold">Pet Shop</h3>
