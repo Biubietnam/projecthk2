@@ -6,7 +6,7 @@ import Header from "./components/Header";
 import GearShop from "./pages/shop/gearshop";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/shop/ProductDetail";
-
+import Homepage from "./pages/Homepage";
 //Booking page
 import Booking from "./pages/Booking";
 import PetHotel from "./pages/Booking/petHotel";
@@ -21,7 +21,7 @@ export default function App() {
         <Header />
 
         <Routes>
-          <Route path="*" element={<h1>404 Not Found</h1>} />
+          <Route path="/" element={<Homepage />} />
           <Route path="/gearshop" element={<GearShop />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/product/:id" element={<ProductDetail />} />

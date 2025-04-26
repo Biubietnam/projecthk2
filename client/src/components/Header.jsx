@@ -9,7 +9,6 @@ import { useState, useEffect } from "react"
 export default function Header() {
   const { openModal } = useModal()
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
