@@ -9,9 +9,9 @@ import ProductDetail from "./pages/shop/ProductDetail";
 
 //Booking page
 import Booking from "./pages/Booking";
-import PetAdivce from "./pages/Booking/petAdvice";
+import PetHotel from "./pages/Booking/petHotel";
 import PetEvent from "./pages/Booking/petEvent";
-import PetGrooming from "./pages/Booking/petGrooming";
+import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
 
 export default function App() {
@@ -26,9 +26,9 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/booking" element={<Booking />} />
-          <Route path="/petadvice" element={<PetAdivce />} />
+          <Route path="/pethotel" element={<PetHotel />} />
           <Route path="/petevent" element={<PetEvent />} />
-          <Route path="/petgrooming" element={<PetGrooming />} />
+          <Route path="/petspa" element={<PetSpa />} />
           <Route path="/petvet" element={<PetVet />} />
         </Routes>
         <Footer />

@@ -42,7 +42,7 @@ function Booking() {
             <p className="text-gray-600">Find the best vets for your pet</p>
           </div>
         </button>
-        {/*petGrooming*/}
+        {/*petSpa*/}
         <button
           className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 w-[180px] 
          transform hover:scale-110 transition duration-300 cusor-pointer relative group"
