@@ -2,47 +2,105 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;      // nếu muốn xóa mềm
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Role;
+use App\Models\Profile;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
-     * The attributes that are mass assignable.
+     * Các trường được phép mass assign.
      *
-     * @var list<string>
+     * @var array<int,string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        // nếu bạn có các trường profile khác:
+        // 'username', 'phone', 'avatar', 'bio', …
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Các trường ẩn khi serialize sang JSON.
      *
-     * @var list<string>
+     * @var array<int,string>
      */
     protected $hidden = [
         'password',
         'remember_token',
+        // nếu dùng 2FA:
+        // 'two_factor_recovery_codes',
+        // 'two_factor_secret',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Các kiểu dữ liệu cần cast.
      *
-     * @return array<string, string>
+     * @var array<string,string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'deleted_at'        => 'datetime',
+    ];
+
+    /**
+     * Các attribute thêm vào JSON (nếu bạn có accessor).
+     *
+     * @var array<int,string>
+     */
+    protected $appends = [
+        // 'profile_photo_url', // nếu bạn xài Laravel Jetstream
+    ];
+
+    /**
+     * Mutator: tự hash password khi gán.
+     */
+    public function setPasswordAttribute($value)
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        // Chỉ hash nếu giá trị thay đổi
+        if ($value && Hash::needsRehash($value)) {
+            $this->attributes['password'] = Hash::make($value);
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    | Ví dụ quan hệ với Role hoặc Profile nếu có:
+    */
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | API Resources / Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Kiểm tra user có role nào không.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('name', $role)->exists();
     }
 }
