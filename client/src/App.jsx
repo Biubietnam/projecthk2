@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import GearShop from "./pages/shop/gearshop";
+import GearShop from "./pages/shop/GearShop";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/shop/ProductDetail";
 import Homepage from "./pages/Homepage";
@@ -17,7 +17,6 @@ import ResetPasswordFormContent from "./pages/Login/ResetPassword";
 import LoginFormContent from "./pages/Login/Login";
 import ForgotPasswordFormContent from "./pages/Login/ForgotPassword";
 import SignUpFormContent from "./pages/Login/SignUp";
-
 
 export default function App() {
 

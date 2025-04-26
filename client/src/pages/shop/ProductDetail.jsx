@@ -1,6 +1,6 @@
 // Thuc
 import { useParams } from 'react-router-dom';
-import { products } from './gearshop';
+import { products } from './GearShop';
 import Button from '../../components/Button';
 
 export default function ProductDetail() {
