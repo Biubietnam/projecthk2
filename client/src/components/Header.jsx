@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ShoppingCart, User, Menu, X } from "lucide-react";
 import Button from "../components/Button";
@@ -10,6 +10,7 @@ export default function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const user = localStorage.getItem("user_info");
@@ -42,12 +43,10 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "shadow-md py-1" : "py-1"
-      } bg-white`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "shadow-md py-1" : "py-1"
+        } bg-white`}
     >
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-        {/* Logo */}
         <Link
           to="/"
           className="text-xl font-bold text-customPurple tracking-wide flex items-center"
@@ -56,13 +55,15 @@ export default function Header() {
           <span className="font-poetsen">PetZone</span>
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden md:flex items-center space-x-1">
           {navItems.map((item) => (
             <Link
               key={item.name}
               to={item.path}
-              className="relative px-4 py-2 text-gray-700 font-medium hover:text-customPurple transition-colors group"
+              className={`relative px-4 py-2 font-medium transition-colors group ${location.pathname === item.path
+                  ? "text-customPurple" 
+                  : "text-gray-700 hover:text-customPurple"
+                }`}
             >
               {item.name}
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
@@ -77,7 +78,6 @@ export default function Header() {
             <ShoppingCart className="w-5 h-5" />
           </Button>
 
-          {/* User dropdown */}
           {userInfo ? (
             <div className="relative flex items-center">
               <button
@@ -107,7 +107,6 @@ export default function Header() {
           )}
         </nav>
 
-        {/* Mobile Menu button */}
         <div className="flex md:hidden items-center space-x-2">
           <Button
             className="flex items-center justify-center"
@@ -127,7 +126,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile menu content */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
           <nav className="flex flex-col py-2">
