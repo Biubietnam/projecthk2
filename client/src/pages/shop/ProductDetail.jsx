@@ -10,7 +10,7 @@ export default function ProductDetail() {
     if (!product) return <div className="text-center mt-20">Product not found	</div>;
 
     return (
-        <div className="max-w-5xl mx-auto px-6 py-10">
+        <div className="max-w-5xl mx-auto px-6 py-10 mt-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div>
                     <div className="w-full h-80 bg-gray-500 flex items-center justify-center rounded-md">

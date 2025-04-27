@@ -3,13 +3,13 @@ import Button from "../components/Button";
 
 export default function Contact() {
   return (
-    <div className="text-gray-700 min-h-screen py-10">
+    <div className="text-gray-700 min-h-screen py-10 mt-10">
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold">Contact Us</h1>
         <p>We’re here to help with all your pet care needs</p>
       </div>
 
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 px-4">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 px-4 items-stretch">
         <div className="p-6 rounded-lg border border-customPurple">
           <h2 className="text-xl font-semibold">Send Us a Message</h2>
           <p className="text-sm text-gray-500 mb-2">Fill out the form below and we'll get back to you as soon as possible</p>
@@ -62,22 +62,22 @@ export default function Contact() {
           </form>
 
           <div className="mt-8">
-          <h2 className="text-xl font-semibold">Find Us Here</h2>
-          <div className="w-full h-64 rounded overflow-hidden border border-gray-300">
-            <iframe
-              title="Our Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4689.851234228488!2d106.6796292112956!3d10.79090305888078!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752fcdf5e6b00b%3A0xed1c6762515e1113!2sFPT%20Aptech!5e1!3m2!1svi!2s!4v1745154702691!5m2!1svi!2s"
-              width="100%"
-              height="100%"
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
+            <h2 className="text-xl font-semibold">Find Us Here</h2>
+            <div className="w-full h-64 rounded overflow-hidden border border-gray-300">
+              <iframe
+                title="Our Location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4689.851234228488!2d106.6796292112956!3d10.79090305888078!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752fcdf5e6b00b%3A0xed1c6762515e1113!2sFPT%20Aptech!5e1!3m2!1svi!2s!4v1745154702691!5m2!1svi!2s"
+                width="100%"
+                height="100%"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
           </div>
         </div>
-        </div>
 
-        <div className="space-y-6">
+        <div className="flex flex-col h-full justify-between space-y-6">
           <div className=" p-6 rounded-lg border border-customPurple">
             <h2 className="text-lg font-semibold mb-2">Contact Information</h2>
             <ul className="text-sm text-gray-500 space-y-2">

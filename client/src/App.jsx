@@ -10,7 +10,7 @@ import Homepage from "./pages/Homepage";
 //Booking page
 import Booking from "./pages/Booking";
 import PetHotel from "./pages/Booking/petHotel";
-import PetEvent from "./pages/Booking/petEvent";
+
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
@@ -32,7 +32,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/pethotel" element={<PetHotel />} />
-          <Route path="/petevent" element={<PetEvent />} />
+
           <Route path="/petspa" element={<PetSpa />} />
           <Route path="/petvet" element={<PetVet />} />
           <Route path="/reset/:token" element={<ResetPasswordFormContent />} />

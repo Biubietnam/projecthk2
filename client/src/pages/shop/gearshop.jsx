@@ -74,9 +74,9 @@ export default function GearShop() {
 
 
     return (
-        <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10">
+        <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="text-center">
-                <h1 className="text-4xl font-bold mb-2">Pet Shop</h1>
+                <h1 className="text-4xl font-bold mb-2">Gear Shop</h1>
                 <p className="text-gray-600 mb-6">Quality products for your beloved pets</p>
             </div>
 
