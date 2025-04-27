@@ -17,7 +17,9 @@ module.exports = {
         customPurpleDark: "#5A678F",
       },
       fontFamily: {
-        poetsen: ['"Poetsen One"', 'sans-serif'],winky: ['"Winky Rough"', 'cursive'],
+        concert: ['"Concert One"', 'cursive'],
+        poetsen: ['"Poetsen One"', 'sans-serif'],
+        winky: ['"Winky Rough"', 'cursive'],
       },
     },
   },
