@@ -1,17 +1,15 @@
-"use client"
-import { Link } from "react-router-dom"
-import { useModal } from "../Appwrapper"
-import LoginFormContent from "../pages/Login/Login"
-import { ShoppingCart, User, Menu, X } from "lucide-react"
-import Button from "../components/Button"
-import { useState, useEffect } from "react"
+"use client";
+
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { ShoppingCart, User, Menu, X } from "lucide-react";
+import Button from "../components/Button";
 
 export default function Header() {
-  const { openModal } = useModal()
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-  const [userInfo, setUserInfo] = useState(null)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     const user = localStorage.getItem("user_info");
@@ -22,33 +20,11 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
-      }
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  const handleOpenModal = (type) => {
-    let title = ""
-    let body = null
-    switch (type) {
-      case "login":
-        title = "Login"
-        body = <LoginFormContent />
-        break
-      default:
-        title = "Unknown"
-        body = <p>No content found.</p>
-    }
-    openModal({
-      title,
-      body,
-    })
-  }
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -56,36 +32,32 @@ export default function Header() {
     { name: "Pet Shop", path: "/petshop" },
     { name: "Booking", path: "/booking" },
     { name: "Contact", path: "/contact" },
-  ]
+  ];
 
-  const opacityClass = !isScrolled || isHovered ? "opacity-100" : "opacity-50"
-
-  const bgClass = !isScrolled
-    ? "bg-white"
-    : isHovered
-      ? "bg-white"
-      : "bg-white/50"
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_info");
+    window.location.href = "/";
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
-        ${isScrolled ? "shadow-md py-1" : "py-1"} 
-        ${bgClass}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "shadow-md py-1" : "py-1"
+      } bg-white`}
     >
-      <div
-        className={`max-w-7xl mx-auto px-4 flex justify-between items-center ${opacityClass} transition-opacity duration-300`}
-      >
+      <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+        {/* Logo */}
         <Link
           to="/"
-          className={`text-xl font-bold text-customPurple tracking-wide flex items-center ${opacityClass} transition-opacity duration-300`}
+          className="text-xl font-bold text-customPurple tracking-wide flex items-center"
         >
           <span className="text-2xl mr-1">🐾</span>
           <span className="font-poetsen">PetZone</span>
         </Link>
 
-        <nav className={`hidden md:flex items-center space-x-1 ${opacityClass} transition-opacity duration-300`}>
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center space-x-1">
           {navItems.map((item) => (
             <Link
               key={item.name}
@@ -96,9 +68,6 @@ export default function Header() {
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
             </Link>
           ))}
-        </nav>
-
-        <div className={`flex items-center space-x-2 ${opacityClass} transition-opacity duration-300`}>
           <Button
             className="flex items-center justify-center"
             color="#6D7AB5"
@@ -108,59 +77,87 @@ export default function Header() {
             <ShoppingCart className="w-5 h-5" />
           </Button>
 
+          {/* User dropdown */}
           {userInfo ? (
-            <div className="hidden md:flex items-center text-gray-700 hover:text-customPurple transition-colors">
-              <User className="w-5 h-5 mr-2" />
-              {userInfo.role.name.charAt(0).toUpperCase() + userInfo.role.name.slice(1)}
+            <div className="relative flex items-center">
+              <button
+                className="flex items-center text-gray-700 hover:text-customPurple transition-colors"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                <User className="w-5 h-5 mr-2" />
+                {userInfo.role?.name.charAt(0).toUpperCase() + userInfo.role?.name.slice(1)}
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Profile</Link>
+                  <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>My Orders</Link>
+                  {userInfo.role?.name === "admin" && (
+                    <Link to="/admin/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setDropdownOpen(false)}>Dashboard</Link>
+                  )}
+                  <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
+                </div>
+              )}
             </div>
           ) : (
-            <Link to={"/login"} className="hidden md:flex items-center text-gray-700 hover:text-customPurple transition-colors">
+            <Link to="/login" className="flex items-center text-gray-700 hover:text-customPurple transition-colors">
               <User className="w-5 h-5 mr-2" />
               Login
             </Link>
           )}
+        </nav>
 
-
+        {/* Mobile Menu button */}
+        <div className="flex md:hidden items-center space-x-2">
+          <Button
+            className="flex items-center justify-center"
+            color="#6D7AB5"
+            hoverColor="#5A678F"
+            aria-label="Shopping Cart"
+          >
+            <ShoppingCart className="w-5 h-5" />
+          </Button>
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-gray-700 hover:text-customPurple transition-colors rounded-full hover:bg-gray-100 md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 text-gray-700 hover:text-customPurple transition-colors rounded-full hover:bg-gray-100"
             aria-label="Menu"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {isMobileMenuOpen && (
-        <div
-          className={`md:hidden ${!isScrolled || isHovered ? "bg-white" : "bg-white/95"} border-t border-gray-200 shadow-lg animate-fadeIn transition-colors duration-300`}
-        >
-          <nav className={`flex flex-col py-2 ${opacityClass} transition-opacity duration-300`}>
+      {/* Mobile menu content */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <nav className="flex flex-col py-2">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className="px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-customPurple transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-customPurple"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            <div className="border-t border-gray-200 mt-2 pt-2 px-4 py-3 flex items-center justify-between">
-              <button
-                onClick={() => {
-                  handleOpenModal("login")
-                  setIsMobileMenuOpen(false)
-                }}
-                className="text-gray-700 hover:text-customPurple transition-colors flex items-center"
-              >
-                <User className="w-5 h-5 mr-2" />
-                Login
-              </button>
+            <div className="border-t border-gray-200 mt-2 pt-2">
+              {userInfo ? (
+                <>
+                  <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
+                  <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>My Orders</Link>
+                  {userInfo.role?.name === "admin" && (
+                    <Link to="/admin/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
+                  )}
+                  <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
+                </>
+              ) : (
+                <Link to="/login" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+              )}
             </div>
           </nav>
         </div>
       )}
     </header>
-  )
+  );
 }
