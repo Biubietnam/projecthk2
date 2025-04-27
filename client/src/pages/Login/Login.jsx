@@ -35,9 +35,13 @@ export default function LoginFormContent() {
 
       setMessage(res.data.message || "Login successful!");
       setMessageType("success");
+
+      localStorage.setItem("access_token", res.data.access_token);
+      localStorage.setItem("user_info", JSON.stringify(res.data.user));
+
       setTimeout(() => {
         window.location.href = "/";
-      }, 2000);
+      }, 1000);
     } catch (err) {
       console.error("Login Error:", err);
       setMessage(err.response?.data?.message || "Login failed!");
@@ -68,7 +72,10 @@ export default function LoginFormContent() {
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setMessage(null);
+              }}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
             />
@@ -80,7 +87,10 @@ export default function LoginFormContent() {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setMessage(null);
+              }}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
             />

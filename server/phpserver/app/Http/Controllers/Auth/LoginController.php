@@ -19,7 +19,7 @@ class LoginController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        $user = Auth::user();
+        $user = Auth::user()->load('role');
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

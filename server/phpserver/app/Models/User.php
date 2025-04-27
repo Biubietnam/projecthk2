@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'role_id',
         // nếu bạn có các trường profile khác:
         // 'username', 'phone', 'avatar', 'bio', …
     ];
@@ -80,9 +81,9 @@ class User extends Authenticatable implements MustVerifyEmail
     | Ví dụ quan hệ với Role hoặc Profile nếu có:
     */
 
-    public function roles()
+    public function role()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsTo(Role::class);
     }
 
     public function profile()
@@ -99,8 +100,8 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Kiểm tra user có role nào không.
      */
-    public function hasRole(string $role): bool
+    public function hasRole(string $roleName): bool
     {
-        return $this->roles()->where('name', $role)->exists();
+        return $this->role && $this->role->name === $roleName;
     }
 }

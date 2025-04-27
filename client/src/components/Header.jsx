@@ -11,6 +11,14 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [userInfo, setUserInfo] = useState(null)
+
+  useEffect(() => {
+    const user = localStorage.getItem("user_info");
+    if (user) {
+      setUserInfo(JSON.parse(user));
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,10 +108,18 @@ export default function Header() {
             <ShoppingCart className="w-5 h-5" />
           </Button>
 
-          <Link to={"/login"} className="hidden md:flex items-center text-gray-700 hover:text-customPurple transition-colors">
-            <User className="w-5 h-5 mr-2" />
-            Login
-          </Link>
+          {userInfo ? (
+            <div className="hidden md:flex items-center text-gray-700 hover:text-customPurple transition-colors">
+              <User className="w-5 h-5 mr-2" />
+              {userInfo.role.name.charAt(0).toUpperCase() + userInfo.role.name.slice(1)}
+            </div>
+          ) : (
+            <Link to={"/login"} className="hidden md:flex items-center text-gray-700 hover:text-customPurple transition-colors">
+              <User className="w-5 h-5 mr-2" />
+              Login
+            </Link>
+          )}
+
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

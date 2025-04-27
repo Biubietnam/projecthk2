@@ -5,29 +5,29 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
+use App\Models\Role;
 
 class RegisterController extends Controller
 {
     public function register(Request $request)
     {
-        // Validate
         $data = $request->validate([
             'name'                  => 'required|string|max:255',
             'email'                 => 'required|string|email|max:255|unique:users',
             'password'              => 'required|string|min:8|confirmed',
         ]);
 
-        // Tạo user
+        $role = Role::where('name', 'user')->firstOrFail();
+
         $user = User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
             'password' => $data['password'],
+            'role_id' => $role->id,
         ]);
 
-        // Gửi email verify (nếu bật tính năng verify)
         event(new Registered($user));
 
-        // Tạo token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
