@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <Router>
-      <div className="App font-winky">
+      <div className="App font-poetsen bg-gray-100 min-h-screen">
         <Header />
 
         <Routes>
