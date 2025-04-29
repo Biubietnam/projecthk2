@@ -19,7 +19,6 @@ import ForgotPasswordFormContent from "./pages/Login/ForgotPassword";
 import SignUpFormContent from "./pages/Login/SignUp";
 
 export default function App() {
-
   return (
     <Router>
       <div className="App font-concert bg-gray-100 min-h-screen">
@@ -37,7 +36,10 @@ export default function App() {
           <Route path="/petvet" element={<PetVet />} />
           <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
           <Route path="/login" element={<LoginFormContent />} />
-          <Route path="/forgot-password" element={<ForgotPasswordFormContent />} />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPasswordFormContent />}
+          />
           <Route path="/signup" element={<SignUpFormContent />} />
         </Routes>
         <Footer />
