@@ -76,7 +76,7 @@ export default function GearShop() {
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="text-center">
-                <h1 className="text-4xl font-bold mb-2">Gear Shop</h1>
+                <h1 className="text-4xl mb-2">Gear Shop</h1>
                 <p className="text-gray-600 mb-6">Quality products for your beloved pets</p>
             </div>
 
@@ -84,7 +84,7 @@ export default function GearShop() {
                 <input
                     type="text"
                     placeholder="Search products..."
-                    className="text-custonPurple px-4 py-2 rounded-md border border-customPurple w-full md:w-1/2"
+                    className="px-4 py-2 rounded-md border border-customPurple w-full md:w-1/2 text-sm"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -120,17 +120,17 @@ export default function GearShop() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredProducts.map((product, index) => (
                     <Link to={`/product/${product.id}`} key={product.id}>
-                    <div className="h-full border border-customPurple rounded-lg p-4 flex flex-col justify-between hover:shadow-md transition cursor-pointer">
+                    <div className="h-full border border-customPurple rounded-lg p-4 flex flex-col justify-between hover:shadow-md transition cursor-pointer duration-200 bg-white">
                         <div className="flex flex-col items-center">
                             <div className="w-full h-40 bg-gray-500 mb-4 flex items-center justify-center">
                                 <span className="text-gray-700">Image</span>
                             </div>
-                            <h2 className="text-lg font-semibold text-center">{product.name}</h2>
+                            <h2 className="text-lg text-center">{product.name}</h2>
                             <p className="text-gray-500 text-sm mb-2 text-center">{product.description}</p>
                         </div>
 
                         <div className="mt-auto flex flex-col items-center">
-                            <p className="font-bold mb-3">${product.price.toFixed(2)}</p>
+                            <p className="mb-3 font-poetsen">${product.price.toFixed(2)}</p>
                         </div>
                     </div>
                     </Link>

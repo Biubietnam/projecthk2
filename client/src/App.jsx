@@ -18,6 +18,8 @@ import LoginFormContent from "./pages/Login/Login";
 import ForgotPasswordFormContent from "./pages/Login/ForgotPassword";
 import SignUpFormContent from "./pages/Login/SignUp";
 
+import AdminDashboard from "./pages/Admin/Dashboard";
+
 export default function App() {
 
   return (
@@ -39,6 +41,7 @@ export default function App() {
           <Route path="/login" element={<LoginFormContent />} />
           <Route path="/forgot-password" element={<ForgotPasswordFormContent />} />
           <Route path="/signup" element={<SignUpFormContent />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
         <Footer />
       </div>

@@ -69,6 +69,20 @@ export default function Header() {
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
             </Link>
           ))}
+
+          {userInfo && userInfo.role?.name === "admin" && (
+            <Link
+              to="/admin/dashboard"
+              className={`relative px-4 py-2 font-medium transition-colors group ${location.pathname === "/admin/dashboard"
+                  ? "text-customPurple" 
+                  : "text-gray-700 hover:text-customPurple"
+                }`}
+            >
+              Admin Dashboard
+              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+            </Link>
+          )}
+          
           <Button
             className="flex items-center justify-center"
             color="#6D7AB5"

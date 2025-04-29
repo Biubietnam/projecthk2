@@ -60,3 +60,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Lấy info user hiện tại
     Route::get('user',   [ProfileController::class, 'me']);
 });
+
+

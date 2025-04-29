@@ -41,7 +41,7 @@ export default function LoginFormContent() {
 
       setTimeout(() => {
         window.location.href = "/";
-      }, 1000);
+      }, 500);
     } catch (err) {
       console.error("Login Error:", err);
       setMessage(err.response?.data?.message || "Login failed!");
@@ -50,6 +50,42 @@ export default function LoginFormContent() {
       setIsLoading(false);
     }
   };
+
+  const openGoogleLoginPopup = () => {
+    const popup = window.open(
+      "http://localhost:8000/auth/google/redirect",
+      "GoogleLogin",
+      "width=500,height=600"
+    );
+
+    const popupTick = setInterval(() => {
+      if (!popup || popup.closed) {
+        clearInterval(popupTick);
+        setMessage("Login canceled or failed.");
+        setMessageType("error");
+      }
+    }, 500);
+
+    window.addEventListener("message", function handler(event) {
+      if (event.origin !== "http://localhost:8000") return;
+
+      const { type, token, user } = event.data;
+      if (type === "OAUTH_SUCCESS") {
+        setMessage("Login successful!");
+        setMessageType("success");
+        
+        localStorage.setItem("access_token", token);
+        localStorage.setItem("user_info", JSON.stringify(user));
+
+        console.log("User info:", user);
+        console.log("Access token:", token);
+
+        window.removeEventListener("message", handler);
+        window.location.href = "/";
+      }
+    });
+  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -124,6 +160,8 @@ export default function LoginFormContent() {
               )}
             </Button>
           </div>
+
+          <Button onClick={openGoogleLoginPopup}>Sign in with Google</Button>
         </form>
 
         <p className="text-sm text-center text-gray-500 mt-6">

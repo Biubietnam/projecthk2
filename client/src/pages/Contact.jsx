@@ -10,7 +10,7 @@ export default function Contact() {
       </div>
 
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 px-4 items-stretch">
-        <div className="p-6 rounded-lg border border-customPurple">
+        <div className="p-6 rounded-lg border border-customPurple bg-white">
           <h2 className="text-xl font-semibold">Send Us a Message</h2>
           <p className="text-sm text-gray-500 mb-2">Fill out the form below and we'll get back to you as soon as possible</p>
           <form className="space-y-4">
@@ -78,7 +78,7 @@ export default function Contact() {
         </div>
 
         <div className="flex flex-col h-full justify-between space-y-6">
-          <div className=" p-6 rounded-lg border border-customPurple">
+          <div className=" p-6 rounded-lg border border-customPurple bg-white">
             <h2 className="text-lg font-semibold mb-2">Contact Information</h2>
             <ul className="text-sm text-gray-500 space-y-2">
               <li><strong>Phone:</strong> (555) 123-4567</li>
@@ -93,7 +93,7 @@ export default function Contact() {
             </ul>
           </div>
 
-          <div className=" p-6 rounded-lg border border-customPurple">
+          <div className=" p-6 rounded-lg border border-customPurple bg-white">
             <h2 className="text-lg font-semibold mb-2">Emergency Services</h2>
             <p className="text-sm text-gray-500">
               Emergency Phone: (555) 987-6543<br />
@@ -104,7 +104,7 @@ export default function Contact() {
             </Button>
           </div>
 
-          <div className=" p-6 rounded-lg border border-customPurple">
+          <div className=" p-6 rounded-lg border border-customPurple bg-white">
             <h2 className="text-lg font-semibold mb-2">FAQs</h2>
             <ul className="text-sm text-gray-500 space-y-2">
               <li><strong>Do you offer house calls?</strong><br />Yes, please call our office.</li>
