@@ -1,4 +1,3 @@
-// Thuc
 import { useParams } from "react-router-dom";
 import { products } from "./gearshop";
 import Button from "../../components/Button";
