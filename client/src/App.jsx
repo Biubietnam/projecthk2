@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import GearShop from "./pages/shop/GearShop";
+import GearShop from "./pages/shop/gearshop";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/shop/ProductDetail";
 import Homepage from "./pages/Homepage";
@@ -21,7 +21,6 @@ import SignUpFormContent from "./pages/Login/SignUp";
 import AdminDashboard from "./pages/Admin/Dashboard";
 
 export default function App() {
-
   return (
     <Router>
       <div className="App font-concert bg-gray-100 min-h-screen">
@@ -39,7 +38,10 @@ export default function App() {
           <Route path="/petvet" element={<PetVet />} />
           <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
           <Route path="/login" element={<LoginFormContent />} />
-          <Route path="/forgot-password" element={<ForgotPasswordFormContent />} />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPasswordFormContent />}
+          />
           <Route path="/signup" element={<SignUpFormContent />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
