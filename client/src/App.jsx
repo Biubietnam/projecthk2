@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import GearShop from "./pages/shop/GearShop";
+import GearShop from "./pages/shop/gearshop";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/shop/ProductDetail";
 import Homepage from "./pages/Homepage";
