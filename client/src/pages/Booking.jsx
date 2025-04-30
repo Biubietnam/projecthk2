@@ -65,7 +65,7 @@ function Booking() {
       </p>
 
       {/*button about 2 sevices*/}
-      <div className="grid grid-cols-2 justify-items-center sm">
+      <div className="grid grid-cols-2 justify-items-center ">
         {/*petVet*/}
 
         <button
