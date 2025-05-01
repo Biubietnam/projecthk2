@@ -12,7 +12,7 @@ export default function Modal({
 
   return (
     <div className="App fixed inset-0 z-50 flex items-center justify-center bg-black/50 font-winky">
-      <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 pb-0 relative">
+      <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 pb-0 relative max-h-[90vh] overflow-y-auto m-4">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"

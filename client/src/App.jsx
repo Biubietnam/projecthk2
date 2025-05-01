@@ -1,5 +1,5 @@
 // App.jsx
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import React from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -17,12 +17,13 @@ import ResetPasswordFormContent from "./pages/Login/ResetPassword";
 import LoginFormContent from "./pages/Login/Login";
 import ForgotPasswordFormContent from "./pages/Login/ForgotPassword";
 import SignUpFormContent from "./pages/Login/SignUp";
-
 import AdminDashboard from "./pages/Admin/Dashboard";
+import Users from "./pages/Admin/Users";
+import OurPets from "./pages/shop/Pet/petshop";
+import PetAdoptionPage from "./pages/shop/Pet/PetAdoptionPage";
 
 export default function App() {
   return (
-    <Router>
       <div className="App font-concert bg-gray-100 min-h-screen">
         <Header />
 
@@ -44,9 +45,11 @@ export default function App() {
           />
           <Route path="/signup" element={<SignUpFormContent />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<Users />} />
+          <Route path="/petshop" element={<OurPets />} />
+          <Route path="/pet/:id" element={<PetAdoptionPage />} />
         </Routes>
         <Footer />
       </div>
-    </Router>
   );
 }

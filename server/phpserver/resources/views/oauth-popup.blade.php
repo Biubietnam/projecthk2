@@ -8,16 +8,21 @@
 
 <body>
     <script>
-        const token = "{{ $token }}";
-        const user = {!! json_encode($user) !!};
-
-        window.opener.postMessage({
-            type: 'OAUTH_SUCCESS',
-            token,
-            user,
-        }, "*");
-
-        window.close();
+        @if(isset($token) && $token)
+            const token = "{{ $token }}";
+            const user = {!! json_encode($user) !!};
+    
+            window.opener.postMessage({
+                type: 'OAUTH_SUCCESS',
+                token,
+                user,
+            }, "*");
+    
+            window.close();
+        @else
+            alert("{{ $message ?? 'Login failed.' }}");
+            window.close();
+        @endif
     </script>
     <p>Authenticating, please wait...</p>
 </body>

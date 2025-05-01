@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\{
     RegisterController,
@@ -10,6 +9,7 @@ use App\Http\Controllers\Auth\{
     VerificationController,
     ProfileController
 };
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +59,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Lấy info user hiện tại
     Route::get('user',   [ProfileController::class, 'me']);
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->get('/admin/users', function () {
+    return User::with('role')->get();
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->delete('/admin/users/{id}', function ($id) {
+    return User::findOrFail($id)->delete();
 });
 
 

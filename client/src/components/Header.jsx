@@ -1,5 +1,5 @@
 "use client";
-
+//Thuc
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ShoppingCart, User, Menu, X } from "lucide-react";
@@ -82,7 +82,7 @@ export default function Header() {
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
             </Link>
           )}
-          
+
           <Button
             className="flex items-center justify-center"
             color="#6D7AB5"
