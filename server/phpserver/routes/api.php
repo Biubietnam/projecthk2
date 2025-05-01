@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\{
     ProfileController
 };
 use App\Models\User;
+use App\Http\Controllers\PetController;
+use App\Http\Controllers\GearController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +21,14 @@ use App\Models\User;
 | Các route đăng ký, đăng nhập, quên mật khẩu… trả về JSON cho React.
 |
 */
+
+Route::get('/pets/{id}', [PetController::class, 'show']);
+
+Route::get('/pets', [PetController::class, 'index']);
+
+Route::get('/gears', [GearController::class, 'index']);
+
+Route::get('/gears/{id}', [GearController::class, 'show']);
 
 // Đăng ký
 Route::post('register', [RegisterController::class, 'register']);

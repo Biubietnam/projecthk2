@@ -1,16 +1,33 @@
 //Thuc
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import dummyPets from './dummyPets.json';
 import Button from '../../../components/Button';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 export default function PetAdoptionPage() {
     const { id } = useParams();
-    const pet = dummyPets.find(p => p.id === parseInt(id));
+    const [pet, setPet] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('About');
 
-    if (!pet) return <p>Pet not found.</p>;
+    useEffect(() => {
+        const fetchPet = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/pets/${id}`);
+                setPet(response.data);
+            } catch (error) {
+                console.error("Error fetching pet:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPet();
+    }, [id]);
+
+    if (loading) return <p className="text-center">Loading...</p>;
+    if (!pet) return <p className="text-center text-red-600">Pet not found.</p>;
 
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
@@ -31,8 +48,8 @@ export default function PetAdoptionPage() {
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`py-2 px-4 text-sm font-medium ${activeTab === tab
-                                        ? 'text-customPurple border-b-2 border-customPurple'
-                                        : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300'
+                                    ? 'text-customPurple border-b-2 border-customPurple'
+                                    : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300'
                                     }`}
                             >
                                 {tab}

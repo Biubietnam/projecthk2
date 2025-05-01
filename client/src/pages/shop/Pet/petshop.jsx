@@ -1,38 +1,46 @@
 //Thuc
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useModal } from '../../../Appwrapper';
 import ContentPetDetail from './ContentPetDetail';
 import { Link } from 'react-router-dom';
-import dummyPets from './dummyPets.json';
-
-const uniquePetTypes = new Set(dummyPets.map(pet => pet.type));
-const dynamicPetTypes = ['All Pets', ...Array.from(uniquePetTypes).sort()];
-
+import axios from 'axios';
 
 export default function OurPets() {
-  const [selectedType, setSelectedType] = useState(dynamicPetTypes[0]);
+  const [pets, setPets] = useState([]);
+  const [selectedType, setSelectedType] = useState('All Pets');
   const [searchQuery, setSearchQuery] = useState('');
 
   const { openModal } = useModal();
 
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/pets')
+      .then(response => setPets(response.data))
+      .catch(error => console.error('Error fetching pets:', error));
+  }, []);
+
+  const dynamicPetTypes = useMemo(() => {
+    const types = new Set(pets.map(p => p.type));
+    return ['All Pets', ...Array.from(types).sort()];
+  }, [pets]);
+
   const handleDetailsClick = (petName) => {
-    const pet = dummyPets.find(p => p.name === petName);
+    const pet = pets.find(p => p.name === petName);
     if (!pet) return;
     openModal({
       title: `Details of ${pet.name}`,
       body: <ContentPetDetail pet={pet} />,
     });
-  }
+  };
 
   const filteredPets = useMemo(() => {
-    return dummyPets.filter((pet) => {
+    return pets.filter((pet) => {
       const matchesType = selectedType === 'All Pets' || pet.type === selectedType;
       const matchesSearch =
         pet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         pet.breed.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesType && matchesSearch;
     });
-  }, [selectedType, searchQuery]);
+  }, [pets, selectedType, searchQuery]);
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">

@@ -1,0 +1,58 @@
+[
+    {
+      "id": "1",
+      "name": "OrthoFlex Memory Foam Dog Bed",
+      "description": "Premium orthopedic memory foam dog bed designed for joint support and comfort.",
+      "price": 89.99,
+      "petType": "Dogs",
+      "category": "Bedding",
+      "image": "/images/bed.jpg",
+      "highlights": ["Orthopedic memory foam", "Water-resistant cover", "Machine washable"],
+      "details": "Perfect for aging dogs or dogs with joint issues. Durable and soft, with anti-slip base."
+    },
+    {
+      "id": "2",
+      "name": "Whisker Delight Tuna Cat Food",
+      "description": "High-protein grain-free tuna cat food with omega-3 for shiny fur and healthy heart.",
+      "price": 29.99,
+      "petType": "Cats",
+      "category": "Food",
+      "image": "/images/tuna.jpg",
+      "highlights": ["Grain-free", "Omega-3 fatty acids", "Vet-approved formula"],
+      "details": "Supports immune system, improves digestion, and enhances coat health. 100% natural ingredients."
+    },
+    {
+      "id": "3",
+      "name": "Chinchilla Deluxe Cage",
+      "description": "Spacious, multi-level metal cage with hammocks and tunnels for small pets.",
+      "price": 119.99,
+      "petType": "Rodents",
+      "category": "Bedding",
+      "image": "/images/cage.jpg",
+      "highlights": ["Multi-level design", "Rust-proof coating", "Easy to clean tray"],
+      "details": "Ideal for chinchillas, ferrets, and rats. Comes with ramps, platforms, and chew-proof bars."
+    },
+    {
+      "id": "4",
+      "name": "LED UVB Reptile Lamp",
+      "description": "Energy-efficient UVB LED light for reptiles to maintain healthy bones and metabolism.",
+      "price": 34.99,
+      "petType": "Reptiles",
+      "category": "Accessories",
+      "image": "/images/lamp.jpg",
+      "highlights": ["UVB 10.0 spectrum", "Long-lasting LED", "Simulates natural daylight"],
+      "details": "Vital for reptiles like bearded dragons and geckos. Helps with vitamin D3 synthesis and calcium absorption."
+    },
+    {
+      "id": "5",
+      "name": "Interactive Laser Toy for Cats",
+      "description": "Rechargeable motion-activated laser toy that stimulates your cat’s natural hunting instinct.",
+      "price": 22.49,
+      "petType": "Cats",
+      "category": "Toys",
+      "image": "/images/laser.jpg",
+      "highlights": ["Auto mode", "USB rechargeable", "Silent motor"],
+      "details": "Keeps cats entertained and active when home alone. Safe and durable build with random pattern rotation."
+    }
+  ]
+  

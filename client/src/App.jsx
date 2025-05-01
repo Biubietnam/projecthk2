@@ -3,9 +3,9 @@ import { Routes, Route } from "react-router-dom";
 import React from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import GearShop from "./pages/shop/gearshop";
+import GearShop from "./pages/shop/Gear/gearshop";
 import Contact from "./pages/Contact";
-import ProductDetail from "./pages/shop/ProductDetail";
+import ProductDetail from "./pages/shop/Gear/GearDetail";
 import Homepage from "./pages/Homepage";
 
 //Booking page
