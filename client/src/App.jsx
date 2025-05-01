@@ -7,9 +7,11 @@ import GearShop from "./pages/shop/gearshop";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/shop/ProductDetail";
 import Homepage from "./pages/Homepage";
+
 //Booking page
 import Booking from "./pages/Booking";
 import PetHotel from "./pages/Booking/petHotel";
+import HotelBooking from "./pages/Booking/hotelBooking";
 
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
@@ -34,6 +36,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/pethotel" element={<PetHotel />} />
+          <Route path="/hotelbooking" element={<HotelBooking />} />
 
           <Route path="/petspa" element={<PetSpa />} />
           <Route path="/petvet" element={<PetVet />} />

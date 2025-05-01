@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 function PetHotel() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-20 ">
       <div class="container mx-auto px-6 py-12">
@@ -16,7 +19,7 @@ function PetHotel() {
         {/* Các dịch vụ */}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Dịch vụ 1 */}
-          <div class="service-card bg-white rounded-xl   text-center  ">
+          <div class="service-card bg-white rounded-xl text-center  ">
             <img
               src="./img/booking/hotel/eating.png"
               alt="Relaxation and Care"
@@ -92,12 +95,15 @@ function PetHotel() {
             <span class="font-bold text-customPurple">Pet Zone</span> – where
             they will feel right at home!
           </p>
-          <a
-            href="tel:+123456789"
-            class="bg-[#6D7AB5] text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-rose-700 transition duration-300 transform hover:scale-105"
+
+          <button
+            onClick={() => {
+              navigate("/hotelbooking");
+            }}
+            className="bg-[#6D7AB5] text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-rose-700 transition duration-300 transform hover:scale-105"
           >
-            Call Now to Book a Service!
-          </a>
+            Reserve Your Pet’s Room
+          </button>
         </div>
       </div>
     </div>
