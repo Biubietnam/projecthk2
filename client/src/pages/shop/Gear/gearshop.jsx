@@ -16,7 +16,7 @@ export default function GearShop() {
     }, []);
 
     const dynamicPetTypes = useMemo(() => {
-        const types = new Set(gears.map(p => p.type));
+        const types = new Set(gears.map(p => p.petType));
         return ['All Gears', ...Array.from(types).sort()];
     }, [gears]);
 
@@ -26,10 +26,10 @@ export default function GearShop() {
     }, [gears]);
 
     const filteredGears = useMemo(() => {
-        return gears.filter((pet) => {
-            const matchesType = petFilter === 'All Gears' || pet.type === petFilter;
-            const matchesCategory = categoryFilter === 'All Categories' || pet.category === categoryFilter;
-            const matchesSearch = search === '' || pet.name.toLowerCase().includes(search.toLowerCase()) || pet.description.toLowerCase().includes(search.toLowerCase());
+        return gears.filter((gear) => {
+            const matchesType = petFilter === 'All Gears' || gear.petType === petFilter;
+            const matchesCategory = categoryFilter === 'All Categories' || gear.category === categoryFilter;
+            const matchesSearch = search === '' || gear.name.toLowerCase().includes(search.toLowerCase()) || gear.description.toLowerCase().includes(search.toLowerCase());
             return matchesType && matchesCategory && matchesSearch;
         });
     }
