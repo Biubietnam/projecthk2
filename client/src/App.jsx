@@ -20,9 +20,11 @@ import LoginFormContent from "./pages/Login/Login";
 import ForgotPasswordFormContent from "./pages/Login/ForgotPassword";
 import SignUpFormContent from "./pages/Login/SignUp";
 import AdminDashboard from "./pages/Admin/Dashboard";
-import Users from "./pages/Admin/Users";
+import UserManagement from "./pages/Admin/UserManagement";
+import PetManagement from "./pages/Admin/PetManagement";
 import OurPets from "./pages/shop/Pet/petshop";
 import PetAdoptionPage from "./pages/shop/Pet/PetAdoptionPage";
+import GearManagement from "./pages/Admin/GearManagement";
 
 export default function App() {
   return (
@@ -32,8 +34,11 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/gearshop" element={<GearShop />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/petshop" element={<OurPets />} />
+          <Route path="/pet/:id" element={<PetAdoptionPage />} />
+
+          <Route path="/contact" element={<Contact />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/pethotel" element={<PetHotel />} />
           <Route path="/hotelbooking" element={<HotelBooking />} />
@@ -41,16 +46,18 @@ export default function App() {
           <Route path="/petspa" element={<PetSpa />} />
           <Route path="/petvet" element={<PetVet />} />
           <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
+
           <Route path="/login" element={<LoginFormContent />} />
           <Route
             path="/forgot-password"
             element={<ForgotPasswordFormContent />}
           />
           <Route path="/signup" element={<SignUpFormContent />} />
+
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<Users />} />
-          <Route path="/petshop" element={<OurPets />} />
-          <Route path="/pet/:id" element={<PetAdoptionPage />} />
+          <Route path="/admin/usermanagement" element={<UserManagement />} />
+          <Route path="/admin/petmanagement" element={<PetManagement />} />
+          <Route path="/admin/gearmanagement" element={<GearManagement />} />
         </Routes>
         <Footer />
       </div>

@@ -1,0 +1,115 @@
+//Thuc
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+export default function UserManagement() {
+    const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
+
+    const user = JSON.parse(localStorage.getItem("user_info"));
+    useEffect(() => {
+        if (!user || user.role?.name !== "admin") {
+            navigate("/");
+        }
+    }, []);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const token = localStorage.getItem("access_token");
+                const response = await axios.get("http://localhost:8000/api/admin/users", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setUsers(response.data);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+        try {
+            const token = localStorage.getItem("access_token");
+            await axios.delete(`http://localhost:8000/api/admin/users/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            setUsers(users.filter((u) => u.id !== id));
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            alert("Failed to delete user.");
+        }
+    };
+
+
+    return (
+        <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+            <h1 className="text-2xl font-bold mb-6">User Management</h1>
+
+            <div className="bg-white shadow rounded-lg overflow-x-auto">
+                <table className="min-w-full text-sm text-left">
+                    <thead className="bg-gray-200 rounded-t-lg">
+                        <tr>
+                            <th className="p-4">ID</th>
+                            <th className="p-4">Name</th>
+                            <th className="p-4">Email</th>
+                            <th className="p-4">Role</th>
+                            <th className="p-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.length === 0 ? (
+                            <tr>
+                                <td colSpan="5" className="text-center py-6 text-gray-500">
+                                    No users found.
+                                </td>
+                            </tr>
+                        ) : (
+                            users.map((user) => (
+                                <tr key={user.id} className="border-t hover:bg-gray-100 transition">
+                                    <td className="p-4">{user.id}</td>
+                                    <td className="p-4">{user.name}</td>
+                                    <td className="p-4">{user.email}</td>
+                                    <td className="p-4">
+                                        <span
+                                            className={`px-2 py-1 rounded text-xs capitalize inline-block ${user.role?.name === 'admin' ? 'bg-red-100 text-red-800' :
+                                                user.role?.name === 'staff' ? 'bg-blue-100 text-blue-800' :
+                                                    user.role?.name === 'vet' ? 'bg-green-100 text-green-800' :
+                                                        user.role?.name === 'seller' ? 'bg-yellow-100 text-yellow-800' :
+                                                            user.role?.name === 'user' ? 'bg-purple-100 text-purple-800' :
+                                                                'bg-gray-100 text-gray-800'
+                                                }`}
+                                        >
+                                            {user.role?.name}
+                                        </span>
+                                    </td>
+                                    <td className="p-4 space-x-2">
+                                        <div className="flex gap-2">
+                                            <button className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition">
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(user.id)}
+                                                className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}

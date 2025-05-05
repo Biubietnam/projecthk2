@@ -15,7 +15,31 @@ export default function ContentPetDetail({ pet }) {
         <div className="text-left text-sm w-full text-gray-700">
             <div className="mb-4 border-b border-gray-200 pb-3">
                 <p className="text-xs text-gray-500">
-                    {pet.breed} • {pet.age} • {pet.gender}
+                    <span
+                        className={`px-2 py-1 rounded text-xs mr-1 font-medium ${pet.type === 'Dogs' ? 'bg-yellow-100 text-yellow-800'
+                            : pet.type === 'Cats' ? 'bg-purple-100 text-purple-800'
+                                : pet.type === 'Rodents' ? 'bg-green-100 text-green-800'
+                                    : pet.type === 'Reptiles' ? 'bg-red-100 text-red-800'
+                                        : 'bg-gray-100 text-gray-800'
+                            }`}
+                    >
+                        {pet.breed}
+                    </span>
+                    <span
+                        className={`px-2 py-1 rounded text-xs inline-block font-medium mr-1 bg-green-100 text-green-800`}
+                    >
+                        {pet.age}
+                    </span>
+                    <span
+                        className={`px-2 py-1 rounded text-xs inline-block mr-1 font-medium ${pet.gender === 'Male'
+                            ? 'bg-blue-100 text-blue-800'
+                            : pet.gender === 'Female'
+                                ? 'bg-pink-100 text-pink-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}
+                    >
+                        {pet.gender === 'Male' ? '♂ Male' : '♀ Female'}
+                    </span>
                 </p>
             </div>
 
@@ -26,7 +50,12 @@ export default function ContentPetDetail({ pet }) {
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                         {pet.tags.map(tag => (
-                            <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium border border-gray-200">{tag}</span>
+                            <span
+                                key={tag}
+                                className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded mr-2 mb-2 font-medium"
+                            >
+                                {tag}
+                            </span>
                         ))}
                     </div>
                 </div>
@@ -62,9 +91,32 @@ export default function ContentPetDetail({ pet }) {
                         )}
                         {activeTab === 'Details' && (
                             <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+                                <div className="font-semibold text-gray-800">Type:</div><div>
+                                    <span
+                                        className={`px-2 py-1 rounded text-xs ${pet.type === 'Dogs' ? 'bg-yellow-100 text-yellow-800'
+                                            : pet.type === 'Cats' ? 'bg-purple-100 text-purple-800'
+                                                : pet.type === 'Rodents' ? 'bg-green-100 text-green-800'
+                                                    : pet.type === 'Reptiles' ? 'bg-red-100 text-red-800'
+                                                        : 'bg-gray-100 text-gray-800'
+                                            }`}
+                                    >
+                                        {pet.type}
+                                    </span>
+                                </div>
                                 <div className="font-semibold text-gray-800">Breed:</div><div className="text-gray-600">{pet.breed}</div>
                                 <div className="font-semibold text-gray-800">Age:</div><div className="text-gray-600">{pet.age}</div>
-                                <div className="font-semibold text-gray-800">Gender:</div><div className="text-gray-600">{pet.gender}</div>
+                                <div className="font-semibold text-gray-800">Gender:</div><div>
+                                    <span
+                                        className={`px-2 py-1 rounded text-xs inline-block ${pet.gender === 'Male'
+                                            ? 'bg-blue-100 text-blue-800'
+                                            : pet.gender === 'Female'
+                                                ? 'bg-pink-100 text-pink-800'
+                                                : 'bg-gray-100 text-gray-800'
+                                            }`}
+                                    >
+                                        {pet.gender === 'Male' ? '♂ Male' : '♀ Female'}
+                                    </span>
+                                </div>
                                 <div className="font-semibold text-gray-800">Weight:</div><div className="text-gray-600">{pet.weight}</div>
                                 <div className="font-semibold text-gray-800">Color:</div><div className="text-gray-600">{pet.color}</div>
                             </div>

@@ -11,7 +11,7 @@ export default function Modal({
   if (!isOpen) return null
 
   return (
-    <div className="App fixed inset-0 z-50 flex items-center justify-center bg-black/50 font-winky">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md transition-opacity duration-300">
       <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 pb-0 relative max-h-[90vh] overflow-y-auto m-4">
         <button
           onClick={onClose}

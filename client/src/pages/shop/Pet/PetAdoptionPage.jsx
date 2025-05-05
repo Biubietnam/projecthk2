@@ -1,6 +1,6 @@
 //Thuc
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Button from '../../../components/Button';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -31,6 +31,31 @@ export default function PetAdoptionPage() {
 
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+            <div className="mb-2">
+                <Link
+                    to="/petshop"
+                    className="inline-flex items-center rounded text-sm text-customPurple hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="mr-1 h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                        />
+                    </svg>
+
+                    Back to Pet Shop
+                </Link>
+            </div >
+
             <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
                 <div className="flex-1 bg-white p-6 rounded-lg">
                     <div className="w-full h-80 bg-gray-700 rounded-lg mb-4 flex items-center justify-center">

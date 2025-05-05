@@ -43,8 +43,9 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "shadow-md py-1" : "py-1"
-        } bg-white`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
+      ${isScrolled ? "backdrop-blur-lg bg-white/80 shadow-md py-1" : "bg-white py-1"}
+    `}
     >
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
         <Link
@@ -61,8 +62,8 @@ export default function Header() {
               key={item.name}
               to={item.path}
               className={`relative px-4 py-2 font-medium transition-colors group ${location.pathname === item.path
-                  ? "text-customPurple" 
-                  : "text-gray-700 hover:text-customPurple"
+                ? "text-customPurple"
+                : "text-gray-700 hover:text-customPurple"
                 }`}
             >
               {item.name}
@@ -74,8 +75,8 @@ export default function Header() {
             <Link
               to="/admin/dashboard"
               className={`relative px-4 py-2 font-medium transition-colors group ${location.pathname === "/admin/dashboard"
-                  ? "text-customPurple" 
-                  : "text-gray-700 hover:text-customPurple"
+                ? "text-customPurple"
+                : "text-gray-700 hover:text-customPurple"
                 }`}
             >
               Admin Dashboard
