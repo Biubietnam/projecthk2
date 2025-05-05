@@ -27,15 +27,24 @@ function PetSpa() {
     <div
       className={`min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto`}
     >
-      <motion.h2
+      <motion.div
         initial={{ y: 100, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.3 }}
-        className={`text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-[#6D7AB5] pb-10 mb-4 font-playfair tracking-wide drop-shadow-lg `}
       >
-        🛁 Spa & Grooming at Pet Zone
-      </motion.h2>
+        <h2
+          className={`text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-[#6D7AB5] p-4  font-playfair tracking-wide drop-shadow-lg `}
+        >
+          🛁 Spa & Grooming at Pet Zone
+        </h2>
+        <p
+          className={`text-base sm:text-lg md:text-xl text-center text-gray-800 max-w-3xl mx-auto leading-relaxed mb-10 font-lora `}
+        >
+          Gentle grooming, loving care – helping your pet look great and feel
+          even better.
+        </p>
+      </motion.div>
 
       {/* Description about Petzone Spa Grooming*/}
       <div className="grid  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 justify-items-center ">
@@ -85,7 +94,7 @@ function PetSpa() {
           initial={{ x: -100, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.2 }}
         >
           <img
             src="/img/booking/spa/comboSpa-banner.png"
@@ -97,7 +106,7 @@ function PetSpa() {
           initial={{ x: 100, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.2 }}
         >
           <h3 className="text-xl md:text-2xl lg:text-3xl text-[#6D7AB5] font-semibold mb-6">
             Perfect Spa Combos – Made Just for Your Pet
@@ -187,7 +196,7 @@ function PetSpa() {
             </ul>
           </div>
 
-          <button className="mt-[232px] bg-yellow-100 text-yellow-700 hover:bg-yellow-200 active:bg-yellow-300 border border-yellow-300 font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <button className="mt-[232px] bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
           </button>
         </div>
@@ -238,7 +247,7 @@ function PetSpa() {
             </ul>
           </div>
 
-          <button className="mt-[112px] bg-yellow-100 text-yellow-700 hover:bg-yellow-200 active:bg-yellow-300 border border-yellow-300 font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <button className="mt-[112px] bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
           </button>
         </div>
@@ -288,7 +297,7 @@ function PetSpa() {
                 </li>
               ))}
             </ul>
-            <button className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200 active:bg-yellow-300 border border-yellow-300 font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+            <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
               Book Now
             </button>
           </div>

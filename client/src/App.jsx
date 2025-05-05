@@ -10,8 +10,6 @@ import Homepage from "./pages/Homepage";
 
 //Booking page
 import Booking from "./pages/Booking";
-import PetHotel from "./pages/Booking/petHotel";
-import HotelBooking from "./pages/Booking/hotelBooking";
 
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
@@ -28,8 +26,8 @@ import GearManagement from "./pages/Admin/GearManagement";
 
 export default function App() {
   return (
-      <div className="App font-concert bg-gray-100 min-h-screen">
-        <Header />
+    <div className="App font-concert bg-gray-100 min-h-screen">
+      <Header />
 
         <Routes>
           <Route path="/" element={<Homepage />} />
