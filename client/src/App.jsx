@@ -29,33 +29,33 @@ export default function App() {
     <div className="App font-concert bg-gray-100 min-h-screen">
       <Header />
 
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/gearshop" element={<GearShop />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/petshop" element={<OurPets />} />
-          <Route path="/pet/:id" element={<PetAdoptionPage />} />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/gearshop" element={<GearShop />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/petshop" element={<OurPets />} />
+        <Route path="/pet/:id" element={<PetAdoptionPage />} />
 
           <Route path="/contact" element={<Contact />} />
           <Route path="/booking" element={<Booking />} />
 
-          <Route path="/petspa" element={<PetSpa />} />
-          <Route path="/petvet" element={<PetVet />} />
-          <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
+        <Route path="/petspa" element={<PetSpa />} />
+        <Route path="/petvet" element={<PetVet />} />
+        <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
 
-          <Route path="/login" element={<LoginFormContent />} />
-          <Route
-            path="/forgot-password"
-            element={<ForgotPasswordFormContent />}
-          />
-          <Route path="/signup" element={<SignUpFormContent />} />
+        <Route path="/login" element={<LoginFormContent />} />
+        <Route
+          path="/forgot-password"
+          element={<ForgotPasswordFormContent />}
+        />
+        <Route path="/signup" element={<SignUpFormContent />} />
 
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/usermanagement" element={<UserManagement />} />
-          <Route path="/admin/petmanagement" element={<PetManagement />} />
-          <Route path="/admin/gearmanagement" element={<GearManagement />} />
-        </Routes>
-        <Footer />
-      </div>
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/usermanagement" element={<UserManagement />} />
+        <Route path="/admin/petmanagement" element={<PetManagement />} />
+        <Route path="/admin/gearmanagement" element={<GearManagement />} />
+      </Routes>
+      <Footer />
+    </div>
   );
 }
