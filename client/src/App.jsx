@@ -38,8 +38,6 @@ export default function App() {
 
           <Route path="/contact" element={<Contact />} />
           <Route path="/booking" element={<Booking />} />
-          <Route path="/pethotel" element={<PetHotel />} />
-          <Route path="/hotelbooking" element={<HotelBooking />} />
 
           <Route path="/petspa" element={<PetSpa />} />
           <Route path="/petvet" element={<PetVet />} />

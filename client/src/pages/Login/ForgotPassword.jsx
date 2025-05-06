@@ -16,17 +16,10 @@ export default function ForgotPasswordFormContent() {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-      });
-
       const res = await axios.post(
         "http://localhost:8000/api/forgot",
         {
           email,
-        },
-        {
-          withCredentials: true,
         }
       );
       setMessage(res.data.message || "Password reset link sent!");

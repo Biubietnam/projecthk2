@@ -119,7 +119,16 @@ export default function PetAdoptionPage() {
                                 </div>
                                 <div>
                                     <p className="text-gray-500">Gender</p>
-                                    <p className="tex-gray-700 text-lg">{pet.gender}</p>
+                                    <span
+                                        className={`px-2 py-1 rounded inline-block mr-1 font-medium ${pet.gender === 'Male'
+                                            ? 'bg-blue-100 text-blue-800'
+                                            : pet.gender === 'Female'
+                                                ? 'bg-pink-100 text-pink-800'
+                                                : 'bg-gray-100 text-gray-800'
+                                            }`}
+                                    >
+                                        {pet.gender === 'Male' ? '♂ Male' : '♀ Female'}
+                                    </span>
                                 </div>
                             </div>
                         )}

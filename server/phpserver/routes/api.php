@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\{
 use App\Models\User;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\GearController;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,10 @@ Route::get('/pets', [PetController::class, 'index']);
 Route::get('/gears', [GearController::class, 'index']);
 
 Route::get('/gears/{id}', [GearController::class, 'show']);
+
+Route::get('/gears/{gear}/reviews', [ReviewController::class, 'index']);
+
+Route::post('/gears/{id}/review', [ReviewController::class, 'store']);
 
 // Đăng ký
 Route::post('register', [RegisterController::class, 'register']);
@@ -53,7 +58,7 @@ Route::get('verify/{id}/{hash}', [VerificationController::class, 'verify'])
 
 // Gửi lại link xác thực (cần token)
 Route::post('email/resend', [VerificationController::class, 'resend'])
-     ->middleware('auth:sanctum');
+    ->middleware('auth:sanctum');
 
 /*
 |--------------------------------------------------------------------------
@@ -78,5 +83,3 @@ Route::middleware(['auth:sanctum', 'admin'])->get('/admin/users', function () {
 Route::middleware(['auth:sanctum', 'admin'])->delete('/admin/users/{id}', function ($id) {
     return User::findOrFail($id)->delete();
 });
-
-

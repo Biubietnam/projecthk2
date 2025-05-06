@@ -114,7 +114,6 @@ export default function GearShop() {
                         >
                             {filteredGears.map((product) => (
                                 <SwiperSlide key={product.id} className="h-auto">
-                                    <Link to={`/product/${product.id}`}>
                                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col justify-between h-full">
 
                                             <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -147,11 +146,11 @@ export default function GearShop() {
                                             </div>
 
                                             <div className="px-4 pb-4 mt-auto flex justify-center gap-2">
-                                                <button
+                                                <Link to={`/product/${product.id}`}
                                                     className="py-2 px-4 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition w-full text-center"
                                                 >
                                                     Details
-                                                </button>
+                                                </Link>
                                                 <button
                                                     className="py-2 px-4 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition w-full text-center"
                                                 >
@@ -159,7 +158,6 @@ export default function GearShop() {
                                                 </button>
                                             </div>
                                         </div>
-                                    </Link>
                                 </SwiperSlide>
                             ))}
                         </Swiper>

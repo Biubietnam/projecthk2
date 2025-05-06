@@ -50,10 +50,6 @@ export default function ResetPasswordFormContent() {
         }
 
         try {
-            await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-                withCredentials: true,
-            });
-
             const res = await axios.post(
                 "http://localhost:8000/api/reset",
                 {
@@ -61,9 +57,6 @@ export default function ResetPasswordFormContent() {
                     password,
                     password_confirmation: confirmPassword,
                     token,
-                },
-                {
-                    withCredentials: true,
                 }
             );
 

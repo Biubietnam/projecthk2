@@ -9,11 +9,27 @@ export default function GearDetail() {
   const { id } = useParams();
   const [gear, setGear] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [formData, setFormData] = useState({
+    user_name: '',
+    user_id: null,
+    comment: '',
+  });
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     const fetchGear = async () => {
       try {
         const response = await axios.get(`http://localhost:8000/api/gears/${id}`);
+        const reviewsResponse = await axios.get(`http://localhost:8000/api/gears/${id}/reviews`);
+        if (reviewsResponse.status !== 200) {
+          throw new Error("Failed to fetch reviews data");
+        }
+        setReviews(reviewsResponse.data);
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch gear data");
+        }
         setGear(response.data);
       } catch (error) {
         console.error("Error fetching gear:", error);
@@ -23,6 +39,57 @@ export default function GearDetail() {
     };
     fetchGear();
   }, [id]);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user_info");
+    if (user) {
+      setUserInfo(JSON.parse(user));
+      setFormData((prev) => ({
+        ...prev,
+        user_name: JSON.parse(user).name,
+        user_id: JSON.parse(user).id,
+      }));
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Form Data:", formData);
+    try {
+      await axios.post(
+        `http://localhost:8000/api/gears/${id}/review`,
+        {
+          ...formData,
+          rating: selectedRating,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      // const updatedReviews = await axios.get(`http://localhost:8000/api/gears/${id}/reviews`);
+      // setReviews(updatedReviews.data);
+      // setFormData({
+      //   user_name: formData.user_name,
+      //   comment: "",
+      // });
+      // setSelectedRating(0);
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    }
+  };
+
 
   if (loading) return <p className="text-center">Loading...</p>;
   if (!gear) return <p className="text-center text-red-600">Gear not found.</p>;
@@ -136,6 +203,83 @@ export default function GearDetail() {
           </div>
         </div>
       </div>
+
+      <div className="mt-12 max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-sm">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Customer Reviews</h2>
+
+        {reviews && reviews.length > 0 ? (
+          <div className="space-y-4">
+            {reviews.map((review) => (
+              <div key={review.id} className="bg-gray-50 p-4 rounded-md shadow-inner space-y-1">
+                <p className="font-semibold text-sm text-gray-700">{review.user_name}</p>
+                <div className="flex items-center text-yellow-500 text-sm">
+                  {Array(review.rating).fill().map((_, i) => (
+                    <span key={i}>★</span>
+                  ))}
+                  <span className="ml-2 text-gray-500">({review.rating})</span>
+                </div>
+                {review.comment && <p className="text-gray-700 text-sm">{review.comment}</p>}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-32 bg-gray-100 rounded-lg mb-4">
+            <p className="text-gray-500">No reviews yet.</p>
+          </div>
+        )}
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Your Name</label>
+              <input
+                type="text"
+                name="user_name"
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm"
+                value={formData.user_name}
+                readOnly
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Your Rating</label>
+              <div className="flex space-x-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setSelectedRating(star)}
+                    className={`text-2xl focus:outline-none transition-transform transform hover:scale-110 ${star <= selectedRating ? 'text-yellow-400' : 'text-gray-300'}`}
+                    aria-label={`Rate ${star} star`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Comment</label>
+            <textarea
+              name="comment"
+              required
+              rows="3"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm"
+              placeholder="Write your thoughts about the product..."
+              value={formData.comment}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+
+          <div>
+            <Button type="submit" className="w-full">Submit Review</Button>
+          </div>
+        </form>
+      </div>
+
     </div>
   );
 }

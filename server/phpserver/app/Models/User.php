@@ -23,6 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int,string>
      */
     protected $fillable = [
+        'id',
         'name',
         'email',
         'password',
@@ -103,5 +104,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasRole(string $roleName): bool
     {
         return $this->role && $this->role->name === $roleName;
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

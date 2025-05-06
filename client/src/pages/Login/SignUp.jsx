@@ -25,10 +25,6 @@ export default function SignUpFormContent() {
     }
 
     try {
-      await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-      });
-
       const res = await axios.post(
         "http://localhost:8000/api/register",
         {
@@ -36,9 +32,6 @@ export default function SignUpFormContent() {
           email,
           password,
           password_confirmation: confirmPassword,
-        },
-        {
-          withCredentials: true,
         }
       );
 

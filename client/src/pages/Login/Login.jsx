@@ -18,18 +18,12 @@ export default function LoginFormContent() {
     setIsLoading(true);
 
     try {
-      await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-      });
-
+      
       const res = await axios.post(
         "http://localhost:8000/api/login",
         {
           email,
           password,
-        },
-        {
-          withCredentials: true,
         }
       );
 

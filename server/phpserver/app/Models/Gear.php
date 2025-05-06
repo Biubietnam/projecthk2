@@ -31,4 +31,9 @@ class Gear extends Model
         'reviews_count' => 'integer',
         'is_featured' => 'boolean',
     ];
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
