@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\Role;
 
+
+
 class SocialLoginController extends Controller
 {
     public function redirect($provider)

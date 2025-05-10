@@ -10,12 +10,11 @@ export default function GearDetail() {
   const [gear, setGear] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
-  const [selectedRating, setSelectedRating] = useState(0);
   const [formData, setFormData] = useState({
-    user_name: '',
-    user_id: null,
     comment: '',
+    rating: 0,
   });
+  const [quantity, setQuantity] = useState(1);
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
@@ -44,11 +43,6 @@ export default function GearDetail() {
     const user = localStorage.getItem("user_info");
     if (user) {
       setUserInfo(JSON.parse(user));
-      setFormData((prev) => ({
-        ...prev,
-        user_name: JSON.parse(user).name,
-        user_id: JSON.parse(user).id,
-      }));
     }
   }, []);
 
@@ -60,36 +54,63 @@ export default function GearDetail() {
     }));
   };
 
-
   const handleSubmit = async (e) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return alert("You must be logged in to submit a review.");
+
     e.preventDefault();
     console.log("Form Data:", formData);
     try {
+      if (!formData.comment.trim()) {
+        return alert("Please enter a comment.");
+      }
+      if (formData.rating === 0) {
+        return alert("Please select a rating.");
+      }
       await axios.post(
         `http://localhost:8000/api/gears/${id}/review`,
         {
           ...formData,
-          rating: selectedRating,
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      // const updatedReviews = await axios.get(`http://localhost:8000/api/gears/${id}/reviews`);
-      // setReviews(updatedReviews.data);
-      // setFormData({
-      //   user_name: formData.user_name,
-      //   comment: "",
-      // });
-      // setSelectedRating(0);
+      const updatedReviews = await axios.get(`http://localhost:8000/api/gears/${id}/reviews`);
+      setReviews(updatedReviews.data);
+      setFormData({
+        comment: "",
+        rating: 0,
+      });
     } catch (error) {
       console.error("Error submitting review:", error);
     }
   };
 
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return alert("You must be logged in to add items to the cart.");
+    try {
+      await axios.post(
+        `http://localhost:8000/api/cart/add/${id}`,
+        {
+          quantity: quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Item added to cart successfully!");
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+      alert("Failed to add item to cart. Please try again.");
+    }
+  };
 
   if (loading) return <p className="text-center">Loading...</p>;
   if (!gear) return <p className="text-center text-red-600">Gear not found.</p>;
@@ -197,9 +218,17 @@ export default function GearDetail() {
               type="number"
               min="1"
               defaultValue="1"
+              onChange={(e) => setQuantity(e.target.value)}
+              onFocus={(e) => e.target.select()}
               className="w-20 px-3 py-2 border border-gray-300 rounded-md text-center text-sm"
             />
-            <Button>Add to Cart</Button>
+            <Button
+              disabled={gear.stock <= 0}
+              onClick={handleAddToCart}
+              className={`w-full ${gear.stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              Add to Cart
+            </Button>
           </div>
         </div>
       </div>
@@ -237,7 +266,7 @@ export default function GearDetail() {
                 name="user_name"
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm"
-                value={formData.user_name}
+                value={userInfo ? userInfo.name : "unknown"}
                 readOnly
               />
             </div>
@@ -249,8 +278,8 @@ export default function GearDetail() {
                   <button
                     key={star}
                     type="button"
-                    onClick={() => setSelectedRating(star)}
-                    className={`text-2xl focus:outline-none transition-transform transform hover:scale-110 ${star <= selectedRating ? 'text-yellow-400' : 'text-gray-300'}`}
+                    onClick={() => setFormData({ ...formData, rating: star })}
+                    className={`text-2xl focus:outline-none transition-transform transform hover:scale-110 ${star <= formData.rating ? 'text-yellow-500' : 'text-gray-300'}`}
                     aria-label={`Rate ${star} star`}
                   >
                     ★

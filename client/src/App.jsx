@@ -5,8 +5,9 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import GearShop from "./pages/shop/Gear/gearshop";
 import Contact from "./pages/Contact";
-import ProductDetail from "./pages/shop/Gear/GearDetail";
+import GearDetail from "./pages/shop/Gear/GearDetail";
 import Homepage from "./pages/Homepage";
+import Cart from "./pages/cart/Cart";
 
 //Booking page
 import Booking from "./pages/Booking";
@@ -23,6 +24,8 @@ import PetManagement from "./pages/Admin/PetManagement";
 import OurPets from "./pages/shop/Pet/petshop";
 import PetAdoptionPage from "./pages/shop/Pet/PetAdoptionPage";
 import GearManagement from "./pages/Admin/GearManagement";
+import Checkout from "./pages/cart/Checkout";
+import Profile from "./pages/User/Profile";
 
 export default function App() {
   return (
@@ -32,7 +35,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/gearshop" element={<GearShop />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/gear/:id" element={<GearDetail />} />
         <Route path="/petshop" element={<OurPets />} />
         <Route path="/pet/:id" element={<PetAdoptionPage />} />
 
@@ -54,6 +57,12 @@ export default function App() {
         <Route path="/admin/usermanagement" element={<UserManagement />} />
         <Route path="/admin/petmanagement" element={<PetManagement />} />
         <Route path="/admin/gearmanagement" element={<GearManagement />} />
+
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+
+        <Route path="/profile" element={<Profile />} />
+
       </Routes>
       <Footer />
     </div>

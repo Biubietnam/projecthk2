@@ -25,6 +25,11 @@ class RegisterController extends Controller
             'password' => $data['password'],
             'role_id' => $role->id,
         ]);
+        
+        $user->profile()->create([
+            'user_id' => $user->id,
+            'full_name' => $data['name'],
+        ]);
 
         event(new Registered($user));
 

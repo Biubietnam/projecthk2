@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import Button from '../../../components/Button';
 
 import { Navigation, Pagination } from 'swiper/modules';
 
@@ -40,7 +41,6 @@ export default function GearShop() {
         });
     }
         , [gears, petFilter, categoryFilter, search]);
-
 
     const showSwiper = filteredGears.length > 0;
 
@@ -114,50 +114,40 @@ export default function GearShop() {
                         >
                             {filteredGears.map((product) => (
                                 <SwiperSlide key={product.id} className="h-auto">
-                                        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col justify-between h-full">
+                                    <Link to={`/gear/${product.id}`}
+                                        className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col justify-between h-full">
 
-                                            <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
-                                                <span className="text-sm">Image Placeholder</span>
-                                            </div>
-
-                                            <div className="p-4 flex flex-col items-center text-center flex-grow">
-                                                <h2 className="text-lg font-semibold">{product.name}</h2>
-                                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.description}</p>
-                                            </div>
-
-                                            <div className="px-4 pb-4 mt-auto flex justify-center">
-                                                <p className="font-poetsen text-lg text-gray-800">
-                                                    {new Intl.NumberFormat('en-US', {
-                                                        style: 'currency',
-                                                        currency: 'USD',
-                                                    }).format(product.price)}
-                                                </p>
-                                            </div>
-
-                                            <div className="text-sm text-gray-500 m-1 text-center">
-                                                <p>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</p>
-                                                <p>⭐ {product.rating} ({product.reviews_count} reviews)</p>
-                                                {product.is_featured && <p className="text-yellow-600 font-semibold">★ Featured</p>}
-                                            </div>
-
-                                            <div className="text-xs text-gray-400 m-1 text-center">
-                                                <p>{product.shipping_info}</p>
-                                                <p>{product.return_policy}</p>
-                                            </div>
-
-                                            <div className="px-4 pb-4 mt-auto flex justify-center gap-2">
-                                                <Link to={`/product/${product.id}`}
-                                                    className="py-2 px-4 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition w-full text-center"
-                                                >
-                                                    Details
-                                                </Link>
-                                                <button
-                                                    className="py-2 px-4 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition w-full text-center"
-                                                >
-                                                    Add to card
-                                                </button>
-                                            </div>
+                                        <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+                                            <span className="text-sm">Image Placeholder</span>
                                         </div>
+
+                                        <div className="p-4 flex flex-col items-center text-center flex-grow">
+                                            <h2 className="text-lg font-semibold">{product.name}</h2>
+                                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                                        </div>
+
+                                        <div className="px-4 pb-4 mt-auto flex justify-center">
+                                            <p className="font-poetsen text-lg text-gray-800">
+                                                {new Intl.NumberFormat('en-US', {
+                                                    style: 'currency',
+                                                    currency: 'USD',
+                                                }).format(product.price)}
+                                            </p>
+                                        </div>
+
+                                        <div className="text-sm text-gray-500 m-1 text-center">
+                                            <p>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</p>
+                                            <p>⭐ {product.rating} ({product.reviews_count} reviews)</p>
+                                            {product.is_featured && <p className="text-yellow-600 font-semibold">★ Featured</p>}
+                                        </div>
+
+                                        <div className="border-t border-gray-200 my-2 w-5/6 mx-auto"></div>
+
+                                        <div className="text-xs text-gray-400 mb-2 text-center">
+                                            <p>{product.shipping_info}</p>
+                                            <p>{product.return_policy}</p>
+                                        </div>
+                                    </Link>
                                 </SwiperSlide>
                             ))}
                         </Swiper>

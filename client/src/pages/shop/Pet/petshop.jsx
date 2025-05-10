@@ -10,6 +10,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import { Navigation, Pagination } from 'swiper/modules';
+import Button from '../../../components/Button';
 
 export default function OurPets() {
   const [pets, setPets] = useState([]);
@@ -127,12 +128,12 @@ export default function OurPets() {
                       </div>
                     </div>
                     <div className="px-4 pb-4 mt-auto flex justify-center gap-2">
-                      <button
+                      <Button
                         onClick={() => handleDetailsClick(pet.id)}
-                        className="py-2 px-4 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition w-full text-center"
+                        className="py-2 px-4 text-sm rounded-md w-full"
                       >
                         Details
-                      </button>
+                      </Button>
                       <Link
                         to={`/pet/${pet.id}`}
                         className="py-2 px-4 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition w-full text-center"

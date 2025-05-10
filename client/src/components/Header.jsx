@@ -84,15 +84,6 @@ export default function Header() {
             </Link>
           )}
 
-          <Button
-            className="flex items-center justify-center"
-            color="#6D7AB5"
-            hoverColor="#5A678F"
-            aria-label="Shopping Cart"
-          >
-            <ShoppingCart className="w-5 h-5" />
-          </Button>
-
           {userInfo ? (
             <div className="relative flex items-center">
               <button
@@ -120,6 +111,14 @@ export default function Header() {
               Login
             </Link>
           )}
+
+          <Link to={"/cart"} className={`relative px-4 py-2 font-medium transition-colors group ${location.pathname === "/admin/dashboard"
+            ? "text-customPurple"
+            : "text-gray-700 hover:text-customPurple"
+            }`}>
+            <ShoppingCart className="w-5 h-5" />
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+          </Link>
         </nav>
 
         <div className="flex md:hidden items-center space-x-2">

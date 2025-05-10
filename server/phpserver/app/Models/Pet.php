@@ -22,8 +22,13 @@ class Pet extends Model
         'careExercise',
         'careGrooming',
     ];
-    
+
     protected $casts = [
         'tags' => 'array',
     ];
+
+    public function adoptionRequests()
+    {
+        return $this->hasMany(AdoptionRequest::class);
+    }
 }

@@ -20,7 +20,6 @@ class ReviewController extends Controller
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string',
-            'user_id' => 'required|exists:users,id',
         ]);
 
 
@@ -28,7 +27,7 @@ class ReviewController extends Controller
 
         $gear->reviews()->create([
             'gear_id' => $id,
-            'user_id' => $validated['user_id'],
+            'user_id' => Auth::id(),
             'rating' => $validated['rating'],
             'comment' => $validated['comment'],
         ]);
