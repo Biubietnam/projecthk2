@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
-import Button from "../../components/Button";
+import CheckLogButton from "../../components/CheckLogButton";
+import { useNavigate } from "react-router-dom";
 
 function PetVet() {
+  //Khai báo điều hướng navigate
+  const navigate = useNavigate();
   return (
     <div
       className={`min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto`}
@@ -46,9 +49,19 @@ function PetVet() {
             up-to-date knowledge, we help detect issues early and support your
             pet’s long-term well-being.
           </p>
-          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <CheckLogButton
+            LoggedIn={() => {
+              navigate("/petlist");
+              window.scrollTo(0, 0);
+            }}
+            NotLoggedIn={() => {
+              navigate("/petUnLogin");
+              window.scrollTo(0, 0);
+            }}
+            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+          >
             Book Now
-          </Button>
+          </CheckLogButton>
         </motion.div>
 
         <motion.div
@@ -98,9 +111,19 @@ function PetVet() {
             we provide professional care for your pets in the comfort of your
             own home, with modern equipment and gentle handling.
           </p>
-          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <CheckLogButton
+            LoggedIn={() => {
+              navigate("/petlist");
+              window.scrollTo(0, 0);
+            }}
+            NotLoggedIn={() => {
+              navigate("/petUnLogin");
+              window.scrollTo(0, 0);
+            }}
+            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+          >
             Book Now
-          </Button>
+          </CheckLogButton>
         </motion.div>
       </div>
 
@@ -126,9 +149,19 @@ function PetVet() {
             making the vaccination process smooth and stress-free — for both you
             and your pet.
           </p>
-          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <CheckLogButton
+            LoggedIn={() => {
+              navigate("/petlist");
+              window.scrollTo(0, 0);
+            }}
+            NotLoggedIn={() => {
+              navigate("/petUnLogin");
+              window.scrollTo(0, 0);
+            }}
+            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+          >
             Book Now
-          </Button>
+          </CheckLogButton>
         </motion.div>
 
         <motion.div
@@ -181,9 +214,19 @@ function PetVet() {
             problems early — safely and comfortably. Quick, gentle, and highly
             informative — for peace of mind and better treatment planning.
           </p>
-          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <CheckLogButton
+            LoggedIn={() => {
+              navigate("/petlist");
+              window.scrollTo(0, 0);
+            }}
+            NotLoggedIn={() => {
+              navigate("/petUnLogin");
+              window.scrollTo(0, 0);
+            }}
+            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+          >
             Book Now
-          </Button>
+          </CheckLogButton>
         </motion.div>
       </div>
 
@@ -209,9 +252,19 @@ function PetVet() {
             team follows trusted procedures and uses modern equipment to ensure
             comfort and safety for your furry friend.
           </p>
-          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <CheckLogButton
+            LoggedIn={() => {
+              navigate("/petlist");
+              window.scrollTo(0, 0);
+            }}
+            NotLoggedIn={() => {
+              navigate("/petUnLogin");
+              window.scrollTo(0, 0);
+            }}
+            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+          >
             Book Now
-          </Button>
+          </CheckLogButton>
         </motion.div>
 
         <motion.div
@@ -288,9 +341,19 @@ function PetVet() {
               </em>
             </p>
           </p>
-          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <CheckLogButton
+            LoggedIn={() => {
+              navigate("/petlist");
+              window.scrollTo(0, 0);
+            }}
+            NotLoggedIn={() => {
+              navigate("/petUnLogin");
+              window.scrollTo(0, 0);
+            }}
+            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+          >
             Book Now
-          </Button>
+          </CheckLogButton>
         </motion.div>
       </div>
     </div>

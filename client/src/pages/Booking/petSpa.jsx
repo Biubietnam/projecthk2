@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
+
 import Button from "../../components/Button";
+import { useNavigate } from "react-router-dom";
 
 function PetSpa() {
+  //DÙng navigate để điều hướng đến các trang khác
+  const navigate = useNavigate();
   //Hiệu ứng bóng
   const shadowEffect = "shadow-lg hover:shadow-xl";
 
@@ -24,6 +28,9 @@ function PetSpa() {
   //Hiệu ứng chuyển màu bg
 
   const combobg = `bg-white hover:bg-[#F0F4FF] p-8 transition-all duration-300`;
+  //Check token
+  const token = localStorage.getItem("access_token");
+
   return (
     <div
       className={`min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto`}
@@ -155,6 +162,15 @@ function PetSpa() {
         {/* BASIC SPA */}
         <div
           className={`w-[300px] bg-white rounded-2xl ${baseEffect} ${transitionAndLayoutEffect} ${combobg}`}
+          onClick={() => {
+            if (token) {
+              window.scrollTo(0, 0);
+              navigate("/petlist");
+            } else {
+              window.scrollTo(0, 0);
+              navigate("/petunlogin");
+            }
+          }}
         >
           <div className="p-4">
             <h3 className="text-2xl font-bold text-[#6D7AB5]">Basic Spa</h3>
@@ -204,6 +220,15 @@ function PetSpa() {
         {/* PREMIUM SPA */}
         <div
           className={` h-auto w-[300px]  rounded-2xl shadow-lg ${combobg}${baseEffect} ${transitionAndLayoutEffect} `}
+          onClick={() => {
+            if (token) {
+              window.scrollTo(0, 0);
+              navigate("/petlist");
+            } else {
+              window.scrollTo(0, 0);
+              navigate("/petunlogin");
+            }
+          }}
         >
           <div className="p-4">
             <h3 className="text-2xl font-bold text-[#6D7AB5]">Premium Spa</h3>
@@ -255,6 +280,15 @@ function PetSpa() {
         {/* ULTRA SPA */}
         <div
           className={`w-[300px] bg-white rounded-2xl ${baseEffect} ${transitionAndLayoutEffect} ${combobg}`}
+          onClick={() => {
+            if (token) {
+              window.scrollTo(0, 0);
+              navigate("/petlist");
+            } else {
+              window.scrollTo(0, 0);
+              navigate("/petunlogin");
+            }
+          }}
         >
           <div className="p-4">
             <h3 className="text-2xl font-bold text-[#6D7AB5]">Ultra Spa</h3>
