@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Button from "../../components/Button";
 
 function PetSpa() {
   //Hiệu ứng bóng
@@ -195,10 +196,9 @@ function PetSpa() {
               ))}
             </ul>
           </div>
-
-          <button className="mt-[232px] bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="mt-[232px] font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </div>
 
         {/* PREMIUM SPA */}
@@ -247,9 +247,9 @@ function PetSpa() {
             </ul>
           </div>
 
-          <button className="mt-[112px] bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="mt-[112px] font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </div>
 
         {/* ULTRA SPA */}
@@ -297,9 +297,9 @@ function PetSpa() {
                 </li>
               ))}
             </ul>
-            <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+            <Button className=" font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
               Book Now
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>

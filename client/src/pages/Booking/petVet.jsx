@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Button from "../../components/Button";
 
 function PetVet() {
   return (
@@ -45,9 +46,9 @@ function PetVet() {
             up-to-date knowledge, we help detect issues early and support your
             pet’s long-term well-being.
           </p>
-          <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </motion.div>
 
         <motion.div
@@ -97,9 +98,9 @@ function PetVet() {
             we provide professional care for your pets in the comfort of your
             own home, with modern equipment and gentle handling.
           </p>
-          <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </motion.div>
       </div>
 
@@ -125,9 +126,9 @@ function PetVet() {
             making the vaccination process smooth and stress-free — for both you
             and your pet.
           </p>
-          <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </motion.div>
 
         <motion.div
@@ -180,9 +181,9 @@ function PetVet() {
             problems early — safely and comfortably. Quick, gentle, and highly
             informative — for peace of mind and better treatment planning.
           </p>
-          <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </motion.div>
       </div>
 
@@ -208,9 +209,9 @@ function PetVet() {
             team follows trusted procedures and uses modern equipment to ensure
             comfort and safety for your furry friend.
           </p>
-          <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </motion.div>
 
         <motion.div
@@ -287,9 +288,9 @@ function PetVet() {
               </em>
             </p>
           </p>
-          <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </motion.div>
       </div>
     </div>
