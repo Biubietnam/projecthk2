@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Button from "../../components/Button";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LoginFormContent() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,10 @@ export default function LoginFormContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = location.state?.redirectTo || "/";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,7 +34,7 @@ export default function LoginFormContent() {
       localStorage.setItem("user_info", JSON.stringify(res.data.user));
 
       setTimeout(() => {
-        window.location.href = "/";
+        navigate(redirectTo);
       }, 500);
     } catch (err) {
       console.error("Login Error:", err);
@@ -70,7 +75,7 @@ export default function LoginFormContent() {
         console.log("Access token:", token);
 
         window.removeEventListener("message", handler);
-        window.location.href = "/";
+        navigate(redirectTo);
       }
     });
   };
