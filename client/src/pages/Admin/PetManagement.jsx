@@ -10,7 +10,7 @@ export default function PetManagement() {
   const fetchPets = async () => {
     try {
       const token = localStorage.getItem("access_token");
-      const response = await axios.get("http://localhost:8000/api/pets", {
+      const response = await axios.get("http://localhost:8002/api/pets", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPets(response.data);
@@ -26,7 +26,7 @@ export default function PetManagement() {
 
     try {
       const token = localStorage.getItem("access_token");
-      await axios.delete(`http://localhost:8000/api/admin/pets/${id}`, {
+      await axios.delete(`http://localhost:8002/api/admin/pets/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPets(pets.filter((pet) => pet.id !== id));

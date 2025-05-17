@@ -13,7 +13,7 @@ export default function Cart() {
     const fetchCart = async () => {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await axios.get('http://localhost:8000/api/cart', {
+            const response = await axios.get('http://localhost:8002/api/cart', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -35,7 +35,7 @@ export default function Cart() {
         if (quantity < 1) return;
         try {
             const token = localStorage.getItem('access_token');
-            await axios.put(`http://localhost:8000/api/cart/update/${itemId}`, {
+            await axios.put(`http://localhost:8002/api/cart/update/${itemId}`, {
                 quantity,
             }, {
                 headers: {
@@ -52,7 +52,7 @@ export default function Cart() {
     const removeItem = async (itemId) => {
         try {
             const token = localStorage.getItem('access_token');
-            await axios.delete(`http://localhost:8000/api/cart/remove/${itemId}`, {
+            await axios.delete(`http://localhost:8002/api/cart/remove/${itemId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

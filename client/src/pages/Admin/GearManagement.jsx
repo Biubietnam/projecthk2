@@ -10,7 +10,7 @@ export default function GearManagement() {
     const fetchGears = async () => {
         try {
             const token = localStorage.getItem("access_token");
-            const response = await axios.get("http://localhost:8000/api/gears", {
+            const response = await axios.get("http://localhost:8002/api/gears", {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setGears(response.data);
@@ -26,7 +26,7 @@ export default function GearManagement() {
 
         try {
             const token = localStorage.getItem("access_token");
-            await axios.delete(`http://localhost:8000/api/admin/gears/${id}`, {
+            await axios.delete(`http://localhost:8002/api/admin/gears/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setGears(gears.filter((gear) => gear.id !== id));

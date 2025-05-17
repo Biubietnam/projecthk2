@@ -20,7 +20,7 @@ export default function Profile() {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('access_token');
-                const res = await axios.get('http://localhost:8000/api/profile', {
+                const res = await axios.get('http://localhost:8002/api/profile', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -43,7 +43,7 @@ export default function Profile() {
         e.preventDefault();
         try {
             const token = localStorage.getItem('access_token');
-            await axios.put('http://localhost:8000/api/profile', profile, {
+            await axios.put('http://localhost:8002/api/profile', profile, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

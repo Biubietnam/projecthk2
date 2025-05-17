@@ -20,8 +20,8 @@ export default function GearDetail() {
   useEffect(() => {
     const fetchGear = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/gears/${id}`);
-        const reviewsResponse = await axios.get(`http://localhost:8000/api/gears/${id}/reviews`);
+        const response = await axios.get(`http://localhost:8002/api/gears/${id}`);
+        const reviewsResponse = await axios.get(`http://localhost:8002/api/gears/${id}/reviews`);
         if (reviewsResponse.status !== 200) {
           throw new Error("Failed to fetch reviews data");
         }
@@ -68,7 +68,7 @@ export default function GearDetail() {
         return alert("Please select a rating.");
       }
       await axios.post(
-        `http://localhost:8000/api/gears/${id}/review`,
+        `http://localhost:8002/api/gears/${id}/review`,
         {
           ...formData,
         },
@@ -79,7 +79,7 @@ export default function GearDetail() {
         }
       );
 
-      const updatedReviews = await axios.get(`http://localhost:8000/api/gears/${id}/reviews`);
+      const updatedReviews = await axios.get(`http://localhost:8002/api/gears/${id}/reviews`);
       setReviews(updatedReviews.data);
       setFormData({
         comment: "",
@@ -95,7 +95,7 @@ export default function GearDetail() {
     if (!token) return alert("You must be logged in to add items to the cart.");
     try {
       await axios.post(
-        `http://localhost:8000/api/cart/add/${id}`,
+        `http://localhost:8002/api/cart/add/${id}`,
         {
           quantity: quantity,
         },

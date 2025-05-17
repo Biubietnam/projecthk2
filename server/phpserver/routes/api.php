@@ -39,7 +39,7 @@ Route::post('forgot',   [ForgotPasswordController::class, 'forgot']);
 Route::post('reset',    [ResetPasswordController::class, 'reset']);
 
 Route::get('/reset-password/{token}', function ($token) {
-    return redirect("http://localhost:3000/reset/{$token}");
+    return redirect("http://localhost:1/reset/{$token}");
 })->middleware('guest')->name('password.reset');
 
 Route::get('verify/{id}/{hash}', [VerificationController::class, 'verify'])

@@ -20,7 +20,7 @@ export default function OurPets() {
   const { openModal } = useModal();
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/pets')
+    axios.get('http://localhost:8002/api/pets')
       .then(response => setPets(response.data))
       .catch(error => console.error('Error fetching pets:', error));
   }, []);

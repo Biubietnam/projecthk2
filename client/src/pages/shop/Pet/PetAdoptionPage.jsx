@@ -15,7 +15,7 @@ export default function PetAdoptionPage() {
     useEffect(() => {
         const fetchPet = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/pets/${id}`);
+                const response = await axios.get(`http://localhost:8002/api/pets/${id}`);
                 setPet(response.data);
             } catch (error) {
                 console.error("Error fetching pet:", error);

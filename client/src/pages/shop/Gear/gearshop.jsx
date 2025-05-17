@@ -17,7 +17,7 @@ export default function GearShop() {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/gears')
+        axios.get('http://localhost:8002/api/gears')
             .then(response => setGears(response.data))
             .catch(error => console.error('Error fetching pets:', error));
     }, []);

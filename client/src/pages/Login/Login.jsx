@@ -20,7 +20,7 @@ export default function LoginFormContent() {
     try {
       
       const res = await axios.post(
-        "http://localhost:8000/api/login",
+        "http://localhost:8002/api/login",
         {
           email,
           password,
@@ -47,7 +47,7 @@ export default function LoginFormContent() {
 
   const openGoogleLoginPopup = () => {
     const popup = window.open(
-      "http://localhost:8000/auth/google/redirect",
+      "http://localhost:8002/auth/google/redirect",
       "GoogleLogin",
       "width=500,height=600"
     );
@@ -61,7 +61,7 @@ export default function LoginFormContent() {
     }, 500);
 
     window.addEventListener("message", function handler(event) {
-      if (event.origin !== "http://localhost:8000") return;
+      if (event.origin !== "http://localhost:8002") return;
 
       const { type, token, user } = event.data;
       if (type === "OAUTH_SUCCESS") {

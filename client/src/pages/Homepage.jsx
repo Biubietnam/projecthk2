@@ -157,7 +157,7 @@ export default function HomePage() {
                 </div>
                 <div className="pt-4">
                   <p className="text-sm text-gray-500">Easy online scheduling for all your pet's healthcare needs.</p>
-                </div>
+                </div>  
               </div>
             </div>
 

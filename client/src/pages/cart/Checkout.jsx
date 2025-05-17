@@ -22,7 +22,7 @@ export default function Checkout() {
         const fetchCart = async () => {
             try {
                 const token = localStorage.getItem('access_token');
-                const response = await axios.get('http://localhost:8000/api/cart', {
+                const response = await axios.get('http://localhost:8002/api/cart', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -41,7 +41,7 @@ export default function Checkout() {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('access_token');
-                const response = await axios.get('http://localhost:8000/api/profile', {
+                const response = await axios.get('http://localhost:8002/api/profile', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

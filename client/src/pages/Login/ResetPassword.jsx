@@ -51,7 +51,7 @@ export default function ResetPasswordFormContent() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8000/api/reset",
+                "http://localhost:8002/api/reset",
                 {
                     email,
                     password,
