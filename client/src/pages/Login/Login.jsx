@@ -35,6 +35,7 @@ export default function LoginFormContent() {
 
       setTimeout(() => {
         navigate(redirectTo);
+        window.location.reload();
       }, 500);
     } catch (err) {
       console.error("Login Error:", err);
@@ -76,6 +77,7 @@ export default function LoginFormContent() {
 
         window.removeEventListener("message", handler);
         navigate(redirectTo);
+        window.location.reload();
       }
     });
   };
