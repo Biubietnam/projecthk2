@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Users, ShoppingCart, Package, Dog } from "lucide-react";
+import { Users, ShoppingCart, Package, PawPrint } from "lucide-react";
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function AdminDashboard() {
                 <AdminCard icon={Users} title="User Management" desc="Manage user roles and permissions." to="/admin/usermanagement" />
                 <AdminCard icon={ShoppingCart} title="Orders Management" desc="Track and manage orders." to="/admin/ordermanagement" />
                 <AdminCard icon={Package} title="Gears Management" desc="Manage product listings." to="/admin/gearmanagement" />
-                <AdminCard icon={Dog} title="Pets Management" desc="Manage pet information." to="/admin/petmanagement" />
+                <AdminCard icon={PawPrint} title="Pets Management" desc="Manage pet information." to="/admin/petmanagement" />
             </div>
         </div>
     );

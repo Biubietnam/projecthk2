@@ -78,7 +78,12 @@ export default function UserManagement() {
                 </Link>
             </div >
 
-            <h1 className="text-2xl font-bold mb-6">User Management</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">User Management</h1>
+                <Link to="/admin/users/create" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    + Add New User
+                </Link>
+            </div>
 
             <div className="bg-white shadow rounded-lg overflow-x-auto">
                 <table className="min-w-full text-sm text-left">
@@ -119,9 +124,12 @@ export default function UserManagement() {
                                     </td>
                                     <td className="p-4 space-x-2">
                                         <div className="flex gap-2">
-                                            <button className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition">
+                                            <Link
+                                                to={`/admin/users/edit/${user.id}`}
+                                                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
+                                            >
                                                 Edit
-                                            </button>
+                                            </Link>
                                             <button
                                                 onClick={() => handleDelete(user.id)}
                                                 className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition"

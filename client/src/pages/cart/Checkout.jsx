@@ -70,21 +70,46 @@ export default function Checkout() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
+
+        const token = localStorage.getItem('access_token');
+
         try {
-            await new Promise((res) => setTimeout(res, 1500));
-            alert('🎉 Order placed successfully!');
-            navigate('/thank-you');
-        } catch (err) {
-            alert('❌ Failed to place order. Please try again.');
+            if (formData.paymentMethod === 'vnpay') {
+                const response = await axios.post('http://localhost:8000/api/vnpay/create-payment', {
+                    amount: totalAmount
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (response.data.payment_url) {
+                    window.location.href = response.data.payment_url;
+                    return;
+                } else {
+                    alert('Failed to create the payment URL.');
+                }
+            }
+
+            if (formData.paymentMethod === 'cash_on_delivery') {
+                await new Promise((res) => setTimeout(res, 1000));
+                alert('🎉 Order placed successfully with Cash on Delivery!');
+                navigate('/thank-you');
+            }
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('❌ An error occurred. Please try again.');
         } finally {
             setSubmitting(false);
         }
     };
 
     const paymentOptions = [
-        { value: 'cod', label: 'Cash on Delivery', icon: <FaMoneyBillAlt className="text-green-600 text-2xl" /> },
-        { value: 'card', label: 'Credit/Debit Card', icon: <FaCreditCard className="text-blue-600 text-2xl" /> },
+        { value: 'cash_on_delivery', label: 'Cash on Delivery', icon: <FaMoneyBillAlt className="text-green-600 text-2xl" /> },
+        { value: 'credit_card', label: 'Credit/Debit Card', icon: <FaCreditCard className="text-blue-600 text-2xl" /> },
         { value: 'paypal', label: 'PayPal', icon: <FaPaypal className="text-indigo-600 text-2xl" /> },
+        { value: 'vnpay', label: 'VNPAY (QR / ATM / Visa)', icon: <FaCreditCard className="text-red-600 text-2xl" /> },
     ];
 
     return (
