@@ -19,9 +19,6 @@ class PetController extends Controller
         return response()->json($pet);
     }
 
-<<<<<<< HEAD
-
-=======
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -77,5 +74,4 @@ class PetController extends Controller
 
         return response()->json(['message' => 'Pet deleted']);
     }
->>>>>>> 30d4afca3f2d9ea4bffb9a9264246d81a6dffdf9
 }

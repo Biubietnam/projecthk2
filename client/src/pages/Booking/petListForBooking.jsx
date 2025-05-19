@@ -18,15 +18,20 @@ function PetListForBooking() {
       // Nếu không có userId, chuyển hướng về trang đăng nhập
       alert("Please log in to view your pet list.");
     }
-    axios.get(`/api/user/${userId}/userpets`).then((response) => {
-      const userpets = response.data;
-      if (userpets.length > 0) {
-        setPetList(userpets);
-        setHasPet(true);
-      } else {
-        setHasPet(false);
-      }
-    });
+    // Kiểm tra xem bảng userpets có tồn tại hay không
+
+    // Gọi API để lấy danh sách thú cưng của người dùng
+    axios
+      .get(`http://localhost:8000/api/user/${userId}/userpets`)
+      .then((response) => {
+        const userpets = response.data;
+        if (userpets.length > 0) {
+          setPetList(userpets);
+          setHasPet(true);
+        } else {
+          setHasPet(false);
+        }
+      });
   }, []);
   return (
     <div

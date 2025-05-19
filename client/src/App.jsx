@@ -10,6 +10,8 @@ import Cart from "./pages/cart/Cart";
 
 //Booking page
 import Booking from "./pages/Booking";
+import PetUnLogin from "./pages/Booking/petUnLogin";
+import PetListForBooking from "./pages/Booking/petListForBooking";
 
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
@@ -43,21 +45,21 @@ export default function App() {
         <Route path="/gear/:id" element={<GearDetail />} />
         <Route path="/petshop" element={<OurPets />} />
         <Route path="/pet/:id" element={<PetAdoptionPage />} />
-
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/booking" element={<Booking />} />
-
+        {/* Part Booking: Dat*/}
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/booking" element={<Booking />} />
         <Route path="/petspa" element={<PetSpa />} />
         <Route path="/petvet" element={<PetVet />} />
-        <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
+        <Route path="/petUnLogin" element={<PetUnLogin />} />
+        <Route path="/petlist" element={<PetListForBooking />} />
 
+        <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
         <Route path="/login" element={<LoginFormContent />} />
         <Route
           path="/forgot-password"
           element={<ForgotPasswordFormContent />}
         />
         <Route path="/signup" element={<SignUpFormContent />} />
-
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/usermanagement" element={<UserManagement />} />
         <Route path="/admin/petmanagement" element={<PetManagement />} />
@@ -68,12 +70,9 @@ export default function App() {
         <Route path="/admin/pets/create" element={<CreatePet />} />
         <Route path="/admin/gears/create" element={<CreateGear />} />
         <Route path="/admin/users/create" element={<CreateUser />} />
-
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
-
         <Route path="/profile" element={<Profile />} />
-
       </Routes>
       <Footer />
     </div>

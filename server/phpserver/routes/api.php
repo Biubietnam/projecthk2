@@ -15,11 +15,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdoptionRequestController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
-<<<<<<< HEAD
 use App\Http\Controllers\UserPetController;
-=======
 use App\Http\Controllers\PaymentController;
->>>>>>> 30d4afca3f2d9ea4bffb9a9264246d81a6dffdf9
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
 Route::get('/pets', [PetController::class, 'index']);
