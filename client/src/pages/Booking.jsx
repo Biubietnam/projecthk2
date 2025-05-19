@@ -71,6 +71,7 @@ function Booking() {
         <button
           className={` w-[300px] bg-white rounded-2xl ${baseEffect} ${transitionAndLayoutEffect}`}
           onClick={() => {
+            window.scrollTo(0, 0);
             navigate("/petvet");
           }}
         >
@@ -103,6 +104,7 @@ function Booking() {
         <button
           className={` w-[300px] bg-white rounded-2xl  ${baseEffect} ${transitionAndLayoutEffect}`}
           onClick={() => {
+            window.scrollTo(0, 0);
             navigate("/petspa");
           }}
         >
