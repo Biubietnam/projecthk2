@@ -15,10 +15,15 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdoptionRequestController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
-
 Route::get('/pets', [PetController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/pets', [PetController::class, 'store']);
+    Route::put('/pets/{id}', [PetController::class, 'update']);
+    Route::delete('/pets/{id}', [PetController::class, 'destroy']);
+});
 
 Route::get('/gears', [GearController::class, 'index']);
 
@@ -59,6 +64,10 @@ Route::middleware(['auth:sanctum', 'admin'])->get('/admin/users', function () {
     return User::with('role')->get();
 });
 
+Route::middleware(['auth:sanctum', 'admin'])->get('/admin/users/{id}', function ($id) {
+    return User::with('role')->findOrFail($id);
+});
+
 Route::middleware(['auth:sanctum', 'admin'])->delete('/admin/users/{id}', function ($id) {
     return User::findOrFail($id)->delete();
 });
@@ -83,4 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
 });
 
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/vnpay/create-payment', [PaymentController::class, 'createPayment']);
+});
+Route::get('/vnpay/return', [PaymentController::class, 'vnpayReturn']);

@@ -1,6 +1,5 @@
 // App.jsx
 import { Routes, Route } from "react-router-dom";
-import React from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import GearShop from "./pages/shop/Gear/gearshop";
@@ -19,13 +18,19 @@ import LoginFormContent from "./pages/Login/Login";
 import ForgotPasswordFormContent from "./pages/Login/ForgotPassword";
 import SignUpFormContent from "./pages/Login/SignUp";
 import AdminDashboard from "./pages/Admin/Dashboard";
-import UserManagement from "./pages/Admin/UserManagement";
-import PetManagement from "./pages/Admin/PetManagement";
+import UserManagement from "./pages/Admin/User/UserManagement";
+import PetManagement from "./pages/Admin/Pet/PetManagement";
 import OurPets from "./pages/shop/Pet/petshop";
 import PetAdoptionPage from "./pages/shop/Pet/PetAdoptionPage";
-import GearManagement from "./pages/Admin/GearManagement";
+import GearManagement from "./pages/Admin/Gear/GearManagement";
 import Checkout from "./pages/cart/Checkout";
 import Profile from "./pages/User/Profile";
+import EditPet from "./pages/Admin/Pet/EditPet";
+import EditGear from "./pages/Admin/Gear/EditGear";
+import EditUser from "./pages/Admin/User/EditUser";
+import CreatePet from "./pages/Admin/Pet/CreatePet";
+import CreateGear from "./pages/Admin/Gear/CreateGear";
+import CreateUser from "./pages/Admin/User/CreateUser";
 
 export default function App() {
   return (
@@ -57,6 +62,12 @@ export default function App() {
         <Route path="/admin/usermanagement" element={<UserManagement />} />
         <Route path="/admin/petmanagement" element={<PetManagement />} />
         <Route path="/admin/gearmanagement" element={<GearManagement />} />
+        <Route path="/admin/pets/edit/:id" element={<EditPet />} />
+        <Route path="/admin/gears/edit/:id" element={<EditGear />} />
+        <Route path="/admin/users/edit/:id" element={<EditUser />} />
+        <Route path="/admin/pets/create" element={<CreatePet />} />
+        <Route path="/admin/gears/create" element={<CreateGear />} />
+        <Route path="/admin/users/create" element={<CreateUser />} />
 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
