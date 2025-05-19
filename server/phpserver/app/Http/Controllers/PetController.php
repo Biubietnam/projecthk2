@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Pet;
 
+
 class PetController extends Controller
 {
     public function index()
@@ -17,4 +18,6 @@ class PetController extends Controller
         $pet = Pet::findOrFail($id);
         return response()->json($pet);
     }
+
+
 }
