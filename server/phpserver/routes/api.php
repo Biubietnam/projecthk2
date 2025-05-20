@@ -15,6 +15,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdoptionRequestController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserPetController;
 use App\Http\Controllers\PaymentController;
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
@@ -91,6 +92,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
 });
+// Dat Part: UserPetController
+// Lấy ID của người dùng và trả về danh sách thú cưng của người dùng đó
+Route::get('/user/{id}/userpets', [UserPetController::class, 'getUserPets']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vnpay/create-payment', [PaymentController::class, 'createPayment']);
