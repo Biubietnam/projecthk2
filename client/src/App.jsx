@@ -15,8 +15,6 @@ import PetListForBooking from "./pages/Booking/petListForBooking";
 
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
-import PetListForBooking from "./pages/Booking/petListForBooking";
-import PetUnLogin from "./pages/Booking/petUnLogin";
 
 // Part Thuc User
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
@@ -37,6 +35,8 @@ import EditUser from "./pages/Admin/User/EditUser";
 import CreatePet from "./pages/Admin/Pet/CreatePet";
 import CreateGear from "./pages/Admin/Gear/CreateGear";
 import CreateUser from "./pages/Admin/User/CreateUser";
+import EditProfile from "./pages/Admin/User/EditProfile";
+import OrderManagement from "./pages/Admin/Order/OrderManagement";
 
 export default function App() {
   return (
@@ -81,9 +81,14 @@ export default function App() {
         <Route path="/admin/pets/create" element={<CreatePet />} />
         <Route path="/admin/gears/create" element={<CreateGear />} />
         <Route path="/admin/users/create" element={<CreateUser />} />
+        <Route path="/admin/users/edit/profile/:id" element={<EditProfile />} />
+        <Route path="/admin/ordermanagement" element={<OrderManagement />} />
+
+
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} />
+
       </Routes>
       <Footer />
     </div>

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('petType');
             $table->string('category');
             $table->string('image')->nullable();
-            $table->json('highlights')->nullable(); //Dùng json để lưu mảng
+            $table->json('highlights')->nullable();
             $table->text('details')->nullable();
             $table->timestamps();
         });

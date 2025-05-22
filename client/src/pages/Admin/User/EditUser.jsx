@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { UserCog } from "lucide-react";
+import Button from "../../../components/Button";
 
 export default function EditUser() {
     const { id } = useParams();
@@ -75,9 +76,17 @@ export default function EditUser() {
                 </Link>
             </div>
 
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Edit User</h1>
-                <UserCog className="text-customPurple w-6 h-6" />
+            <div className="relative w-full flex items-center justify-center mb-6">
+                <Link
+                    to={`/admin/users/edit/profile/${user.id}`}
+                    className="absolute left-0 px-4 py-2 text-sm text-white bg-customPurple hover:bg-customPurpleDark rounded-md transition"
+                >
+                    Edit Profile Info
+                </Link>
+
+                <h1 className="text-3xl font-bold text-center">Edit User</h1>
+
+                <UserCog className="absolute right-0 w-6 h-6 text-customPurple" />
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 grid grid-cols-1 gap-6">
@@ -143,12 +152,9 @@ export default function EditUser() {
                 </div>
 
                 <div className="text-center mt-4">
-                    <button
-                        type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-all"
-                    >
-                        Save Changes
-                    </button>
+                    <Button type="submit" className="w-full">
+                        Update User
+                    </Button>
                 </div>
             </form>
         </div>

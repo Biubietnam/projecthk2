@@ -66,7 +66,7 @@ export default function GearManagement() {
                     Back to Admin Dasboard
                 </Link>
             </div >
-            
+
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Gear Management</h1>
                 <Link to="/admin/gears/create" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
@@ -116,14 +116,23 @@ export default function GearManagement() {
                                     <td className="p-4">{gear.category}</td>
                                     <td className="p-4">${gear.price}</td>
                                     <td className="p-4">
-                                        {Array.isArray(gear.highlights)
-                                            ? gear.highlights.map((h, i) => (
-                                                <span key={i} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1 whitespace-nowrap">
-                                                    {h}
-                                                </span>
-                                            ))
-                                            : null}
+                                        {Array.isArray(gear.highlights) ? (
+                                            <>
+                                                {gear.highlights.slice(0, 2).map((h, i) => (
+                                                    <span
+                                                        key={i}
+                                                        className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1 whitespace-nowrap"
+                                                    >
+                                                        {h}
+                                                    </span>
+                                                ))}
+                                                {gear.highlights.length > 3 && (
+                                                    <span className="text-xs text-gray-500 ml-1">+{gear.highlights.length - 2} more</span>
+                                                )}
+                                            </>
+                                        ) : null}
                                     </td>
+
                                     <td className="p-4 text-center">
                                         <div className="flex justify-center gap-2">
                                             <Link

@@ -18,9 +18,11 @@ class Pet extends Model
         'tags',
         'adoptionFee',
         'images',
+        'main_image',
         'careDiet',
         'careExercise',
         'careGrooming',
+        'adopted',
     ];
 
     protected $casts = [

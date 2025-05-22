@@ -30,7 +30,6 @@ class ProfileController extends Controller
         $user = Auth::user();
         $profile = $user->profile ?? $user->profile()->create();
 
-
         if (!$profile) {
             return response()->json(['message' => 'Profile not found'], 404);
         }

@@ -1,11 +1,21 @@
+//Thuc
 import React, { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { PawPrint, Trash2 } from "lucide-react";
 import Button from "../../../components/Button";
+import { Loader } from "lucide-react";
 
 export default function CreatePet() {
   const navigate = useNavigate();
+  const fileInputRef = useRef();
+  const mainInputRef = useRef();
+  const [mainImage, setMainImage] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState(null);
+  const [images, setImages] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [pet, setPet] = useState({
     name: "",
     breed: "",
@@ -21,86 +31,129 @@ export default function CreatePet() {
     careExercise: "",
     careGrooming: "",
     adopted: 0,
-    images: [],
   });
-
-  const [imagePreviews, setImagePreviews] = useState([]);
-  const fileInputRef = useRef();
 
   const handleChange = (e) => {
     setPet({ ...pet, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
-    const newFiles = Array.from(e.target.files);
-    const totalFiles = pet.images.length + newFiles.length;
-    if (totalFiles > 5) {
-      alert("You can only upload a maximum of 5 images.");
-      return;
-    }
+  const handleImages = (files) => {
+    const fileArr = Array.from(files);
+    const total = images.length + fileArr.length;
+    if (total > 5) return alert("Only up to 5 images are allowed.");
 
-    const allowedFiles = newFiles.slice(0, 5 - pet.images.length);
-    const newPreviews = allowedFiles.map((file) => URL.createObjectURL(file));
-
-    setPet({ ...pet, images: [...pet.images, ...allowedFiles] });
-    setImagePreviews([...imagePreviews, ...newPreviews]);
+    const allowed = fileArr.slice(0, 5 - images.length);
+    const previews = allowed.map((file) => URL.createObjectURL(file));
+    setImages((prev) => [...prev, ...allowed]);
+    setImagePreviews((prev) => [...prev, ...previews]);
   };
 
-  const handleDrop = (e) => {
+  const handleImageChange = (e) => handleImages(e.target.files);
+  const handleImageDrop = (e) => {
     e.preventDefault();
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    const totalFiles = pet.images.length + droppedFiles.length;
-    if (totalFiles > 5) {
-      alert("You can only upload a maximum of 5 images.");
-      return;
-    }
-
-    const allowedFiles = droppedFiles.slice(0, 5 - pet.images.length);
-    const newPreviews = allowedFiles.map((file) => URL.createObjectURL(file));
-
-    setPet({ ...pet, images: [...pet.images, ...allowedFiles] });
-    setImagePreviews([...imagePreviews, ...newPreviews]);
+    handleImages(e.dataTransfer.files);
   };
 
-  const handleRemoveImage = (index) => {
-    const updatedImages = [...pet.images];
-    const updatedPreviews = [...imagePreviews];
-    updatedImages.splice(index, 1);
-    updatedPreviews.splice(index, 1);
-    setPet({ ...pet, images: updatedImages });
-    setImagePreviews(updatedPreviews);
+  const handleMainImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setMainImage(file);
+      setMainImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleMainImageDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setMainImage(file);
+      setMainImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveNewImage = (index) => {
+    const updated = [...images];
+    const previews = [...imagePreviews];
+    updated.splice(index, 1);
+    previews.splice(index, 1);
+    setImages(updated);
+    setImagePreviews(previews);
+  };
+
+  const uploadToCloudinary = async (file, folder) => {
+    const formData = new FormData();
+    formData.set("file", file);
+    formData.set("upload_preset", "petzone");
+    formData.set("folder", folder);
+
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload",
+      formData
+    );
+    return res.data.secure_url;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const token = localStorage.getItem("access_token");
-      const formData = new FormData();
+      const petId = Date.now();
+      const mainFolder = `Petzone/Pets/${petId}/Main_image`;
+      const galleryFolder = `Petzone/Pets/${petId}`;
 
-      Object.entries({
+      let mainImageUrl = "";
+      if (mainImage) {
+        mainImageUrl = await uploadToCloudinary(mainImage, mainFolder);
+      }
+
+      const galleryUrls = [];
+      for (const img of images) {
+        const url = await uploadToCloudinary(img, galleryFolder);
+        galleryUrls.push(url);
+      }
+
+      const tagsArray = pet.tags ? pet.tags.split(",").map((tag) => tag.trim()).filter(Boolean) : [];
+
+      const payload = {
         ...pet,
-        tags: pet.tags.split(",").map((tag) => tag.trim()),
-      }).forEach(([key, value]) => {
-        if (key !== "images") {
-          formData.append(key, typeof value === "object" ? JSON.stringify(value) : value);
-        }
-      });
+        tags: tagsArray,
+        images: galleryUrls,
+        main_image: mainImageUrl,
+      };
 
-      pet.images.forEach((file) => {
-        formData.append("images[]", file);
-      });
-
-      await axios.post(`http://localhost:8000/api/admin/pets`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
+      await axios.post("http://localhost:8000/api/admin/pets", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       alert("Pet created successfully!");
-      navigate("/admin/pets");
+      navigate("/admin/petmanagement");
     } catch (err) {
       console.error(err);
-      alert("Failed to create pet.");
+      alert("Failed to create pet: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const inputFields = [
+    { label: "Name", name: "name", required: true },
+    { label: "Breed", name: "breed" },
+    { label: "Age", name: "age" },
+    { label: "Weight", name: "weight" },
+    { label: "Color", name: "color" },
+    { label: "Adoption Fee", name: "adoptionFee", type: "numberic", min: 0, step: 0.01 },
+  ];
+
+  const textareaFields = [
+    { label: "Description", name: "description" },
+    { label: "Diet Care", name: "careDiet" },
+    { label: "Exercise Care", name: "careExercise" },
+    { label: "Grooming Care", name: "careGrooming" },
+  ];
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
@@ -121,18 +174,19 @@ export default function CreatePet() {
         <PawPrint className="text-customPurple w-6 h-6" />
       </div>
 
-      <div className="mt-6 bg-white shadow-md rounded-lg p-6">
+      <div className="bg-white shadow-md rounded-lg p-6">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6" encType="multipart/form-data">
-          {[ "name", "breed", "age", "weight", "color", "adoptionFee" ].map((name) => (
-            <div key={name} className="flex flex-col">
-              <p className="text-sm text-gray-600 mb-1">{name.charAt(0).toUpperCase() + name.slice(1)}</p>
+          {inputFields.map((field) => (
+            <div key={field.name} className="flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">{field.label}</p>
               <input
-                name={name}
-                value={pet[name]}
+                name={field.name}
+                type={field.type || "text"}
+                min={field.min}
+                value={pet[field.name]}
                 onChange={handleChange}
-                type={name === "adoptionFee" ? "number" : "text"}
+                required={field.required}
                 className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
-                required={name === "name"}
               />
             </div>
           ))}
@@ -176,58 +230,97 @@ export default function CreatePet() {
             />
           </div>
 
-          {[ "description", "careDiet", "careExercise", "careGrooming" ].map((name) => (
-            <div key={name} className="md:col-span-2 flex flex-col">
-              <p className="text-sm text-gray-600 mb-1">{name}</p>
+          {textareaFields.map((field) => (
+            <div key={field.name} className="md:col-span-2 flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">{field.label}</p>
               <textarea
-                name={name}
-                value={pet[name]}
+                name={field.name}
+                value={pet[field.name]}
                 onChange={handleChange}
                 rows={2}
+                placeholder={`Enter ${field.label.toLowerCase()}`}
                 className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
               />
             </div>
           ))}
 
-          <div className="md:col-span-2 flex flex-col">
-            <p className="text-sm text-gray-600 mb-1">Upload Images (Max 5)</p>
-            <div
-              onDrop={handleDrop}
-              onDragOver={(e) => e.preventDefault()}
-              className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple"
-              onClick={() => fileInputRef.current.click()}
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="hidden"
-              />
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Main Image */}
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">Main Image (required)</p>
+              <div
+                onDrop={handleMainImageDrop}
+                onDragOver={(e) => e.preventDefault()}
+                onClick={() => mainInputRef.current.click()}
+                className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple text-center"
+              >
+                <input
+                  type="file"
+                  ref={mainInputRef}
+                  accept="image/*"
+                  onChange={handleMainImageChange}
+                  className="hidden"
+                />
+                {mainImagePreview ? (
+                  <div className="relative inline-block">
+                    <img src={mainImagePreview} alt="Main" className="h-32 mx-auto object-cover rounded shadow" />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMainImage(null);
+                        setMainImagePreview(null);
+                      }}
+                      className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600"
+                      title="Remove Main Image"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">Click to select main image</p>
+                )}
+              </div>
+            </div>
 
-              {imagePreviews.length > 0 ? (
-                <div className="flex flex-wrap gap-4">
-                  {imagePreviews.map((src, index) => (
-                    <div key={index} className="relative group">
+            {/* Gallery Images */}
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">Gallery Images (Max 5)</p>
+              <div
+                onDrop={handleImageDrop}
+                onDragOver={(e) => e.preventDefault()}
+                onClick={() => fileInputRef.current.click()}
+                className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple"
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                {imagePreviews.length === 0 && (
+                  <p className="text-gray-500 text-sm text-center mt-2">Drag & drop or click to upload</p>
+                )}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
+                  {imagePreviews.map((src, idx) => (
+                    <div key={idx} className="relative group">
                       <img src={src} className="h-24 w-24 object-cover rounded shadow" />
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleRemoveImage(index);
+                          handleRemoveNewImage(idx);
                         }}
-                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white transition text-gray-600"
-                        title="Remove"
+                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-gray-500 text-sm text-center">Drag & drop images here, or click to select</p>
-              )}
+              </div>
             </div>
           </div>
 
@@ -245,8 +338,15 @@ export default function CreatePet() {
           </div>
 
           <div className="md:col-span-2 text-center mt-4">
-            <Button type="submit" className="w-full">
-              Create Pet
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader className="animate-spin w-4 h-4" />
+                  Creating...
+                </span>
+              ) : (
+                "Create Pet"
+              )}
             </Button>
           </div>
         </form>

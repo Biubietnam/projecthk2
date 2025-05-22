@@ -2,19 +2,23 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Wrench, Trash2 } from "lucide-react";
+import Button from "../../../components/Button";
 
 export default function EditGear() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [gear, setGear] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [imagePreviews, setImagePreviews] = useState([]);
-    const [existingImages, setExistingImages] = useState([]);
     const fileInputRef = useRef();
     const mainInputRef = useRef();
+
+    const [images, setImages] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
+    const [existingImages, setExistingImages] = useState([]);
+
     const [mainImage, setMainImage] = useState(null);
     const [mainImagePreview, setMainImagePreview] = useState(null);
-
+    const [existingMainImage, setExistingMainImage] = useState(null);
 
     useEffect(() => {
         fetchGear();
@@ -32,6 +36,7 @@ export default function EditGear() {
                 images: [],
             });
             setExistingImages(res.data.images || []);
+            setExistingMainImage(res.data.main_image || "");
         } catch (err) {
             alert("Failed to load gear.");
         } finally {
@@ -47,44 +52,53 @@ export default function EditGear() {
         const newFiles = Array.from(e.target.files);
         const total = (gear.images?.length || 0) + newFiles.length;
         if (total > 5) return alert("Only up to 5 images are allowed.");
+
         const allowed = newFiles.slice(0, 5 - (gear.images?.length || 0));
         const newPreviews = allowed.map((file) => URL.createObjectURL(file));
-        setGear({ ...gear, images: [...(gear.images || []), ...allowed] });
+
+        setImages(allowed);
         setImagePreviews((prev) => [...prev, ...newPreviews]);
     };
+
+    const handleImageDrop = (e) => {
+        e.preventDefault();
+        const files = Array.from(e.dataTransfer.files);
+        const total = (gear.images?.length || 0) + files.length;
+        if (total > 5) return alert("Only up to 5 images are allowed.");
+
+        const allowed = files.slice(0, 5 - (gear.images?.length || 0));
+        const newPreviews = allowed.map((file) => URL.createObjectURL(file));
+        
+        setImages(allowed);
+        setImagePreviews((prev) => [...prev, ...newPreviews]);
+    };
+
     const handleMainImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setMainImage(file);
             setMainImagePreview(URL.createObjectURL(file));
+            setExistingMainImage(null);
         }
     };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        const files = Array.from(e.dataTransfer.files);
-        const total = (gear.images?.length || 0) + files.length;
-        if (total > 5) return alert("Only up to 5 images are allowed.");
-        const allowed = files.slice(0, 5 - (gear.images?.length || 0));
-        const newPreviews = allowed.map((file) => URL.createObjectURL(file));
-        setGear({ ...gear, images: [...(gear.images || []), ...allowed] });
-        setImagePreviews((prev) => [...prev, ...newPreviews]);
-    };
+    
     const handleMainImageDrop = (e) => {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
         if (file) {
             setMainImage(file);
             setMainImagePreview(URL.createObjectURL(file));
+            setExistingMainImage(null);
         }
     };
 
     const handleRemoveNewImage = (index) => {
-        const updatedFiles = [...gear.images];
+        const updatedFiles = [...images];
         const updatedPreviews = [...imagePreviews];
         updatedFiles.splice(index, 1);
         updatedPreviews.splice(index, 1);
-        setGear({ ...gear, images: updatedFiles });
+        
+        setImages(updatedFiles);
         setImagePreviews(updatedPreviews);
     };
 
@@ -98,38 +112,62 @@ export default function EditGear() {
         e.preventDefault();
         try {
             const token = localStorage.getItem("access_token");
-            const formData = new FormData();
 
-            Object.entries({
+            const gearId = id;
+            const mainFolder = `Petzone/Gears/${gearId}/Main_image`;
+            const galleryFolder = `Petzone/Gears/${gearId}`;
+
+            let mainImageUrl = gear.main_image || existingMainImage || "";
+            if (mainImage && mainImage !== existingMainImage) {
+                mainImageUrl = await uploadToCloudinary(mainImage, mainFolder);
+            }
+
+            const galleryUrls = [];
+            for (const img of images || []) {
+                const url = await uploadToCloudinary(img, galleryFolder);
+                galleryUrls.push(url);
+            }
+
+            const highlightsArray = gear.highlights
+                ? gear.highlights.split(",").map(h => h.trim()).filter(Boolean)
+                : [];
+
+            const payload = {
                 ...gear,
-                highlights: gear.highlights.split(",").map((h) => h.trim()),
-            }).forEach(([key, value]) => {
-                if (key !== "images") {
-                    formData.append(key, typeof value === "object" ? JSON.stringify(value) : value);
-                }
-            });
+                highlights: highlightsArray,
+                images: [...existingImages, ...galleryUrls],
+                main_image: mainImageUrl
+            };
 
-            if (gear.images && gear.images.length > 0) {
-                gear.images.forEach((file) => {
-                    formData.append("images[]", file);
-                });
-            }
+            console.log("Sending JSON Payload:", JSON.stringify(payload, null, 2));
 
-            if (existingImages.length > 0) {
-                existingImages.forEach((url) => {
-                    formData.append("existingImages[]", url);
-                });
-            }
-
-            await axios.post(`http://localhost:8000/api/admin/gears/${id}?_method=PUT`, formData, {
-                headers: { Authorization: `Bearer ${token}` },
+            await axios.put(`http://localhost:8000/api/admin/gears/${id}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
             });
 
             alert("Gear updated successfully!");
-            navigate("/admin/gears");
+            navigate("/admin/gearmanagement");
         } catch (err) {
-            alert("Failed to update gear.");
+            console.error(err);
+            alert("Failed to update gear: " + err.message);
         }
+    };
+
+    const uploadToCloudinary = async (file, folder) => {
+        const formData = new FormData();
+        formData.set("file", file);
+        formData.set("upload_preset", "petzone");
+        formData.set("folder", folder);
+
+        const res = await axios.post(
+            "https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload",
+            formData
+        );
+
+        return res.data.secure_url;
     };
 
     if (loading || !gear) return <div className="text-center py-20 text-gray-500">Loading...</div>;
@@ -252,10 +290,10 @@ export default function EditGear() {
                                     onChange={handleMainImageChange}
                                     className="hidden"
                                 />
-                                {mainImagePreview ? (
+                                {mainImagePreview || existingMainImage ? (
                                     <div className="relative inline-block">
                                         <img
-                                            src={mainImagePreview}
+                                            src={mainImagePreview || existingMainImage}
                                             alt="Main"
                                             className="h-32 mx-auto object-cover rounded shadow"
                                         />
@@ -263,6 +301,7 @@ export default function EditGear() {
                                             type="button"
                                             onClick={(e) => {
                                                 e.stopPropagation();
+                                                setExistingMainImage(null);
                                                 setMainImage(null);
                                                 setMainImagePreview(null);
                                             }}
@@ -272,7 +311,7 @@ export default function EditGear() {
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>
-                                    
+
                                 ) : (
                                     <p className="text-gray-500 text-sm">Click to select main image</p>
                                 )}
@@ -282,7 +321,7 @@ export default function EditGear() {
                         <div className="flex flex-col">
                             <p className="text-sm text-gray-600 mb-1">Gallery Images (Max 5)</p>
                             <div
-                                onDrop={handleDrop}
+                                onDrop={handleImageDrop}
                                 onDragOver={(e) => e.preventDefault()}
                                 onClick={() => fileInputRef.current.click()}
                                 className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple"
@@ -335,12 +374,9 @@ export default function EditGear() {
                     </div>
 
                     <div className="md:col-span-2 text-center mt-4">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-all"
-                        >
-                            Save Changes
-                        </button>
+                        <Button type="submit" className="w-full">
+                            Update Gear
+                        </Button>
                     </div>
                 </form>
             </div>

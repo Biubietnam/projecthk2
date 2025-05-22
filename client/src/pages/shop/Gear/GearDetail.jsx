@@ -4,6 +4,12 @@ import Button from "../../../components/Button";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { CheckCircle2 } from 'lucide-react';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Plus, Minus } from 'lucide-react';
 
 export default function GearDetail() {
   const { id } = useParams();
@@ -16,6 +22,8 @@ export default function GearDetail() {
   });
   const [quantity, setQuantity] = useState(1);
   const [userInfo, setUserInfo] = useState(null);
+  const [openDetails, setOpenDetails] = useState(false);
+  const [openDescription, setOpenDescription] = useState(false);
 
   useEffect(() => {
     const fetchGear = async () => {
@@ -143,92 +151,156 @@ export default function GearDetail() {
       </div >
 
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
-        <div className="flex-1 bg-white p-6 rounded-lg">
-          <div className="w-full h-96 bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
-            <span className="text-gray-400">Image Placeholder</span>
-          </div>
-          <p className="text-sm text-gray-500 m-3">
-            Category: <span
-              className={`px-2 py-1 rounded text-xs font-medium mr-1 ${gear.category === 'Accessories' ? 'bg-indigo-100 text-indigo-600' :
-                gear.category === 'Bedding' ? 'bg-amber-100 text-amber-700' :
-                  gear.category === 'Food' ? 'bg-emerald-100 text-emerald-700' :
-                    gear.category === 'Toys' ? 'bg-red-100 text-red-700' :
-                      'bg-gray-100 text-gray-600'
-                }`}
-            >
-              {gear.category}
-            </span>
-            Pet Type: <span
-              className={`px-2 py-1 rounded text-xs mr-1 font-medium ${gear.petType === 'Dogs' ? 'bg-yellow-100 text-yellow-800'
-                : gear.petType === 'Cats' ? 'bg-purple-100 text-purple-800'
-                  : gear.petType === 'Rodents' ? 'bg-green-100 text-green-800'
-                    : gear.petType === 'Reptiles' ? 'bg-red-100 text-red-800'
-                      : 'bg-gray-100 text-gray-800'
-                }`}
-            >
-              {gear.petType}
-            </span>
-          </p>
+        <div className="w-full lg:w-3/5 bg-white p-6 rounded-lg shadow-sm">
+          <h1 className="text-4xl font-bold text-gray-800 mb-3">{gear.name}</h1>
 
-          <div className="mt-3">
-            <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-            <p className="text-gray-600 leading-relaxed text-sm">{gear.details}</p>
+          <div className="flex justify-between text-sm text-gray-600 mb-4">
+            <div>
+              <p>⭐ {gear.rating} ({gear.reviews_count} reviews)</p>
+            </div>
+
+            <div>
+              {gear.is_featured ? (
+                <span className="text-yellow-600">★ Featured Product</span>
+              ) : (
+                <span className="invisible">Placeholder</span>
+              )}
+            </div>
           </div>
 
-          <div className="mt-3 border-t pt-6 text-sm text-gray-600">
-            <p><strong>Shipping:</strong> {gear.shipping_info}</p>
-            <p><strong>Return Policy:</strong> {gear.return_policy}</p>
+
+          <div className="w-full max-w-3xl mx-auto rounded-xl overflow-hidden">
+            {gear?.images?.length > 0 ? (
+              <Swiper
+                modules={[Navigation, Pagination]}
+                navigation
+                pagination={{ clickable: true }}
+                spaceBetween={10}
+                slidesPerView={1}
+                className="w-full"
+              >
+                {gear.images.map((img, index) => (
+                  <SwiperSlide key={index}>
+                    <div className="h-[34rem] aspect-[3/4] flex items-center justify-center bg-white rounded-xl overflow-hidden mx-auto">
+                      <img
+                        src={img}
+                        alt={`Gear - ${gear.name || "Product"} - ${index + 1}`}
+                        className="w-full h-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <div className="w-full h-96 bg-gray-100 flex items-center justify-center text-gray-400 text-lg">
+                No images available
+              </div>
+            )}
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">
+              Category: <span
+                className={`px-2 py-1 rounded text-xs font-medium mr-1 ${gear.category === 'Accessories' ? 'bg-indigo-100 text-indigo-600' :
+                  gear.category === 'Bedding' ? 'bg-amber-100 text-amber-700' :
+                    gear.category === 'Food' ? 'bg-emerald-100 text-emerald-700' :
+                      gear.category === 'Toys' ? 'bg-red-100 text-red-700' :
+                        'bg-gray-100 text-gray-600'
+                  }`}
+              >
+                {gear.category}
+              </span>
+              Pet Type: <span
+                className={`px-2 py-1 rounded text-xs mr-1 font-medium ${gear.petType === 'Dogs' ? 'bg-yellow-100 text-yellow-800'
+                  : gear.petType === 'Cats' ? 'bg-purple-100 text-purple-800'
+                    : gear.petType === 'Rodents' ? 'bg-green-100 text-green-800'
+                      : gear.petType === 'Reptiles' ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-800'
+                  }`}
+              >
+                {gear.petType}
+              </span>
+            </p>
           </div>
         </div>
 
-        <div className="w-full lg:w-1/3 bg-white p-6 rounded-lg space-y-4">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-3">{gear.name}</h1>
-            <p className="text-gray-600 text-base mb-2">{gear.description}</p>
+        <div className="lg:basis-2/5 bg-white p-6 rounded-xl shadow space-y-6">
+          {/* Giá */}
+          <p className="text-4xl font-bold text-gray-800 tracking-tight">
+            {new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            }).format(gear.price)}
+          </p>
 
-            <p className="font-poetsen text-3xl text-gray-800 mb-2">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-              }).format(gear.price)}
-            </p>
+          {/* Highlights */}
+          {gear.highlights?.length > 0 && (
+            <ul className="space-y-2 text-sm text-gray-700 border-t pt-4">
+              {gear.highlights.map((item, index) => (
+                <li key={index} className="flex items-center">
+                  <CheckCircle2 className="w-4 h-4 mr-2 text-green-600 flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
 
-            <div className="text-sm text-gray-600 mb-4">
-              <p>{gear.stock > 0 ? `${gear.stock} in stock` : 'Out of stock'}</p>
-              <p>⭐ {gear.rating} ({gear.reviews_count} reviews)</p>
-              {gear.is_featured && (
-                <p className="text-yellow-600 font-semibold">★ Featured Product</p>
-              )}
-            </div>
+          <p>
+            {gear.stock > 0
+              ? <span className="text-green-600 font-medium">{gear.stock} in stock</span>
+              : <span className="text-red-500 font-medium">Out of stock</span>}
+          </p>
 
-            {gear.highlights?.length > 0 && (
-              <ul className="space-y-1.5 text-sm text-gray-600">
-
-                {gear.highlights.map((item, index) => (
-                  <li className="flex items-center">
-                    <CheckCircle2 className="w-4 h-4 mr-1.5 text-green-600 flex-shrink-0" />{item}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="flex items-center gap-4 mt-6">
+          {/* Nút Add to cart */}
+          <div className="flex items-center gap-4 border-t pt-4">
             <input
               type="number"
               min="1"
               defaultValue="1"
               onChange={(e) => setQuantity(e.target.value)}
               onFocus={(e) => e.target.select()}
-              className="w-20 px-3 py-2 border border-gray-300 rounded-md text-center text-sm"
+              className="w-20 px-3 py-2 border border-gray-300 rounded-md text-center text-sm focus:ring-2 focus:ring-blue-500"
             />
+
             <Button
               disabled={gear.stock <= 0}
               onClick={handleAddToCart}
-              className={`w-full ${gear.stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full py-2 ${gear.stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               Add to Cart
             </Button>
+          </div>
+
+          {/* Product Details */}
+          <div className="border-t pt-4">
+            <button
+              className="w-full flex justify-between items-center text-left text-gray-800 text-base font-medium py-2"
+              onClick={() => setOpenDetails(!openDetails)}
+            >
+              Product Details
+              {openDetails ? <Minus className="text-customPurple w-5 h-5" /> : <Plus className="text-customPurple w-5 h-5" />}
+            </button>
+            {openDetails && (
+              <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+                {gear.details}
+              </p>
+            )}
+          </div>
+
+          {/* Product Description */}
+          <div className="border-t pt-4">
+            <button
+              className="w-full flex justify-between items-center text-left text-gray-800 text-base font-medium py-2"
+              onClick={() => setOpenDescription(!openDescription)}
+            >
+              <h1>Product Description</h1>
+              {openDescription ? <Minus className="text-customPurple w-5 h-5" /> : <Plus className="text-customPurple w-5 h-5" />}
+            </button>
+            {openDescription && (
+              <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+                {gear.description}
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -5,6 +5,11 @@ import Button from '../../../components/Button';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination } from 'swiper/modules';
 
 export default function PetAdoptionPage() {
     const { id } = useParams();
@@ -57,9 +62,35 @@ export default function PetAdoptionPage() {
             </div >
 
             <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
-                <div className="flex-1 bg-white p-6 rounded-lg">
-                    <div className="w-full h-80 bg-gray-700 rounded-lg mb-4 flex items-center justify-center">
-                        <span className="text-gray-400">Image Placeholder</span>
+                <div className="w-full lg:w-3/5 bg-white p-6 rounded-lg">
+                    <div className="w-full max-w-3xl mx-auto rounded-xl overflow-hidden">
+                        {pet?.images?.length > 0 ? (
+                            <Swiper
+                                modules={[Navigation, Pagination]}
+                                navigation
+                                pagination={{ clickable: true }}
+                                spaceBetween={10}
+                                slidesPerView={1}
+                                className="w-full"
+                            >
+                                {pet.images.map((img, index) => (
+                                    <SwiperSlide key={index}>
+                                        <div className="h-[34rem] aspect-[3/4] flex items-center justify-center bg-white rounded-xl overflow-hidden mx-auto">
+                                            <img
+                                                src={img}
+                                                alt={`Pet - ${pet.name || "Product"} - ${index + 1}`}
+                                                className="w-full h-full object-contain"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        ) : (
+                            <div className="w-full h-96 bg-gray-100 flex items-center justify-center text-gray-400 text-lg">
+                                No images available
+                            </div>
+                        )}
                     </div>
                     <div className="flex justify-between items-center mb-2">
                         <h1 className="text-3xl font-bold">{pet.name}</h1>
@@ -152,7 +183,7 @@ export default function PetAdoptionPage() {
                     </div>
                 </div>
 
-                <div className="w-full lg:w-1/3 bg-white p-6 rounded-lg space-y-4">
+                <div className="w-full lg:w-2/5 bg-white p-6 rounded-lg space-y-4">
                     <div>
                         <h2 className="text-xl font-semibold">Adoption Fee</h2>
                         <p className="font-poetsen text-3xl text-gray-800">
@@ -164,9 +195,6 @@ export default function PetAdoptionPage() {
                         <p className="text-xs text-gray-500">Fee includes vaccinations, microchip, and spay/neuter</p>
                     </div>
                     <Button className="w-full">Adopt Me</Button>
-                    <button className="w-full bg-white text-gray-600 py-2 rounded-md hover:bg-gray-300 transition duration-200 border border-customPurple">
-                        Schedule a Visit
-                    </button>
                     <div className="mt-6">
                         <h2 className='text-xl'>Contact Us</h2>
                         <p className="text-sm text-gray-500">Phone: (123) 456-7890</p>

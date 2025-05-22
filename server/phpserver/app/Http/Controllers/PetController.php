@@ -4,74 +4,96 @@ namespace App\Http\Controllers;
 
 use App\Models\Pet;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 
 class PetController extends Controller
 {
     public function index()
     {
-        return response()->json(Pet::all());
+        return response()->json(Pet::all(), 200);
     }
 
     public function show($id)
     {
-        $pet = Pet::findOrFail($id);
-        return response()->json($pet);
+        $pet = Pet::find($id);
+        if (!$pet) {
+            return response()->json(['message' => 'Pet not found'], 404);
+        }
+        return response()->json($pet, 200);
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'breed' => 'nullable|string',
-            'age' => 'nullable|numeric',
-            'weight' => 'nullable|numeric',
+            'age' => 'nullable|string',
+            'weight' => 'nullable|string',
             'color' => 'nullable|string',
             'adoptionFee' => 'nullable|numeric',
             'type' => 'nullable|string',
             'gender' => 'nullable|string',
-            'tags' => 'nullable|array',
+            'tags' => 'nullable',
             'description' => 'nullable|string',
             'careDiet' => 'nullable|string',
             'careExercise' => 'nullable|string',
             'careGrooming' => 'nullable|string',
             'adopted' => 'nullable|boolean',
+            'images' => 'nullable',
+            'main_image' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('pets', 'public');
-            $data['image'] = '/storage/' . $imagePath;
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $pet = Pet::create($data);
-        return response()->json(['message' => 'Pet created', 'pet' => $pet], 201);
+        $pet = Pet::create($validator->validated());
+        return response()->json($pet, 201);
     }
 
     public function update(Request $request, $id)
     {
-        $pet = Pet::findOrFail($id);
-
-        $data = $request->all();
-
-        if ($request->has('tags') && is_string($request->tags)) {
-            $data['tags'] = json_decode($request->tags, true);
+        $pet = Pet::find($id);
+        if (!$pet) {
+            return response()->json(['message' => 'Pet not found'], 404);
         }
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('pets', 'public');
-            $data['image'] = '/storage/' . $imagePath;
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string|max:255',
+            'breed' => 'sometimes|nullable|string',
+            'age' => 'sometimes|nullable|string',
+            'weight' => 'sometimes|nullable|string',
+            'color' => 'sometimes|nullable|string',
+            'adoptionFee' => 'sometimes|nullable|numeric',
+            'type' => 'sometimes|nullable|string',
+            'gender' => 'sometimes|nullable|string',
+            'tags' => 'sometimes|nullable',
+            'description' => 'sometimes|nullable|string',
+            'careDiet' => 'sometimes|nullable|string',
+            'careExercise' => 'sometimes|nullable|string',
+            'careGrooming' => 'sometimes|nullable|string',
+            'adopted' => 'sometimes|nullable|boolean',
+            'images' => 'sometimes|nullable',
+            'main_image' => 'sometimes|nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $pet->update($data);
+        $pet->update($validator->validated());
 
-        return response()->json(['message' => 'Pet updated', 'pet' => $pet]);
+        return response()->json($pet, 200);
     }
 
     public function destroy($id)
     {
-        $pet = Pet::findOrFail($id);
-        $pet->delete();
+        $pet = Pet::find($id);
+        if (!$pet) {
+            return response()->json(['message' => 'Pet not found'], 404);
+        }
 
-        return response()->json(['message' => 'Pet deleted']);
+        $pet->delete();
+        return response()->json(['message' => 'Pet deleted successfully'], 200);
     }
 }
