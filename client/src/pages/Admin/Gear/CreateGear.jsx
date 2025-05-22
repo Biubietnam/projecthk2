@@ -3,10 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Wrench, Trash2 } from "lucide-react";
 import Button from "../../../components/Button";
+import { Loader } from "lucide-react";
+
 
 export default function CreateGear() {
   const navigate = useNavigate();
   const fileInputRef = useRef();
+  const mainInputRef = useRef();
+  const [loading, setLoading] = useState(false);
 
   const [gear, setGear] = useState({
     name: "",
@@ -22,86 +26,142 @@ export default function CreateGear() {
     return_policy: "",
     description: "",
     details: "",
-    images: [],
   });
 
+  const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [mainImage, setMainImage] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState(null);
 
   const handleChange = (e) => {
     setGear({ ...gear, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
-    const newFiles = Array.from(e.target.files);
-    const total = gear.images.length + newFiles.length;
+  const handleImages = (files) => {
+    const fileArr = Array.from(files);
+    const total = images.length + fileArr.length;
     if (total > 5) return alert("Only up to 5 images are allowed.");
 
-    const allowed = newFiles.slice(0, 5 - gear.images.length);
-    const newPreviews = allowed.map((file) => URL.createObjectURL(file));
-
-    setGear({ ...gear, images: [...gear.images, ...allowed] });
-    setImagePreviews((prev) => [...prev, ...newPreviews]);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const dropped = Array.from(e.dataTransfer.files);
-    const total = gear.images.length + dropped.length;
-    if (total > 5) return alert("Only up to 5 images are allowed.");
-
-    const allowed = dropped.slice(0, 5 - gear.images.length);
+    const allowed = fileArr.slice(0, 5 - images.length);
     const previews = allowed.map((file) => URL.createObjectURL(file));
 
-    setGear({ ...gear, images: [...gear.images, ...allowed] });
+    setImages((prev) => [...prev, ...allowed]);
     setImagePreviews((prev) => [...prev, ...previews]);
   };
 
-  const handleRemoveImage = (index) => {
-    const updatedImages = [...gear.images];
-    const updatedPreviews = [...imagePreviews];
-    updatedImages.splice(index, 1);
-    updatedPreviews.splice(index, 1);
-    setGear({ ...gear, images: updatedImages });
-    setImagePreviews(updatedPreviews);
+  const handleImageChange = (e) => handleImages(e.target.files);
+  const handleImageDrop = (e) => {
+    e.preventDefault();
+    handleImages(e.dataTransfer.files);
+  };
+
+  const handleMainImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setMainImage(file);
+      setMainImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleMainImageDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setMainImage(file);
+      setMainImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveNewImage = (index) => {
+    const updated = [...images];
+    const previews = [...imagePreviews];
+    updated.splice(index, 1);
+    previews.splice(index, 1);
+    setImages(updated);
+    setImagePreviews(previews);
+  };
+
+  const uploadToCloudinary = async (file, folder) => {
+    const formData = new FormData();
+    formData.set("file", file);
+    formData.set("upload_preset", "petzone");
+    formData.set("folder", folder);
+
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload",
+      formData
+    );
+    return res.data.secure_url;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const token = localStorage.getItem("access_token");
-      const formData = new FormData();
+      const gearId = Date.now();
+      const mainFolder = `Petzone/Gears/${gearId}/Main_image`;
+      const galleryFolder = `Petzone/Gears/${gearId}`;
 
-      Object.entries({
+      let mainImageUrl = "";
+      if (mainImage) {
+        mainImageUrl = await uploadToCloudinary(mainImage, mainFolder);
+      }
+
+      const galleryUrls = [];
+      for (const img of images) {
+        const url = await uploadToCloudinary(img, galleryFolder);
+        galleryUrls.push(url);
+      }
+
+      const highlightsArray = gear.highlights
+        ? gear.highlights.split(",").map((h) => h.trim()).filter(Boolean)
+        : [];
+
+      const payload = {
         ...gear,
-        highlights: gear.highlights.split(",").map((h) => h.trim()),
-      }).forEach(([key, value]) => {
-        if (key !== "images") {
-          formData.append(key, typeof value === "object" ? JSON.stringify(value) : value);
-        }
-      });
+        highlights: highlightsArray,
+        images: galleryUrls,
+        main_image: mainImageUrl,
+      };
 
-      gear.images.forEach((file) => {
-        formData.append("images[]", file);
-      });
-
-      await axios.post("http://localhost:8000/api/admin/gears", formData, {
-        headers: { Authorization: `Bearer ${token}` },
+      await axios.post("http://localhost:8000/api/admin/gears", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       alert("Gear created successfully!");
-      navigate("/admin/gears");
+      navigate("/admin/gearmanagement");
     } catch (err) {
-      alert("Failed to create gear.");
+      console.error(err);
+      alert("Failed to create gear: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const inputFields = [
+    { label: "Name", name: "name", required: true },
+    { label: "Price ($)", name: "price", type: "number", min: 0, step: 0.01 },
+    { label: "Category", name: "category" },
+    { label: "Slug", name: "slug", placeholder: "auto-generated if left blank" },
+    { label: "Rating", name: "rating", type: "number", step: "0.1", max: "5" },
+    { label: "Stock", name: "stock", type: "number", min: 0 },
+  ];
+
+  const textareaFields = [
+    { label: "Shipping Info", name: "shipping_info", rows: 2 },
+    { label: "Return Policy", name: "return_policy", rows: 2 },
+    { label: "Description", name: "description", rows: 3 },
+    { label: "Details", name: "details", rows: 3 },
+  ];
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
       <div className="mb-2">
-        <Link
-          to="/admin/gearmanagement"
-          className="inline-flex items-center rounded text-sm text-customPurple hover:underline"
-        >
+        <Link to="/admin/gearmanagement" className="inline-flex items-center text-sm text-customPurple hover:underline">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
@@ -116,14 +176,7 @@ export default function CreateGear() {
 
       <div className="bg-white shadow-md rounded-lg p-6">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6" encType="multipart/form-data">
-          {[
-            { label: "Name", name: "name" },
-            { label: "Price ($)", name: "price", type: "number" },
-            { label: "Category", name: "category" },
-            { label: "Slug", name: "slug", placeholder: "auto-generated if left blank" },
-            { label: "Rating", name: "rating", type: "number", step: "0.1", max: "5" },
-            { label: "Stock", name: "stock", type: "number" },
-          ].map((field) => (
+          {inputFields.map((field) => (
             <div key={field.name} className="flex flex-col">
               <p className="text-sm text-gray-600 mb-1">{field.label}</p>
               <input
@@ -131,11 +184,12 @@ export default function CreateGear() {
                 type={field.type || "text"}
                 step={field.step}
                 max={field.max}
-                value={gear[field.name]}
+                min={field.min}
+                value={gear[field.name] || ""}
                 onChange={handleChange}
                 placeholder={field.placeholder}
+                required={field.required}
                 className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
-                required={field.name === "name"}
               />
             </div>
           ))}
@@ -174,69 +228,115 @@ export default function CreateGear() {
               name="highlights"
               value={gear.highlights}
               onChange={handleChange}
-              placeholder="e.g. Waterproof, Lightweight"
+              placeholder="e.g. Water-resistant, Lightweight"
               className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
             />
           </div>
 
-          {[ "shipping_info", "return_policy", "description", "details" ].map((name) => (
-            <div key={name} className="md:col-span-2 flex flex-col">
-              <p className="text-sm text-gray-600 mb-1">{name.replace("_", " ")}</p>
+          {textareaFields.map((field) => (
+            <div key={field.name} className="md:col-span-2 flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">{field.label}</p>
               <textarea
-                name={name}
-                value={gear[name]}
+                name={field.name}
+                rows={field.rows}
+                value={gear[field.name]}
                 onChange={handleChange}
-                rows={3}
+                placeholder={`Enter ${field.label.toLowerCase()}`}
                 className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
               />
             </div>
           ))}
 
-          <div className="md:col-span-2 flex flex-col">
-            <p className="text-sm text-gray-600 mb-1">Upload Images (Max 5)</p>
-            <div
-              onDrop={handleDrop}
-              onDragOver={(e) => e.preventDefault()}
-              className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple"
-              onClick={() => fileInputRef.current.click()}
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="hidden"
-              />
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Main Image */}
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">Main Image (required)</p>
+              <div
+                onDrop={handleMainImageDrop}
+                onDragOver={(e) => e.preventDefault()}
+                onClick={() => mainInputRef.current.click()}
+                className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple text-center"
+              >
+                <input
+                  type="file"
+                  ref={mainInputRef}
+                  accept="image/*"
+                  onChange={handleMainImageChange}
+                  className="hidden"
+                />
+                {mainImagePreview ? (
+                  <div className="relative inline-block">
+                    <img src={mainImagePreview} alt="Main" className="h-32 mx-auto object-cover rounded shadow" />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMainImage(null);
+                        setMainImagePreview(null);
+                      }}
+                      className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600"
+                      title="Remove Main Image"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">Click to select main image</p>
+                )}
+              </div>
+            </div>
 
-              {imagePreviews.length > 0 ? (
-                <div className="flex flex-wrap gap-4">
-                  {imagePreviews.map((src, index) => (
-                    <div key={index} className="relative group">
+            {/* Gallery Images */}
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">Gallery Images (Max 5)</p>
+              <div
+                onDrop={handleImageDrop}
+                onDragOver={(e) => e.preventDefault()}
+                onClick={() => fileInputRef.current.click()}
+                className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple"
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                {imagePreviews.length === 0 && (
+                  <p className="text-gray-500 text-sm text-center mt-2">Drag & drop or click to upload</p>
+                )}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
+                  {imagePreviews.map((src, idx) => (
+                    <div key={idx} className="relative group">
                       <img src={src} className="h-24 w-24 object-cover rounded shadow" />
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleRemoveImage(index);
+                          handleRemoveNewImage(idx);
                         }}
-                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white transition text-gray-600"
-                        title="Remove"
+                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-gray-500 text-sm text-center">Drag & drop images here, or click to select</p>
-              )}
+              </div>
             </div>
           </div>
 
           <div className="md:col-span-2 text-center mt-4">
-            <Button type="submit" className="w-full">
-              Create Gear
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader className="animate-spin w-4 h-4" />
+                  Creating...
+                </span>
+              ) : (
+                "Create Gear"
+              )}
             </Button>
           </div>
         </form>

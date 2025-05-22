@@ -20,28 +20,15 @@ use App\Http\Controllers\PaymentController;
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
 Route::get('/pets', [PetController::class, 'index']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/pets', [PetController::class, 'store']);
-    Route::put('/pets/{id}', [PetController::class, 'update']);
-    Route::delete('/pets/{id}', [PetController::class, 'destroy']);
-});
 
 Route::get('/gears', [GearController::class, 'index']);
-
 Route::get('/gears/{id}', [GearController::class, 'show']);
-
 Route::get('/gears/{gear}/reviews', [ReviewController::class, 'index']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/gears/{id}/review', [ReviewController::class, 'store']);
-});
 
 Route::post('register', [RegisterController::class, 'register']);
-
 Route::post('login',    [LoginController::class, 'login']);
-
 Route::post('forgot',   [ForgotPasswordController::class, 'forgot']);
-
 Route::post('reset',    [ResetPasswordController::class, 'reset']);
 
 Route::get('/reset-password/{token}', function ($token) {
@@ -61,17 +48,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user',   [ProfileController::class, 'me']);
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->get('/admin/users', function () {
-    return User::with('role')->get();
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin/users', function () {
+        return User::with('role')->get();
+    });
+    Route::get('/admin/users/{id}', function ($id) {
+        return User::with('role')->findOrFail($id);
+    });
+    Route::delete('/admin/users/{id}', function ($id) {
+        return User::findOrFail($id)->delete();
+    });
+    Route::get('/admin/users/{id}/profile', [ProfileController::class, 'show']);
+
+    Route::post('/admin/pets', [PetController::class, 'store']);
+    Route::put('/admin/pets/{id}', [PetController::class, 'update']);
+    Route::delete('/admin/pets/{id}', [PetController::class, 'destroy']);
+    Route::put('/admin/gears/{id}', [GearController::class, 'update']);
+    Route::post('/admin/gears', [GearController::class, 'store']);
+    Route::delete('/admin/gears/{id}', [GearController::class, 'destroy']);
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->get('/admin/users/{id}', function ($id) {
-    return User::with('role')->findOrFail($id);
-});
-
-Route::middleware(['auth:sanctum', 'admin'])->delete('/admin/users/{id}', function ($id) {
-    return User::findOrFail($id)->delete();
-});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/adoption-requests', [AdoptionRequestController::class, 'index']);
