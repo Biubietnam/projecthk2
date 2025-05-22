@@ -2,10 +2,34 @@
 //if user dont have pet, show the message
 //if user have pet, show the pet list
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
 function PetListForBooking() {
+  // DÙng navigate để điều hướng đến các trang khác
+  const navigate = useNavigate();
+
+  //Hiệu ứng bóng
+  const shadowEffect = "shadow-lg hover:shadow-xl";
+
+  //Hiệu ứng phóng to
+  const scaleEffect = "hover:scale-110";
+
+  //Hiệu ứng con trỏ
+  const cursorEffect = "cursor-pointer";
+
+  //Hiệu ứng chuyển tiếp
+  const transitionEffect = "transition duration-200";
+
+  //Hiệu ứng bố cục và nhóm (Layout and Group Effect)
+  const layoutEffect = "relative overflow-hidden group";
+
+  //Hiệu ứng cho các card petVet và petSpa
+  const baseEffect = ` ${cursorEffect} `;
+  const transitionAndLayoutEffect = `${transitionEffect} ${layoutEffect}`;
+
+  //xu ly lý khi người dùng chưa đăng nhập
   const [petList, setPetList] = useState([]);
   const [hasPet, setHasPet] = useState(false);
   useEffect(() => {
@@ -37,12 +61,59 @@ function PetListForBooking() {
     <div
       className={`min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto`}
     >
-      <h1>Pet List for Booking</h1>
+      <h1 className="text-3xl font-bold text-center text-[#6D7AB5] mb-6">
+        STEP 1: 🐶 Choose Your Pet to Serve
+      </h1>
 
       {hasPet ? (
-        <p>HAVE PET LIST</p>
+        <div className="overflow-x-auto rounded-xl shadow-md">
+          <table className="min-w-full border text-sm text-gray-700 bg-white">
+            <thead>
+              <tr className="bg-[#F0F4FF] text-[#4A5A93] uppercase text-xs tracking-wider">
+                <th className="px-4 py-3 border">#</th>
+                <th className="px-4 py-3 border">Name</th>
+                <th className="px-4 py-3 border">Species</th>
+                <th className="px-4 py-3 border">Breed</th>
+                <th className="px-4 py-3 border">Age</th>
+                <th className="px-4 py-3 border">Gender</th>
+                <th className="px-4 py-3 border">Weight (kg)</th>
+                <th className="px-4 py-3 border">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {petList.map((pet, index) => (
+                <tr
+                  key={pet.id}
+                  className={`hover:bg-[#E0E7FF] transition duration-200 ${baseEffect} ${transitionAndLayoutEffect}`}
+                  onClick={() => {
+                    localStorage.setItem("selectedPet", JSON.stringify(pet));
+                    navigate("/serviceBooking");
+                  }}
+                >
+                  <td className="px-4 py-3 border text-center">{index + 1}</td>
+                  <td className="px-4 py-3 border font-medium">{pet.name}</td>
+                  <td className="px-4 py-3 border">{pet.species}</td>
+                  <td className="px-4 py-3 border">{pet.breed}</td>
+                  <td className="px-4 py-3 border">{pet.age}</td>
+                  <td className="px-4 py-3 border capitalize">{pet.gender}</td>
+                  <td className="px-4 py-3 border">{pet.weight_kg}</td>
+                  <td className="px-4 py-3 border text-gray-500 italic">
+                    {pet.notes || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
-        <p>You don't have any pets. Please add a pet to book.</p>
+        <div className="text-center mt-8 text-gray-600">
+          <p className="text-lg">😿 No pets found in your profile.</p>
+          <p className="mt-2">
+            Please{" "}
+            <span className="text-blue-600 font-semibold">add a pet</span> to
+            get started.
+          </p>
+        </div>
       )}
     </div>
   );

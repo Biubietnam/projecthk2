@@ -92,6 +92,8 @@ Route::middleware('auth:sanctum')->group(function () {
 // Lấy ID của người dùng và trả về danh sách thú cưng của người dùng đó
 Route::get('/user/{id}/userpets', [UserPetController::class, 'getUserPets']);
 
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vnpay/create-payment', [PaymentController::class, 'createPayment']);
 });

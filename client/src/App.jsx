@@ -12,9 +12,9 @@ import Cart from "./pages/cart/Cart";
 import Booking from "./pages/Booking";
 import PetUnLogin from "./pages/Booking/petUnLogin";
 import PetListForBooking from "./pages/Booking/petListForBooking";
-
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
+import ServiceBooking from "./pages/Booking/serviceBooking";
 
 // Part Thuc User
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
@@ -60,6 +60,7 @@ export default function App() {
         <Route path="/petvet" element={<PetVet />} />
         <Route path="/petUnLogin" element={<PetUnLogin />} />
         <Route path="/petlist" element={<PetListForBooking />} />
+        <Route path="/serviceBooking" element={<ServiceBooking />} />
 
         <Route path="/petlist" element={<PetListForBooking />} />
         <Route path="/petunlogin" element={<PetUnLogin />} />
