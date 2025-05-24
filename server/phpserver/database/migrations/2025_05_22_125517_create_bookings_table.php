@@ -4,32 +4,41 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateBookingsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // booking_id
+
+            // Liên kết đến bảng users
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            // Liên kết đến bảng user_pets
             $table->foreignId('pet_id')->constrained('user_pets')->onDelete('cascade');
-            $table->enum('service_type', ['Spa', 'Vet']);
+
+            // Liên kết đến bảng services
+            $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
+
+            // Ngày và khung giờ đặt
             $table->date('date');
-            $table->string('time_slot');
+            $table->string('time_slot'); // ví dụ "09:00", "10:30"
+
+            // Trạng thái đặt lịch
             $table->enum('status', ['Pending', 'Confirmed', 'Completed', 'Cancelled'])->default('Pending');
+
+            // Ghi chú thêm
             $table->text('notes')->nullable();
+
+            // Tự động lưu thời gian tạo và cập nhật
             $table->timestamps();
         });
-        
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('bookings');
     }
 };
+
+

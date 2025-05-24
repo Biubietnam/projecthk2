@@ -17,6 +17,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserPetController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\BookingController;
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
 Route::get('/pets', [PetController::class, 'index']);
@@ -91,6 +92,9 @@ Route::middleware('auth:sanctum')->group(function () {
 // Dat Part: UserPetController
 // Lấy ID của người dùng và trả về danh sách thú cưng của người dùng đó
 Route::get('/user/{id}/userpets', [UserPetController::class, 'getUserPets']);
+Route::get('/booked-time-slots', [BookingController::class, 'getBookedTimeSlots']);
+Route::get('/bookings', [BookingController::class, 'index']);
+Route::post('/bookings', [BookingController::class, 'store']);
 
 
 

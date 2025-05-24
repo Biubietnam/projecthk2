@@ -1,4 +1,18 @@
+import React, { useState } from "react";
+import { useModal } from "../../Appwrapper";
+import BookingModal from "./BookingModal";
+
 function ServiceBooking() {
+  const { openModal } = useModal();
+
+  const handleDetailsClick = () => {
+    openModal({
+      title: `BOOKING FORM`,
+      body: <BookingModal />,
+    });
+  };
+  // State to manage the modal visibility
+
   const shadowEffect = "shadow-lg hover:shadow-xl";
 
   //Hiệu ứng phóng to
@@ -45,6 +59,7 @@ function ServiceBooking() {
         {/* Vet at Clinic */}
         <div
           className={`bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition duration-300 ${baseEffect} ${transitionAndLayoutEffect}`}
+          onClick={handleDetailsClick}
         >
           <img
             src="/img/service/vetClinic.png"
