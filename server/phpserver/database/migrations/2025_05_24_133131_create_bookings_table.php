@@ -9,7 +9,7 @@ class CreateBookingsTable extends Migration
     public function up()
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->id(); // booking_id
+            $table->id();
 
             // Liên kết đến bảng users
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -19,6 +19,9 @@ class CreateBookingsTable extends Migration
 
             // Liên kết đến bảng services
             $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
+
+            // Thêm cột service_name
+            $table->string('service_name');
 
             // Ngày và khung giờ đặt
             $table->date('date');
@@ -39,6 +42,4 @@ class CreateBookingsTable extends Migration
     {
         Schema::dropIfExists('bookings');
     }
-};
-
-
+}

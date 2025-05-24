@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useModal } from "../../Appwrapper";
 import BookingModal from "./BookingModal";
+import AddPetModal from "./AddPetModal";
+import Button from "../../components/Button";
 
 import axios from "axios";
 
@@ -12,16 +14,21 @@ function PetListForBooking() {
   //Phần này về form
   const { openModal, closeModal } = useModal();
 
-  const handleDetailsClick = () => {
+  const BookingClick = () => {
     openModal({
       title: `BOOKING FORM`,
       body: <BookingModal onClose={closeModal} />,
     });
   };
 
+  const AddPetClick = () => {
+    openModal({
+      title: `ADD PET`,
+      body: <AddPetModal onClose={closeModal} />,
+    });
+  };
+
   // Phần này về bảng
-  // DÙng navigate để điều hướng đến các trang khác
-  const navigate = useNavigate();
 
   //Hiệu ứng bóng
   const shadowEffect = "shadow-lg hover:shadow-xl";
@@ -100,7 +107,7 @@ function PetListForBooking() {
                   className={`hover:bg-[#E0E7FF] transition duration-200 ${baseEffect} ${transitionAndLayoutEffect}`}
                   onClick={() => {
                     localStorage.setItem("selectedPet", JSON.stringify(pet));
-                    handleDetailsClick();
+                    BookingClick();
                   }}
                 >
                   <td className="px-4 py-3 border text-center">{index + 1}</td>
@@ -123,9 +130,17 @@ function PetListForBooking() {
           <p className="text-lg">😿 No pets found in your profile.</p>
           <p className="mt-2">
             Please{" "}
-            <span className="text-blue-600 font-semibold">add a pet</span> to
-            get started.
+            <span className="text-blue-600 font-semibold hover: cursor-pointer">
+              add a pet
+            </span>{" "}
+            to get started.
           </p>
+          <button
+            className="mt-4 bg-[#6D7AB5] text-white px-6 py-2 rounded hover:bg-[#5A6A9B] transition-colors"
+            onClick={AddPetClick}
+          >
+            Add Pet
+          </button>
         </div>
       )}
     </div>

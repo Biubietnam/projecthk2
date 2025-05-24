@@ -61,8 +61,8 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|integer',
-            'pet_id' => 'required|integer',
+            'user_id' => 'required|integer|exists:users,id',
+            'pet_id' => 'required|integer|exists:user_pets,id',
             'service_id' => 'required|integer',
             'date' => 'required|date',
             'time_slot' => 'required|string',
@@ -79,6 +79,17 @@ class BookingController extends Controller
         }
 
         $booking = Booking::create($request->all());
+          // Lấy service_name từ bảng services
+    $service = \App\Models\Service::find($request->service_id);
+    if (!$service) {
+        return response()->json(['error' => 'Dịch vụ không tồn tại'], 404);
+    }
+
+    // Tạo booking, thêm service_name
+    $bookingData = $request->all();
+    $bookingData['service_name'] = $service->name; // giả sử trường tên dịch vụ là 'name'
+
+    $booking = Booking::create($bookingData);
 
         return response()->json(['message' => 'Đặt lịch thành công', 'booking' => $booking], 201);
     }

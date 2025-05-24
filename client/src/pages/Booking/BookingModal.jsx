@@ -191,7 +191,7 @@ const BookingModal = ({ onClose }) => {
 
           {/* Select dịch vụ */}
           <div>
-            <label>Dịch vụ</label>
+            <label className="text-sm font-medium">Services</label>
             <select
               name="service_id"
               value={formData.service_id}
@@ -200,25 +200,23 @@ const BookingModal = ({ onClose }) => {
               className="w-full border rounded px-3 py-2"
             >
               <option value="">-- Chọn dịch vụ --</option>
-              <option value="1">Basic Spa</option>
-              <option value="2">Premium Spa</option>
-              <option value="3">Ultra Spa</option>
-              <option value="4">Vet At Clinic</option>
+              <option value="2">Basic Spa</option>
+              <option value="3">Premium Spa</option>
+              <option value="4">Ultra Spa</option>
+              <option value="1">Vet At Clinic</option>
             </select>
           </div>
 
           {/* Chọn ngày */}
-          <div>
-            <label>Ngày</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            min={new Date().toISOString().split("T")[0]} // Chỉ cho chọn từ hôm nay trở đi
+            className="w-full border rounded px-3 py-2"
+          />
 
           {/* Chọn giờ */}
           <SlotSelector

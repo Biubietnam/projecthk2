@@ -14,7 +14,7 @@ import PetUnLogin from "./pages/Booking/petUnLogin";
 import PetListForBooking from "./pages/Booking/petListForBooking";
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
-import ServiceBooking from "./pages/Booking/serviceBooking";
+import AddPetModal from "./pages/Booking/AddPetModal";
 
 // Part Thuc User
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
@@ -60,10 +60,10 @@ export default function App() {
         <Route path="/petvet" element={<PetVet />} />
         <Route path="/petUnLogin" element={<PetUnLogin />} />
         <Route path="/petlist" element={<PetListForBooking />} />
-        <Route path="/serviceBooking" element={<ServiceBooking />} />
 
         <Route path="/petlist" element={<PetListForBooking />} />
         <Route path="/petunlogin" element={<PetUnLogin />} />
+        <Route path="/addpetmodal" element={<AddPetModal />} />
 
         <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
         <Route path="/login" element={<LoginFormContent />} />
@@ -85,11 +85,9 @@ export default function App() {
         <Route path="/admin/users/edit/profile/:id" element={<EditProfile />} />
         <Route path="/admin/ordermanagement" element={<OrderManagement />} />
 
-
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} />
-
       </Routes>
       <Footer />
     </div>

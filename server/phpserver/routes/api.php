@@ -96,6 +96,7 @@ Route::get('/booked-time-slots', [BookingController::class, 'getBookedTimeSlots'
 Route::get('/bookings', [BookingController::class, 'index']);
 Route::post('/bookings', [BookingController::class, 'store']);
 Route::get('/booked-slots', [BookingController::class, 'getBookedSlots']);
+Route::post('/userpets', [UserPetController::class, 'store']);
 
 
 
