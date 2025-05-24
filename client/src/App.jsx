@@ -11,7 +11,6 @@ import Receipt from "./pages/cart/Receipt";
 import ThankYou from "./pages/cart/thank-you";
 import { useLocation } from "react-router-dom";
 
-
 //Dat: Booking page
 import Booking from "./pages/Booking";
 import PetUnLogin from "./pages/Booking/petUnLogin";
@@ -91,20 +90,16 @@ export default function App() {
         <Route path="/admin/users/create" element={<CreateUser />} />
         <Route path="/admin/users/edit/profile/:id" element={<EditProfile />} />
         <Route path="/admin/ordermanagement" element={<OrderManagement />} />
-<<<<<<< HEAD
-=======
-        <Route path="/admin/adoptionmanagement" element={<AdoptionManagement />} />
->>>>>>> 432ec8b725f8ef189aeeba91d70b08375aa7bf0a
+        <Route
+          path="/admin/adoptionmanagement"
+          element={<AdoptionManagement />}
+        />
 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} />
-<<<<<<< HEAD
-=======
         <Route path="/checkout/result" element={<Receipt />} />
         <Route path="/thank-you" element={<ThankYou />} />
-
->>>>>>> 432ec8b725f8ef189aeeba91d70b08375aa7bf0a
       </Routes>
       {!isAdmin && <Footer />}
     </div>
