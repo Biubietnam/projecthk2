@@ -3,10 +3,23 @@
 //if user have pet, show the pet list
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useModal } from "../../Appwrapper";
+import BookingModal from "./BookingModal";
 
 import axios from "axios";
 
 function PetListForBooking() {
+  //Phần này về form
+  const { openModal, closeModal } = useModal();
+
+  const handleDetailsClick = () => {
+    openModal({
+      title: `BOOKING FORM`,
+      body: <BookingModal onClose={closeModal} />,
+    });
+  };
+
+  // Phần này về bảng
   // DÙng navigate để điều hướng đến các trang khác
   const navigate = useNavigate();
 
@@ -87,7 +100,7 @@ function PetListForBooking() {
                   className={`hover:bg-[#E0E7FF] transition duration-200 ${baseEffect} ${transitionAndLayoutEffect}`}
                   onClick={() => {
                     localStorage.setItem("selectedPet", JSON.stringify(pet));
-                    navigate("/serviceBooking");
+                    handleDetailsClick();
                   }}
                 >
                   <td className="px-4 py-3 border text-center">{index + 1}</td>

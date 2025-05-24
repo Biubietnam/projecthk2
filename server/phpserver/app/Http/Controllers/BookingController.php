@@ -82,4 +82,20 @@ class BookingController extends Controller
 
         return response()->json(['message' => 'Đặt lịch thành công', 'booking' => $booking], 201);
     }
+    public function getBookedSlots(Request $request)
+{
+    $date = $request->query('date');
+    $serviceId = $request->query('service_id');
+
+    if (!$date || !$serviceId) {
+        return response()->json(['error' => 'Thiếu thông tin'], 400);
+    }
+
+    $bookedSlots =  Booking::table('bookings')
+        ->where('date', $date)
+        ->where('service_id', $serviceId)
+        ->pluck('time_slot');
+
+    return response()->json($bookedSlots);
+}
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import SlotSelector from "./SlotSelector";
 
 const BookingModal = ({ onClose }) => {
   const [allSlots, setAllSlots] = useState([]); // Tất cả khung giờ theo dịch vụ
@@ -179,7 +180,7 @@ const BookingModal = ({ onClose }) => {
                   <label className="text-sm font-medium">Weight (kg)</label>
                   <input
                     type="text"
-                    value={petData.weight}
+                    value={petData.weight_kg}
                     readOnly
                     className="w-full border rounded px-3 py-2"
                   />
@@ -220,32 +221,12 @@ const BookingModal = ({ onClose }) => {
           </div>
 
           {/* Chọn giờ */}
-          <div>
-            <label>Khung giờ</label>
-            {loadingSlots ? (
-              <p>Đang tải khung giờ...</p>
-            ) : (
-              <select
-                name="time_slot"
-                value={formData.time_slot}
-                onChange={handleChange}
-                required
-                disabled={!formData.date || !formData.service_id}
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value="">-- Chọn giờ --</option>
-                {allSlots.map((slot) => (
-                  <option
-                    key={slot}
-                    value={slot}
-                    disabled={bookedSlots.includes(slot)}
-                  >
-                    {slot} {bookedSlots.includes(slot) ? "(Đã đặt)" : ""}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
+          <SlotSelector
+            allSlots={allSlots}
+            bookedSlots={bookedSlots}
+            formData={formData}
+            setFormData={setFormData}
+          />
 
           {/* Notes */}
           <div>

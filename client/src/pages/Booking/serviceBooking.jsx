@@ -3,12 +3,12 @@ import { useModal } from "../../Appwrapper";
 import BookingModal from "./BookingModal";
 
 function ServiceBooking() {
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   const handleDetailsClick = () => {
     openModal({
       title: `BOOKING FORM`,
-      body: <BookingModal />,
+      body: <BookingModal onClose={closeModal} />,
     });
   };
   // State to manage the modal visibility
