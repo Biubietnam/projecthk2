@@ -6,19 +6,30 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import 'swiper/css/grid';
+import { Loader } from 'lucide-react';
 
-import { Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination, Grid } from 'swiper/modules';
+import Button from '../../../components/Button';
 
 export default function GearShop() {
     const [gears, setGears] = useState([]);
     const [petFilter, setPetFilter] = useState('All Gears');
     const [categoryFilter, setCategoryFilter] = useState('All Categories');
     const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     useEffect(() => {
         axios.get('http://localhost:8000/api/gears')
-            .then(response => setGears(response.data))
-            .catch(error => console.error('Error fetching pets:', error));
+            .then(response => {
+                setGears(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching pets:', error);
+                setLoading(false);
+            })
     }, []);
 
     const dynamicPetTypes = useMemo(() => {
@@ -52,13 +63,47 @@ export default function GearShop() {
             case 'Reptiles':
                 return <img src="https://img.icons8.com/?size=100&id=95597&format=png&color=000000" alt="Reptile" className="w-8 h-8" />;
             default:
-                return <img src="https://img.icons8.com/?size=100&id=2740&format=png&color=000000" alt="All Pets" className="w-8 h-8" />;
+                return <img src="https://img.icons8.com/?size=100&id=121391&format=png&color=000000" alt="All Pets" className="w-8 h-8" />;
+        }
+    };
+
+    const handleAddToCart = async (id) => {
+        setButtonLoading(true);
+        const token = localStorage.getItem("access_token");
+        if (!token) return alert("You must be logged in to add items to the cart.");
+        try {
+            await axios.post(
+                `http://localhost:8000/api/cart/add/${id}`,
+                {
+                    quantity: 1,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            alert("Item added to cart successfully!");
+        } catch (error) {
+            console.error("Error adding item to cart:", error);
+            alert("Failed to add item to cart. Please try again.");
+        } finally {
+            setButtonLoading(false);
         }
     };
 
     const showSwiper = filteredGears.length > 0;
 
-    return (
+    return loading ? (
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center">
+                <svg className="animate-spin h-10 w-10 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4.93 4.93a10 10 0 0 1 14.14 14.14A10 10 0 0 1 4.93 4.93z"></path>
+                </svg>
+            </div>
+        </div>
+    ) : (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="text-center">
                 <h1 className="text-4xl mb-2 font-bold font-poetsen flex items-center justify-center gap-2 animate-fade-in">
@@ -124,9 +169,13 @@ export default function GearShop() {
                 {showSwiper ? (
                     <>
                         <Swiper
-                            modules={[Navigation, Pagination]}
+                            modules={[Navigation, Pagination, Grid]}
                             spaceBetween={30}
                             slidesPerView={3}
+                            grid={{
+                                rows: 2,
+                                fill: 'row',
+                            }}
                             navigation={{
                                 nextEl: '.swiper-button-next-custom',
                                 prevEl: '.swiper-button-prev-custom',
@@ -136,21 +185,23 @@ export default function GearShop() {
                                 clickable: true,
                                 type: 'bullets',
                             }}
-                            className="!pb-16"
+                            className="swiper !pb-16"
                             breakpoints={{
-                                0: { slidesPerView: 1, spaceBetween: 15 },
-                                640: { slidesPerView: 1, spaceBetween: 20 },
-                                768: { slidesPerView: 2, spaceBetween: 25 },
-                                1024: { slidesPerView: 3, spaceBetween: 30 },
+                                0: { slidesPerView: 1, grid: { rows: 1 } },
+                                640: { slidesPerView: 1, grid: { rows: 1 } },
+                                768: { slidesPerView: 2, grid: { rows: 2 } },
+                                1024: { slidesPerView: 3, grid: { rows: 2 } },
+                                1280: { slidesPerView: 3, grid: { rows: 2 } },
+                                1536: { slidesPerView: 3, grid: { rows: 2 } },
+                                1920: { slidesPerView: 4, grid: { rows: 2 } },
                             }}
                         >
                             {filteredGears.map((product) => (
-                                <SwiperSlide key={product.id} className="h-auto">
-                                    <Link
-                                        to={`/gear/${product.id}`}
-                                        className="group bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col h-[500px]"
+                                <SwiperSlide key={product.id} className="!h-auto">
+                                    <div
+                                        className="relative group bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col h-[500px]"
                                     >
-                                        <div className="w-full h-[275px] flex items-center justify-center overflow-hidden">
+                                        <div className="w-full h-[250px] flex items-center justify-center overflow-hidden">
                                             <img
                                                 src={product.main_image}
                                                 alt={product.name}
@@ -162,7 +213,7 @@ export default function GearShop() {
                                         <div className="w-full h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
 
                                         <div className="p-4 flex flex-col items-center text-center flex-grow">
-                                            <h2 className="text-lg font-semibold line-clamp-2">{product.name}</h2>
+                                            <h2 className="text-lg line-clamp-2">{product.name}</h2>
                                         </div>
 
                                         <div className="px-4 pb-2 mt-auto text-center">
@@ -177,11 +228,54 @@ export default function GearShop() {
                                         <div className="text-sm text-gray-500 pb-3 text-center">
                                             <p>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</p>
                                             <p>⭐ {product.rating} ({product.reviews_count} reviews)</p>
-                                            {product.is_featured ? (
-                                                <p className="text-yellow-600 font-semibold">★ Featured</p>
-                                            ) : null}
                                         </div>
-                                    </Link>
+                                        <div className="px-4 pb-4 mt-auto flex justify-center gap-2">
+                                            <Link
+                                                to={`/gear/${product.id}`}
+                                                className="w-full text-center"
+                                            >
+                                                <Button
+                                                    className="w-full h-[40px] relative text-sm"
+                                                    onClick={() => setButtonLoading(true)}
+                                                    disabled={buttonLoading}
+                                                >
+                                                    <span className={buttonLoading ? "invisible" : "visible"}>
+                                                        Details
+                                                    </span>
+                                                    {buttonLoading && (
+                                                        <span className="absolute inset-0 flex items-center justify-center gap-2">
+                                                            <Loader className="animate-spin w-4 h-4" />
+                                                            Loading...
+                                                        </span>
+                                                    )}
+                                                </Button>
+                                            </Link>
+
+                                            <Button
+                                                onClick={() => handleAddToCart(product.id)}
+                                                className="w-full h-[40px] relative text-sm"
+                                                color="#22c55e"
+                                                hoverColor="#16a34a"
+                                                type="submit"
+                                                disabled={buttonLoading}
+                                            >
+                                                <span className={buttonLoading ? "invisible" : "visible"}>
+                                                    Add to Cart
+                                                </span>
+                                                {buttonLoading && (
+                                                    <span className="absolute inset-0 flex items-center justify-center gap-2">
+                                                        <Loader className="animate-spin w-4 h-4" />
+                                                        Loading...
+                                                    </span>
+                                                )}
+                                            </Button>
+                                        </div>
+                                        {product.is_featured ? (
+                                            <div className="absolute bg-yellow-600 text-white text-xs px-2 py-1 shadow rounded-br-md">
+                                                ★ Featured
+                                            </div>
+                                        ) : null}
+                                    </div>
                                 </SwiperSlide>
                             ))}
                         </Swiper>
@@ -218,5 +312,5 @@ export default function GearShop() {
                 )}
             </div>
         </div>
-    );
+    )
 };

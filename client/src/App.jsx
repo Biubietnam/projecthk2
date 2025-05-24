@@ -7,6 +7,10 @@ import Contact from "./pages/Contact";
 import GearDetail from "./pages/shop/Gear/GearDetail";
 import Homepage from "./pages/Homepage";
 import Cart from "./pages/cart/Cart";
+import Receipt from "./pages/cart/Receipt";
+import ThankYou from "./pages/cart/thank-you";
+import { useLocation } from "react-router-dom";
+
 
 //Dat: Booking page
 import Booking from "./pages/Booking";
@@ -37,11 +41,14 @@ import CreateGear from "./pages/Admin/Gear/CreateGear";
 import CreateUser from "./pages/Admin/User/CreateUser";
 import EditProfile from "./pages/Admin/User/EditProfile";
 import OrderManagement from "./pages/Admin/Order/OrderManagement";
+import AdoptionManagement from "./pages/Admin/Adoption/AdoptionManagement";
 
 export default function App() {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith("/admin");
   return (
     <div className="App font-concert bg-gray-100 min-h-screen">
-      <Header />
+      {!isAdmin && <Header />}
 
       <Routes>
         <Route path="/" element={<Homepage />} />
@@ -84,14 +91,16 @@ export default function App() {
         <Route path="/admin/users/create" element={<CreateUser />} />
         <Route path="/admin/users/edit/profile/:id" element={<EditProfile />} />
         <Route path="/admin/ordermanagement" element={<OrderManagement />} />
-
+        <Route path="/admin/adoptionmanagement" element={<AdoptionManagement />} />
 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/checkout/result" element={<Receipt />} />
+        <Route path="/thank-you" element={<ThankYou />} />
 
       </Routes>
-      <Footer />
+      {!isAdmin && <Footer />}
     </div>
   );
 }

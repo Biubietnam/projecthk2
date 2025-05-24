@@ -25,6 +25,24 @@ export default function OrderManagement() {
     fetchOrders();
   }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const token = localStorage.getItem("access_token");
+      await axios.post("http://localhost:8000/api/orders", data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("Order created successfully!");
+      fetchOrders();
+    } catch (err) {
+      console.error("Error creating order:", err);
+      alert("Failed to create order.");
+    }
+  }
+
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
       <div className="mb-2">

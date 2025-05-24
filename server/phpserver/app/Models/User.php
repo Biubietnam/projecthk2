@@ -64,11 +64,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Review::class);
     }
 
-    public function adoptionRequests()
-    {
-        return $this->hasMany(AdoptionRequest::class);
-    }
-
     public function pets()
     {
         return $this->hasMany(UserPet::class);
@@ -82,6 +77,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function cart()
     {
         return $this->hasOne(Cart::class);
+    }
+
+    public function hasAdoptionRequestForPet($petId)
+    {
+        return $this->hasMany(AdoptionRequest::class)
+        ->where('pet_id', $petId)
+        ->where('status', 'pending')
+        ->exists();
     }
 
 }

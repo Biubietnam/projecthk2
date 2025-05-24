@@ -84,11 +84,15 @@ export default function Cart() {
                 </div>
             ) : (
                 <div className="space-y-6">
-                    {cartItems.map(item => (
+{cartItems.map(item => (
                         <div key={item.id} className="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded shadow-sm">
                             <div className="flex items-center gap-4 w-full md:w-2/3">
                                 <div className="w-24 h-24 bg-gray-100 rounded flex items-center justify-center">
-                                    <span className="text-gray-400 text-xs">Image</span>
+                                    {item.gear.main_image ? (
+                                        <img src={item.gear.main_image} alt={item.gear.name} className="w-full h-full object-cover rounded" />
+                                    ) : (
+                                        <span className="text-gray-400">No Image</span>
+                                    )}
                                 </div>
                                 <div className="space-y-1">
                                     <h2 className="text-lg font-semibold text-gray-800">{item.gear.name}</h2>

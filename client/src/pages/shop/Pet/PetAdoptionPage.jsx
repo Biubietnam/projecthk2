@@ -10,31 +10,78 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination } from 'swiper/modules';
+import { useModal } from '../../../Appwrapper';
+import AdoptForm from './AdoptForm';
 
 export default function PetAdoptionPage() {
     const { id } = useParams();
     const [pet, setPet] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('About');
+    const { openModal } = useModal();
+    const [hasPending, setHasPending] = useState(false);
 
     useEffect(() => {
-        const fetchPet = async () => {
+        const fetchData = async () => {
+            setLoading(true);
+
             try {
-                const response = await axios.get(`http://localhost:8000/api/pets/${id}`);
-                setPet(response.data);
-            } catch (error) {
-                console.error("Error fetching pet:", error);
+                const petRes = await axios.get(`http://localhost:8000/api/pets/${id}`);
+                setPet(petRes.data);
+
+                const token = localStorage.getItem("access_token");
+                if (token) {
+                    const adoptionRes = await axios.get(`http://localhost:8000/api/adoption/check/${id}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    setHasPending(adoptionRes.data.has_request);
+                }
+            } catch (err) {
+                console.error("Error fetching data:", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchPet();
+
+        fetchData();
     }, [id]);
 
-    if (loading) return <p className="text-center">Loading...</p>;
-    if (!pet) return <p className="text-center text-red-600">Pet not found.</p>;
 
-    return (
+    const handleAdoptClick = () => {
+        if (!pet) return;
+        openModal({
+            title: `Adopt ${pet.name}`,
+            body: <AdoptForm pet={pet} />,
+        });
+    };
+
+    const getTypeColor = (type) => {
+        switch (type) {
+            case 'Dogs':
+                return 'bg-yellow-600';
+            case 'Cats':
+                return 'bg-pink-600';
+            case 'Rodents':
+                return 'bg-orange-600';
+            case 'Reptiles':
+                return 'bg-green-600';
+            default:
+                return 'bg-gray-600';
+        }
+    };
+
+  return loading ? (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center">
+        <svg className="animate-spin h-10 w-10 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4.93 4.93a10 10 0 0 1 14.14 14.14A10 10 0 0 1 4.93 4.93z"></path>
+        </svg>
+      </div>
+    </div>
+  ) : (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="mb-2">
                 <Link
@@ -62,6 +109,7 @@ export default function PetAdoptionPage() {
             </div >
 
             <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
+
                 <div className="w-full lg:w-3/5 bg-white p-6 rounded-lg">
                     <div className="w-full max-w-3xl mx-auto rounded-xl overflow-hidden">
                         {pet?.images?.length > 0 ? (
@@ -94,6 +142,9 @@ export default function PetAdoptionPage() {
                     </div>
                     <div className="flex justify-between items-center mb-2">
                         <h1 className="text-3xl font-bold">{pet.name}</h1>
+                        <span className={`text-sm text-white px-3 py-1 rounded ${getTypeColor(pet.type)}`}>
+                            {pet.type}
+                        </span>
                         <span className="bg-green-600 text-white px-3 py-1 rounded text-sm">
                             {pet.tags.includes('Available') ? 'Available' : 'Unavailable'}
                         </span>
@@ -192,13 +243,30 @@ export default function PetAdoptionPage() {
                                 currency: 'USD',
                             }).format(pet.adoptionFee)}
                         </p>
-                        <p className="text-xs text-gray-500">Fee includes vaccinations, microchip, and spay/neuter</p>
+                        <p className="text-xs text-gray-500 m-2">Fee includes vaccinations, microchip, and spay/neuter</p>
                     </div>
-                    <Button className="w-full">Adopt Me</Button>
-                    <div className="mt-6">
-                        <h2 className='text-xl'>Contact Us</h2>
-                        <p className="text-sm text-gray-500">Phone: (123) 456-7890</p>
-                        <p className="text-sm text-gray-500">Email: adoptions@petcare.com</p>
+                    {hasPending ? (
+                        <div className="w-full py-3 px-4 text-center bg-yellow-100 border border-yellow-300 text-yellow-800 rounded shadow-inner">
+                            <img src="https://img.icons8.com/?size=100&id=lr6SW2hyT2rh&format=png&color=000000" alt="Pending" className='w-10 h-10 mx-auto' />
+                            You have already submitted an adoption request.
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleAdoptClick}
+                            className="w-full relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-white transition duration-300 bg-green-500 rounded-lg shadow-lg group hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+                        >
+                            <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-green-400 to-green-600 opacity-10 group-hover:opacity-20"></span>
+                            <span className="relative z-10">🐾 Adopt Me</span>
+                        </button>
+                    )}
+                    <div className="mt-6 text-center">
+                        <h2 className="text-xl mb-2">Need Help?</h2>
+                        <Link to="/contact">
+                            <Button>
+                                <img src="https://img.icons8.com/?size=100&id=fUHYOFprDglQ&format=png&color=000000" alt="Contact Us" className="inline-block mr-2 w-5 h-5" />
+                                Contact Us
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>

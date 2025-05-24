@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\AdoptionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\AdoptionRequestReceived;
+use Illuminate\Support\Facades\Mail;
 
 class AdoptionRequestController extends Controller
 {
@@ -20,6 +22,11 @@ class AdoptionRequestController extends Controller
             'note' => 'nullable|string',
         ]);
 
+        $user = Auth::user();
+        if ($user->hasAdoptionRequestForPet($request->pet_id)) {
+            return response()->json(['message' => 'You have already requested to adopt this pet.'], 400);
+        }
+
         $alreadyAdopted = \App\Models\Pet::find($request->pet_id)?->adopted;
         if ($alreadyAdopted) {
             return response()->json(['message' => 'This pet has already been adopted.'], 400);
@@ -32,6 +39,7 @@ class AdoptionRequestController extends Controller
             'requested_at' => now(),
         ]);
 
+        Mail::to(Auth::user()->email)->send(new AdoptionRequestReceived($adoption));
         return response()->json(['message' => 'Adoption request submitted.', 'data' => $adoption]);
     }
 
@@ -77,5 +85,13 @@ class AdoptionRequestController extends Controller
 
         return response()->json(['message' => 'Adoption request deleted.']);
     }
-}
+    
+    public function check($petId)
+    {
+        $user = Auth::user();
+        
+        $hasRequest = $user->hasAdoptionRequestForPet($petId);
 
+        return response()->json(['has_request' => $hasRequest]);
+    }
+}

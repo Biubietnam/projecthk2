@@ -14,7 +14,7 @@ export default function LoginFormContent() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectTo = location.state?.redirectTo || "/";
+  const redirectTo = location.state?.redirectTo || "/admin/dashboard";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -94,9 +94,8 @@ export default function LoginFormContent() {
 
         {message && (
           <div
-            className={`mb-3 text-center font-semibold ${
-              messageType === "success" ? "text-green-600" : "text-red-600"
-            }`}
+            className={`mb-3 text-center font-semibold ${messageType === "success" ? "text-green-600" : "text-red-600"
+              }`}
           >
             {message}
           </div>
@@ -162,9 +161,8 @@ export default function LoginFormContent() {
               width="full"
               position="center"
               disabled={isLoading}
-              className={`flex justify-center items-center ${
-                isLoading ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+              className={`flex justify-center items-center ${isLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
             >
               {isLoading ? (
                 <svg
@@ -193,7 +191,22 @@ export default function LoginFormContent() {
             </Button>
           </div>
 
-          <Button onClick={openGoogleLoginPopup}>Sign in with Google</Button>
+          <Button
+            type="button"
+            onClick={openGoogleLoginPopup}
+            className="w-full flex items-center justify-center gap-3 border rounded-lg py-2"
+            color="white"
+            textColor="#374151"
+            hoverColor="#E5E7EB"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            <span className="text-sm font-medium">Sign in with Google</span>
+          </Button>
+
         </form>
 
         <p className="text-sm text-center text-gray-500 mt-6">
