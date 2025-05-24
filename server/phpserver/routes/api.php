@@ -17,6 +17,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserPetController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\BookingController;
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
@@ -76,14 +78,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/adoption-requests/{id}/approve', [AdoptionRequestController::class, 'approve']);
     Route::patch('/adoption-requests/{id}/reject', [AdoptionRequestController::class, 'reject']);
     Route::delete('/adoption-requests/{id}', [AdoptionRequestController::class, 'destroy']);
-});
+    Route::get('/adoption/check/{pet}', [AdoptionRequestController::class, 'check']);
 
-Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart', [CartController::class, 'show']);
     Route::post('/cart/add/{gearId}', [CartController::class, 'add']);
     Route::put('/cart/update/{itemId}', [CartController::class, 'update']);
     Route::delete('/cart/remove/{itemId}', [CartController::class, 'remove']);
+
+    Route::post('/vnpay/create-payment', [PaymentController::class, 'createPayment']);
 });
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
@@ -98,9 +102,14 @@ Route::post('/bookings', [BookingController::class, 'store']);
 Route::get('/booked-slots', [BookingController::class, 'getBookedSlots']);
 Route::post('/userpets', [UserPetController::class, 'store']);
 
-
+Route::get('/vnpay/return', [PaymentController::class, 'vnpayReturn']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/vnpay/create-payment', [PaymentController::class, 'createPayment']);
+    Route::post('/confirm-payment', [StripeController::class, 'confirmPayment']);
+    Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
 });
-Route::get('/vnpay/return', [PaymentController::class, 'vnpayReturn']);
+
+Route::middleware('auth:sanctum')->group(function () {
+        Route::get('receipts/{transaction}', [ReceiptController::class, 'show']);
+});
+

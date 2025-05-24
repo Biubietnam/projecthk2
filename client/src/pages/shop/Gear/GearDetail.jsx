@@ -9,12 +9,13 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, Loader } from 'lucide-react';
 
 export default function GearDetail() {
   const { id } = useParams();
   const [gear, setGear] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingAddToCart, setLoadingAddToCart] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [formData, setFormData] = useState({
     comment: '',
@@ -27,6 +28,7 @@ export default function GearDetail() {
 
   useEffect(() => {
     const fetchGear = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`http://localhost:8000/api/gears/${id}`);
         const reviewsResponse = await axios.get(`http://localhost:8000/api/gears/${id}/reviews`);
@@ -99,6 +101,7 @@ export default function GearDetail() {
   };
 
   const handleAddToCart = async () => {
+    setLoadingAddToCart(true);
     const token = localStorage.getItem("access_token");
     if (!token) return alert("You must be logged in to add items to the cart.");
     try {
@@ -118,12 +121,21 @@ export default function GearDetail() {
       console.error("Error adding item to cart:", error);
       alert("Failed to add item to cart. Please try again.");
     }
+    finally {
+      setLoadingAddToCart(false);
+    }
   };
 
-  if (loading) return <p className="text-center">Loading...</p>;
-  if (!gear) return <p className="text-center text-red-600">Gear not found.</p>;
-
-  return (
+  return loading ? (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center">
+        <svg className="animate-spin h-10 w-10 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4.93 4.93a10 10 0 0 1 14.14 14.14A10 10 0 0 1 4.93 4.93z"></path>
+        </svg>
+      </div>
+    </div>
+  ) : (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
       <div className="mb-2">
         <Link
@@ -263,11 +275,19 @@ export default function GearDetail() {
             />
 
             <Button
-              disabled={gear.stock <= 0}
+              disabled={gear.stock <= 0 || loadingAddToCart || quantity <= 0}
               onClick={handleAddToCart}
-              className={`w-full py-2 ${gear.stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className="w-full text-sm relative"
             >
-              Add to Cart
+              <span className={loadingAddToCart ? "invisible" : "visible"}>
+                Add to Cart
+              </span>
+              {loadingAddToCart && (
+                <span className="absolute inset-0 flex items-center justify-center gap-2">
+                  <Loader className="animate-spin w-4 h-4" />
+                  Loading...
+                </span>
+              )}
             </Button>
           </div>
 

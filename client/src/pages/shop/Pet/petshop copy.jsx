@@ -8,9 +8,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import 'swiper/css/grid';
 
-import { Navigation, Pagination, Grid } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 import Button from '../../../components/Button';
 
 export default function OurPets() {
@@ -121,13 +120,9 @@ export default function OurPets() {
         {showSwiper ? (
           <>
             <Swiper
-              modules={[Navigation, Pagination, Grid]}
+              modules={[Navigation, Pagination]}
               spaceBetween={30}
               slidesPerView={3}
-              grid={{
-                rows: 2,
-                fill: 'row',
-              }}
               navigation={{
                 nextEl: '.swiper-button-next-custom',
                 prevEl: '.swiper-button-prev-custom',
@@ -137,19 +132,19 @@ export default function OurPets() {
                 clickable: true,
                 type: 'bullets',
               }}
-              className="swiper !pb-16"
+              className="!pb-16"
               breakpoints={{
-                0: { slidesPerView: 1, grid: { rows: 1 } },
-                640: { slidesPerView: 1, grid: { rows: 1 } },
-                768: { slidesPerView: 2, grid: { rows: 2 } },
-                1024: { slidesPerView: 3, grid: { rows: 2 } },
-                1280: { slidesPerView: 3, grid: { rows: 2 } },
-                1536: { slidesPerView: 3, grid: { rows: 2 } },
-                1920: { slidesPerView: 4, grid: { rows: 2 } },
+                0: { slidesPerView: 1, spaceBetween: 15 },
+                640: { slidesPerView: 1, spaceBetween: 20 },
+                768: { slidesPerView: 2, spaceBetween: 25 },
+                1024: { slidesPerView: 3, spaceBetween: 30 },
+                1280: { slidesPerView: 3, spaceBetween: 30 },
+                1536: { slidesPerView: 3, spaceBetween: 30 },
+                1920: { slidesPerView: 3, spaceBetween: 30 },
               }}
             >
               {filteredPets.map((pet) => (
-                <SwiperSlide key={pet.id} className="!h-auto">
+                <SwiperSlide key={pet.id} className="h-auto">
                   <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col justify-between h-full">
                     <div>
                       <div className="h-48 w-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
