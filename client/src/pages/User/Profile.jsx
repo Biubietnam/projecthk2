@@ -60,7 +60,7 @@ export default function Profile() {
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="max-w-xl mx-auto px-4 py-10 shadow rounded hover:shadow-lg transition-shadow duration-300 bg-white">
-                <h2 className="text-xl font-bold mb-4">User Profile</h2>
+                <h2 className="text-xl  mb-4">User Profile</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input type="text" name="full_name" placeholder="Full Name" value={profile.full_name || ''} onChange={handleChange} className="w-full border p-2 rounded" />
                     <select name="gender" value={profile.gender || ''} onChange={handleChange} className="w-full border p-2 rounded">

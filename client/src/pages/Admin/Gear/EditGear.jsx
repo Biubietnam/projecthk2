@@ -187,7 +187,7 @@ export default function EditGear() {
             </div>
 
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Edit Gear</h1>
+                <h1 className="text-3xl ">Edit Gear</h1>
                 <Wrench className="text-customPurple w-6 h-6" />
             </div>
 

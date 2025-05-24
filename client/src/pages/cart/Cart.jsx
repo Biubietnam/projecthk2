@@ -68,7 +68,7 @@ export default function Cart() {
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-10 text-gray-700 mt-10">
-            <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
+            <h1 className="text-3xl  mb-6 flex items-center gap-2">
                 <ShoppingCart className="w-6 h-6" /> Your Cart
             </h1>
 
@@ -97,7 +97,7 @@ export default function Cart() {
                                 <div className="space-y-1">
                                     <h2 className="text-lg font-semibold text-gray-800">{item.gear.name}</h2>
                                     <p className="text-sm text-gray-600">{item.gear.description}</p>
-                                    <p className="text-xl font-bold text-green-600 mt-1 tracking-wide">
+                                    <p className="text-xl  text-green-600 mt-1 tracking-wide">
                                         {
                                             new Intl.NumberFormat('en-US', {
                                                 style: 'currency',
@@ -126,7 +126,7 @@ export default function Cart() {
                     ))}
 
                     <div className="text-right">
-                        <h3 className="text-xl font-bold">
+                        <h3 className="text-xl ">
                             Total: {
                                 new Intl.NumberFormat('en-US', {
                                     style: 'currency',

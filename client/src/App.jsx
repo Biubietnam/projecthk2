@@ -42,12 +42,25 @@ import CreateUser from "./pages/Admin/User/CreateUser";
 import EditProfile from "./pages/Admin/User/EditProfile";
 import OrderManagement from "./pages/Admin/Order/OrderManagement";
 import AdoptionManagement from "./pages/Admin/Adoption/AdoptionManagement";
+import { useEffect } from "react";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
+
+  return null;
+}
+
 
 export default function App() {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
   return (
     <div className="App font-concert bg-gray-100 min-h-screen">
+      <ScrollToTop />
       {!isAdmin && <Header />}
 
       <Routes>

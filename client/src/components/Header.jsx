@@ -54,7 +54,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
         <Link
           to="/"
-          className="text-xl font-bold text-customPurple tracking-wide flex items-center"
+          className="text-xl  text-customPurple tracking-wide flex items-center"
         >
           <span className="text-2xl mr-1">🐾</span>
           <span className="font-poetsen">PetZone</span>
@@ -89,6 +89,15 @@ export default function Header() {
 
               {dropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  {/* Link admin dashboard */}
+                  <Link
+                    to="/admin/dashboard"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                  
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"

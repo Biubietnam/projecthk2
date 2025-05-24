@@ -35,6 +35,9 @@ class RegisterController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Xác thực mail
+        $user->sendEmailVerificationNotification();
+
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'Bearer',

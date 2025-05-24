@@ -141,7 +141,7 @@ export default function PetAdoptionPage() {
                         )}
                     </div>
                     <div className="flex justify-between items-center mb-2">
-                        <h1 className="text-3xl font-bold">{pet.name}</h1>
+                        <h1 className="text-3xl ">{pet.name}</h1>
                         <span className={`text-sm text-white px-3 py-1 rounded ${getTypeColor(pet.type)}`}>
                             {pet.type}
                         </span>

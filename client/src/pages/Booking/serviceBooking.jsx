@@ -33,7 +33,7 @@ function ServiceBooking() {
 
   return (
     <div className="min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6 text-[#6D7AB5]">
+      <h1 className="text-3xl  text-center mb-6 text-[#6D7AB5]">
         Step 2: Booking Service
       </h1>
       <p className="text-center text-gray-600 mb-10">Choose your service.</p>

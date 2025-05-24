@@ -121,7 +121,7 @@ const BookingModal = ({ onClose }) => {
           ×
         </button>
 
-        <h2 className="text-2xl font-bold text-center mb-4">BOOKING FORM</h2>
+        <h2 className="text-2xl  text-center mb-4">BOOKING FORM</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Pet Info */}
           {petData && (

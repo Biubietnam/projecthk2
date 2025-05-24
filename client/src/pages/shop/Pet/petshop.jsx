@@ -82,7 +82,7 @@ export default function OurPets() {
   ) : (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
       <div className="text-center mb-10">
-        <h1 className="text-4xl mb-2 font-bold font-poetsen flex items-center justify-center gap-2 animate-fade-in">
+        <h1 className="text-4xl mb-2  font-poetsen flex items-center justify-center gap-2 animate-fade-in">
           🐾 Find Your Perfect Pet
         </h1>
         <p className="text-gray-600 mt-2">Browse our selection of adorable pets looking for a loving home</p>
@@ -154,18 +154,20 @@ export default function OurPets() {
                     <div>
                       <div className="h-48 w-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
                         {pet.main_image ? (
+                          // Ảnh chỉ xem không tải lại
                           <img
                             src={pet.main_image}
                             alt={pet.name}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain select-none pointer-events-none"
                             loading="lazy"
+                            draggable={false}
                           />
                         ) : (
                           <span className="text-sm">No Image Available</span>
                         )}
                       </div>
                       <div className="p-4">
-                        <h2 className="text-xl font-bold text-center truncate">{pet.name}</h2>
+                        <h2 className="text-xl  text-center truncate">{pet.name}</h2>
                         <p className="text-sm text-gray-500 text-center capitalize">{pet.breed} • {pet.age}</p>
                         <p className="text-sm mt-2 text-gray-600 text-center line-clamp-2">{pet.description}</p>
                       </div>

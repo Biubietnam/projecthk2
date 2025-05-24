@@ -18,11 +18,14 @@ class StripeController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
         Log::info('Stripe secret is: ' . config('services.stripe.secret'));
         $amount = $request->input('amount');
-
+        $customer  = $request->input('customer');
         $paymentIntent = PaymentIntent::create([
             'amount'               => $amount,
             'currency'             => 'usd',
             'payment_method_types' => ['card'],
+            'metadata'             => [
+                'customer' => json_encode($customer),
+            ],
         ]);
 
         return response()->json([
@@ -37,28 +40,38 @@ class StripeController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
 
         $piId  = $request->input('payment_intent_id');
-        $items = $request->input('items');
+        $items = $request->input('items');              
 
         $pi = PaymentIntent::retrieve($piId);
 
         if ($pi->status !== 'succeeded') {
-            return response()->json([
-                'error' => 'Payment not successful.',
-            ], 400);
+            return response()->json(['error' => 'Payment not successful.'], 400);
         }
 
-        $count = Receipt::count() + 1;
-        $txnId = 'VN' . str_pad($count, 6, '0', STR_PAD_LEFT);
+        $customerMeta = json_decode($pi->metadata->customer ?? '{}', true);
 
-        // amount_received is in cents; convert to dollars (or your currency unit)
-        $paidAmount = $pi->amount_received / 100;
+        $authUser = Auth::user(); 
+
+        $fullName = $customerMeta['fullName'];
+        $email    = $customerMeta['email'];
+        $number   = $customerMeta['phone'];
+        $address  = $customerMeta['address'];
+
+        $count        = Receipt::count() + 1;
+        $txnId        = 'VN' . str_pad($count, 6, '0', STR_PAD_LEFT);
+        $paidAmount   = $pi->amount_received / 100;    
+
 
         Receipt::create([
-            'transaction_id'  => $txnId,
-            'user_id'         => Auth::id(),
-            'items'           => $items,
-            'amount'          => $paidAmount,
-            'payment_status'  => 'paid',
+            'transaction_id' => $txnId,
+            'user_id'        => $authUser?->id,  
+            'items'          => json_encode($items),
+            'amount'         => $paidAmount,
+            'payment_status' => 'paid',
+            'full_name'      => $fullName,
+            'email'          => $email,
+            'number'         => $number,
+            'address'        => $address,
         ]);
 
         return response()->json([

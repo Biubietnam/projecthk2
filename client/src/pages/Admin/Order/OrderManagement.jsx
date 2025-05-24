@@ -55,7 +55,7 @@ export default function OrderManagement() {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Order Management</h1>
+        <h1 className="text-3xl ">Order Management</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-x-auto border border-gray-200">

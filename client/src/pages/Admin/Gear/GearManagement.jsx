@@ -68,7 +68,7 @@ export default function GearManagement() {
             </div >
 
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Gear Management</h1>
+                <h1 className="text-3xl ">Gear Management</h1>
                 <Link to="/admin/gears/create" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                     + Add New Gear
                 </Link>

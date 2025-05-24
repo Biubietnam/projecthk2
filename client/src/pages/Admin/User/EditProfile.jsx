@@ -99,7 +99,7 @@ export default function EditProfile() {
 
             <div className="relative w-full flex items-center justify-center mb-6">
                 <Edit3 className="absolute left-0 w-6 h-6 text-customPurple" />
-                <h1 className="text-3xl font-bold text-center">Edit Profile</h1>
+                <h1 className="text-3xl  text-center">Edit Profile</h1>
                 <UserCog className="absolute right-0 w-6 h-6 text-customPurple" />
             </div>
 

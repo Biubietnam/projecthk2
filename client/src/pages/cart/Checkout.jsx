@@ -3,11 +3,22 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import Button from "../../components/Button"
 import { Link } from "react-router-dom"
-import { FaMoneyBillAlt, FaCreditCard, FaPaypal } from "react-icons/fa"
+import { FaMoneyBillAlt, FaCreditCard } from "react-icons/fa"
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 
 const stripePromise = loadStripe("pk_test_51RPkKYCksw0msKNEl8oiXWfeBxczpThjgO7hriExdGjHg8MDg7WO5E411S68j00H34IqtziW8CKdGHNngFTFNAO100r6z6QPiv")
+
+function MoMoIcon() {
+  return (
+    <img
+      src="/img/momo_square_pinkbg.svg"
+      alt="MoMo Logo"
+      className="w-7 h-7"
+    />
+  );
+}
+
 
 function CheckoutForm({ totalAmount, onSuccess, onCancel }) {
     const stripe = useStripe()
@@ -226,7 +237,7 @@ export default function Checkout() {
     const paymentOptions = [
         { value: "cod", label: "Cash on Delivery", icon: <FaMoneyBillAlt className="text-green-600 text-2xl" /> },
         { value: "card", label: "Credit/Debit Card", icon: <FaCreditCard className="text-blue-600 text-2xl" /> },
-        { value: "paypal", label: "PayPal", icon: <FaPaypal className="text-indigo-600 text-2xl" /> },
+        { value: "Momo", label: "Momo", icon: <MoMoIcon className="text-yellow-600 text-2xl" /> },
     ]
 
     // Stripe Elements appearance options
@@ -253,7 +264,7 @@ export default function Checkout() {
 
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
-            <h1 className="text-3xl font-bold mb-6 text-center">Checkout</h1>
+            <h1 className="text-3xl mb-6 text-center">Checkout</h1>
             <div className="mb-2">
                 <Link
                     to="/cart"
@@ -276,10 +287,10 @@ export default function Checkout() {
 
             <div className="flex flex-col lg:flex-row gap-6 hover w-full">
                 <div className="bg-white p-6 rounded shadow space-y-4 lg:basis-1/2 w-full hover:shadow-lg transition-shadow duration-300">
-                    <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                    <h2 className="text-xl mb-4">Order Summary</h2>
                     <div className="overflow-x-auto rounded-lg border border-gray-200">
                         <ul className="min-w-full divide-y divide-gray-200 text-sm">
-                            <li className="bg-gray-50 grid grid-cols-3 font-semibold text-gray-700 px-4 py-2">
+                            <li className="bg-gray-50 grid grid-cols-3  text-gray-700 px-4 py-2">
                                 <span className="text-left">Product</span>
                                 <span className="text-center">Quantity</span>
                                 <span className="text-right">Subtotal</span>
@@ -308,7 +319,7 @@ export default function Checkout() {
                             <span>Shipping</span>
                             <span>Free</span>
                         </div>
-                        <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                        <div className="flex justify-between text-lg pt-2 border-t">
                             <span>Total</span>
                             <span>{new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalAmount)}</span>
                         </div>
@@ -319,7 +330,7 @@ export default function Checkout() {
                     onSubmit={handleSubmit}
                     className="space-y-6 bg-white p-6 rounded shadow hover:shadow-lg transition-shadow duration-300 lg:basis-1/2 w-full"
                 >
-                    <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
+                    <h2 className="text-xl  mb-4">Shipping Information</h2>
                     <div className="grid grid-cols-1 gap-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Full Name</label>
@@ -403,7 +414,7 @@ export default function Checkout() {
             {showStripeModal && clientSecret && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h3 className="text-xl font-semibold mb-4">Complete Your Payment</h3>
+                        <h3 className="text-xl mb-4">Complete Your Payment</h3>
                         <Elements stripe={stripePromise} options={stripeOptions}>
                             <CheckoutForm totalAmount={totalAmount} onSuccess={handlePaymentSuccess} onCancel={handlePaymentCancel} />
                         </Elements>

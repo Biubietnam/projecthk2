@@ -86,7 +86,7 @@ function Booking() {
             className="w-[300px] h-[300px] absolute top-0 left-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
           />
           <div className="p-4">
-            <h3 className="text-2xl font-bold text-customPurple text-center mb-2 font-serif leading-tight">
+            <h3 className="text-2xl  text-customPurple text-center mb-2 font-serif leading-tight">
               Vet
             </h3>
             <p className="text-gray-700 text-center mb-2 italic font-sans tracking-wide">
@@ -119,7 +119,7 @@ function Booking() {
             className="w-[300px] h-[300px] absolute top-0 left-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
           />
           <div className="p-4">
-            <h3 className="text-2xl font-bold text-customPurple text-center mb-2 font-serif leading-tight">
+            <h3 className="text-2xl  text-customPurple text-center mb-2 font-serif leading-tight">
               Spa
             </h3>
             <p className="text-gray-700 text-center mb-2 italic font-sans tracking-wide">
