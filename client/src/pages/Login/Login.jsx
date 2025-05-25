@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Button from "../../components/Button";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LoginFormContent() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,9 @@ export default function LoginFormContent() {
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = location.state?.redirectTo || "/";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,7 +38,7 @@ export default function LoginFormContent() {
       localStorage.setItem("user_info", JSON.stringify(res.data.user));
 
       setTimeout(() => {
-        window.location.href = "/";
+        navigate(redirectTo);
       }, 500);
     } catch (err) {
       console.error("Login Error:", err);
@@ -67,7 +71,7 @@ export default function LoginFormContent() {
       if (type === "OAUTH_SUCCESS") {
         setMessage("Login successful!");
         setMessageType("success");
-        
+
         localStorage.setItem("access_token", token);
         localStorage.setItem("user_info", JSON.stringify(user));
 
@@ -75,21 +79,26 @@ export default function LoginFormContent() {
         console.log("Access token:", token);
 
         window.removeEventListener("message", handler);
-        window.location.href = "/";
+        navigate(redirectTo);
       }
     });
   };
 
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center mb-2">Welcome Back</h1>
-        <p className="text-sm text-gray-500 text-center mb-4">Please sign in to your account</p>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center mb-2">
+          Welcome Back
+        </h1>
+        <p className="text-sm text-gray-500 text-center mb-4">
+          Please sign in to your account
+        </p>
 
         {message && (
           <div
-            className={`mb-3 text-center font-semibold ${messageType === "success" ? "text-green-600" : "text-red-600"}`}
+            className={`mb-3 text-center font-semibold ${
+              messageType === "success" ? "text-green-600" : "text-red-600"
+            }`}
           >
             {message}
           </div>
@@ -97,7 +106,9 @@ export default function LoginFormContent() {
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label htmlFor="email" className="block text-sm text-gray-600 mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm text-gray-600 mb-1">
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -112,7 +123,12 @@ export default function LoginFormContent() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm text-gray-600 mb-1">Password</label>
+            <label
+              htmlFor="password"
+              className="block text-sm text-gray-600 mb-1"
+            >
+              Password
+            </label>
             <input
               type="password"
               id="password"
@@ -128,10 +144,16 @@ export default function LoginFormContent() {
 
           <div className="flex justify-between items-center text-sm text-gray-600">
             <label className="flex items-center space-x-2">
-              <input type="checkbox" className="form-checkbox h-4 w-4 accent-customPurple" />
+              <input
+                type="checkbox"
+                className="form-checkbox h-4 w-4 accent-customPurple"
+              />
               <span>Remember me</span>
             </label>
-            <Link to="/forgot-password" className="text-customPurple hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-customPurple hover:underline"
+            >
               Forgot Password?
             </Link>
           </div>
@@ -142,12 +164,30 @@ export default function LoginFormContent() {
               width="full"
               position="center"
               disabled={isLoading}
-              className={`flex justify-center items-center ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+              className={`flex justify-center items-center ${
+                isLoading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
               {isLoading ? (
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
                 </svg>
               ) : (
                 "Sign In"

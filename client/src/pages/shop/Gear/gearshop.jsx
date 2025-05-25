@@ -6,20 +6,30 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import Button from '../../../components/Button';
+import 'swiper/css/grid';
+import { Loader } from 'lucide-react';
 
-import { Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination, Grid } from 'swiper/modules';
+import Button from '../../../components/Button';
 
 export default function GearShop() {
     const [gears, setGears] = useState([]);
     const [petFilter, setPetFilter] = useState('All Gears');
     const [categoryFilter, setCategoryFilter] = useState('All Categories');
     const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     useEffect(() => {
         axios.get('http://localhost:8002/api/gears')
-            .then(response => setGears(response.data))
-            .catch(error => console.error('Error fetching pets:', error));
+            .then(response => {
+                setGears(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching pets:', error);
+                setLoading(false);
+            })
     }, []);
 
     const dynamicPetTypes = useMemo(() => {
@@ -42,9 +52,58 @@ export default function GearShop() {
     }
         , [gears, petFilter, categoryFilter, search]);
 
+    const getTypeIcon = (type) => {
+        switch (type) {
+            case 'Dogs':
+                return <img src="https://img.icons8.com/?size=100&id=121419&format=png&color=000000" alt="Dog" className="w-8 h-8" />;
+            case 'Cats':
+                return <img src="https://img.icons8.com/?size=100&id=121439&format=png&color=000000" alt="Cat" className="w-8 h-8" />;
+            case 'Rodents':
+                return <img src="https://img.icons8.com/?size=100&id=41034&format=png&color=000000" alt="Rodent" className="w-8 h-8" />;
+            case 'Reptiles':
+                return <img src="https://img.icons8.com/?size=100&id=95597&format=png&color=000000" alt="Reptile" className="w-8 h-8" />;
+            default:
+                return <img src="https://img.icons8.com/?size=100&id=121391&format=png&color=000000" alt="All Pets" className="w-8 h-8" />;
+        }
+    };
+
+    const handleAddToCart = async (id) => {
+        setButtonLoading(true);
+        const token = localStorage.getItem("access_token");
+        if (!token) return alert("You must be logged in to add items to the cart.");
+        try {
+            await axios.post(
+                `http://localhost:8002/api/cart/add/${id}`,
+                {
+                    quantity: 1,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            alert("Item added to cart successfully!");
+        } catch (error) {
+            console.error("Error adding item to cart:", error);
+            alert("Failed to add item to cart. Please try again.");
+        } finally {
+            setButtonLoading(false);
+        }
+    };
+
     const showSwiper = filteredGears.length > 0;
 
-    return (
+    return loading ? (
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center">
+                <svg className="animate-spin h-10 w-10 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4.93 4.93a10 10 0 0 1 14.14 14.14A10 10 0 0 1 4.93 4.93z"></path>
+                </svg>
+            </div>
+        </div>
+    ) : (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="text-center">
                 <h1 className="text-4xl mb-2 font-bold font-poetsen flex items-center justify-center gap-2 animate-fade-in">
@@ -53,48 +112,70 @@ export default function GearShop() {
                 <p className="text-gray-600 mb-6">Quality products for your beloved pets</p>
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div className="w-full flex justify-center mt-6">
                 <input
                     type="text"
                     placeholder="Search products..."
-                    className="px-4 py-2 rounded-md border border-customPurple w-full md:w-1/2 text-sm"
+                    className="w-full max-w-xl px-5 py-3 rounded-full border border-customPurple shadow-sm focus:outline-none focus:ring-2 focus:ring-customPurple focus:border-transparent text-sm"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     aria-label="Search products"
                 />
+            </div>
 
-                <div className="flex gap-2">
-                    <select
-                        className="px-4 py-2 rounded-md border border-customPurple text-sm"
-                        value={petFilter}
-                        onChange={(e) => setPetFilter(e.target.value)}
-                        aria-label="Filter by pet type"
-                    >
-                        {dynamicPetTypes.map((type) => (
-                            <option key={type} value={type}>{type}</option>
-                        ))}
-                    </select>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
+                <div className="flex flex-col gap-4 w-full">
+                    <div>
+                        <div className="flex justify-center gap-4 flex-wrap">
+                            {dynamicPetTypes.map((type) => (
+                                <button
+                                    key={type}
+                                    onClick={() => setPetFilter(type)}
+                                    className={`flex flex-col items-center justify-center w-20 h-20 rounded-full border text-sm transition
+      ${petFilter === type
+                                            ? "bg-customPurple text-white border-customPurple"
+                                            : "bg-white text-gray-700 border-gray-300 hover:border-customPurple"
+                                        }`}
+                                    aria-label={`Filter pets by ${type}`}
+                                >
+                                    {getTypeIcon(type)}
+                                    <span className="mt-1">{type}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
-                    <select
-                        className="px-4 py-2 rounded-md border border-customPurple text-sm"
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        aria-label="Filter by category"
-                    >
-                        {dynamicCategories.map((category) => (
-                            <option key={category} value={category}>{category}</option>
-                        ))}
-                    </select>
+                    <div>
+                        <p className="text-sm font-medium text-gray-600 mb-1">Filter by Category:</p>
+                        <div className="flex flex-wrap gap-2">
+                            {dynamicCategories.map((type) => (
+                                <button
+                                    key={type}
+                                    onClick={() => setCategoryFilter(type)}
+                                    className={`px-4 py-1.5 rounded-full border text-sm transition transform active:scale-95 focus:outline-none focus:ring-2 ${categoryFilter === type
+                                        ? 'bg-customPurple text-white border-customPurple shadow'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:border-customPurple'
+                                        }`}
+                                >
+                                    {type}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div>
+            <div className='mt-6'>
                 {showSwiper ? (
                     <>
                         <Swiper
-                            modules={[Navigation, Pagination]}
+                            modules={[Navigation, Pagination, Grid]}
                             spaceBetween={30}
                             slidesPerView={3}
+                            grid={{
+                                rows: 2,
+                                fill: 'row',
+                            }}
                             navigation={{
                                 nextEl: '.swiper-button-next-custom',
                                 prevEl: '.swiper-button-prev-custom',
@@ -104,29 +185,38 @@ export default function GearShop() {
                                 clickable: true,
                                 type: 'bullets',
                             }}
-                            className="!pb-16"
+                            className="swiper !pb-16"
                             breakpoints={{
-                                0: { slidesPerView: 1, spaceBetween: 15 },
-                                640: { slidesPerView: 1, spaceBetween: 20 },
-                                768: { slidesPerView: 2, spaceBetween: 25 },
-                                1024: { slidesPerView: 3, spaceBetween: 30 },
+                                0: { slidesPerView: 1, grid: { rows: 1 } },
+                                640: { slidesPerView: 1, grid: { rows: 1 } },
+                                768: { slidesPerView: 2, grid: { rows: 2 } },
+                                1024: { slidesPerView: 3, grid: { rows: 2 } },
+                                1280: { slidesPerView: 3, grid: { rows: 2 } },
+                                1536: { slidesPerView: 3, grid: { rows: 2 } },
+                                1920: { slidesPerView: 4, grid: { rows: 2 } },
                             }}
                         >
                             {filteredGears.map((product) => (
-                                <SwiperSlide key={product.id} className="h-auto">
-                                    <Link to={`/gear/${product.id}`}
-                                        className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col justify-between h-full">
-
-                                        <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
-                                            <span className="text-sm">Image Placeholder</span>
+                                <SwiperSlide key={product.id} className="!h-auto">
+                                    <div
+                                        className="relative group bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col h-[500px]"
+                                    >
+                                        <div className="w-full h-[250px] flex items-center justify-center overflow-hidden">
+                                            <img
+                                                src={product.main_image}
+                                                alt={product.name}
+                                                className="max-h-full max-w-full object-contain transition-transform duration-300 ease-in-out group-hover:scale-105"
+                                                loading="lazy"
+                                            />
                                         </div>
+
+                                        <div className="w-full h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
 
                                         <div className="p-4 flex flex-col items-center text-center flex-grow">
-                                            <h2 className="text-lg font-semibold">{product.name}</h2>
-                                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                                            <h2 className="text-lg line-clamp-2">{product.name}</h2>
                                         </div>
 
-                                        <div className="px-4 pb-4 mt-auto flex justify-center">
+                                        <div className="px-4 pb-2 mt-auto text-center">
                                             <p className="font-poetsen text-lg text-gray-800">
                                                 {new Intl.NumberFormat('en-US', {
                                                     style: 'currency',
@@ -135,19 +225,57 @@ export default function GearShop() {
                                             </p>
                                         </div>
 
-                                        <div className="text-sm text-gray-500 m-1 text-center">
+                                        <div className="text-sm text-gray-500 pb-3 text-center">
                                             <p>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</p>
                                             <p>⭐ {product.rating} ({product.reviews_count} reviews)</p>
-                                            {product.is_featured && <p className="text-yellow-600 font-semibold">★ Featured</p>}
                                         </div>
+                                        <div className="px-4 pb-4 mt-auto flex justify-center gap-2">
+                                            <Link
+                                                to={`/gear/${product.id}`}
+                                                className="w-full text-center"
+                                            >
+                                                <Button
+                                                    className="w-full h-[40px] relative text-sm"
+                                                    onClick={() => setButtonLoading(true)}
+                                                    disabled={buttonLoading}
+                                                >
+                                                    <span className={buttonLoading ? "invisible" : "visible"}>
+                                                        Details
+                                                    </span>
+                                                    {buttonLoading && (
+                                                        <span className="absolute inset-0 flex items-center justify-center gap-2">
+                                                            <Loader className="animate-spin w-4 h-4" />
+                                                            Loading...
+                                                        </span>
+                                                    )}
+                                                </Button>
+                                            </Link>
 
-                                        <div className="border-t border-gray-200 my-2 w-5/6 mx-auto"></div>
-
-                                        <div className="text-xs text-gray-400 mb-2 text-center">
-                                            <p>{product.shipping_info}</p>
-                                            <p>{product.return_policy}</p>
+                                            <Button
+                                                onClick={() => handleAddToCart(product.id)}
+                                                className="w-full h-[40px] relative text-sm"
+                                                color="#22c55e"
+                                                hoverColor="#16a34a"
+                                                type="submit"
+                                                disabled={buttonLoading}
+                                            >
+                                                <span className={buttonLoading ? "invisible" : "visible"}>
+                                                    Add to Cart
+                                                </span>
+                                                {buttonLoading && (
+                                                    <span className="absolute inset-0 flex items-center justify-center gap-2">
+                                                        <Loader className="animate-spin w-4 h-4" />
+                                                        Loading...
+                                                    </span>
+                                                )}
+                                            </Button>
                                         </div>
-                                    </Link>
+                                        {product.is_featured ? (
+                                            <div className="absolute bg-yellow-600 text-white text-xs px-2 py-1 shadow rounded-br-md">
+                                                ★ Featured
+                                            </div>
+                                        ) : null}
+                                    </div>
                                 </SwiperSlide>
                             ))}
                         </Swiper>
@@ -184,5 +312,5 @@ export default function GearShop() {
                 )}
             </div>
         </div>
-    );
+    )
 };

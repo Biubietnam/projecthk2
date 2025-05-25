@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
 
+import Button from "../../components/Button";
+import { useNavigate } from "react-router-dom";
+
 function PetSpa() {
+  //DÙng navigate để điều hướng đến các trang khác
+  const navigate = useNavigate();
   //Hiệu ứng bóng
   const shadowEffect = "shadow-lg hover:shadow-xl";
 
@@ -23,6 +28,9 @@ function PetSpa() {
   //Hiệu ứng chuyển màu bg
 
   const combobg = `bg-white hover:bg-[#F0F4FF] p-8 transition-all duration-300`;
+  //Check token
+  const token = localStorage.getItem("access_token");
+
   return (
     <div
       className={`min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto`}
@@ -154,6 +162,15 @@ function PetSpa() {
         {/* BASIC SPA */}
         <div
           className={`w-[300px] bg-white rounded-2xl ${baseEffect} ${transitionAndLayoutEffect} ${combobg}`}
+          onClick={() => {
+            if (token) {
+              window.scrollTo(0, 0);
+              navigate("/petlist");
+            } else {
+              window.scrollTo(0, 0);
+              navigate("/petunlogin");
+            }
+          }}
         >
           <div className="p-4">
             <h3 className="text-2xl font-bold text-[#6D7AB5]">Basic Spa</h3>
@@ -195,15 +212,23 @@ function PetSpa() {
               ))}
             </ul>
           </div>
-
-          <button className="mt-[232px] bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="mt-[232px] font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </div>
 
         {/* PREMIUM SPA */}
         <div
           className={` h-auto w-[300px]  rounded-2xl shadow-lg ${combobg}${baseEffect} ${transitionAndLayoutEffect} `}
+          onClick={() => {
+            if (token) {
+              window.scrollTo(0, 0);
+              navigate("/petlist");
+            } else {
+              window.scrollTo(0, 0);
+              navigate("/petunlogin");
+            }
+          }}
         >
           <div className="p-4">
             <h3 className="text-2xl font-bold text-[#6D7AB5]">Premium Spa</h3>
@@ -247,14 +272,23 @@ function PetSpa() {
             </ul>
           </div>
 
-          <button className="mt-[112px] bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="mt-[112px] font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
-          </button>
+          </Button>
         </div>
 
         {/* ULTRA SPA */}
         <div
           className={`w-[300px] bg-white rounded-2xl ${baseEffect} ${transitionAndLayoutEffect} ${combobg}`}
+          onClick={() => {
+            if (token) {
+              window.scrollTo(0, 0);
+              navigate("/petlist");
+            } else {
+              window.scrollTo(0, 0);
+              navigate("/petunlogin");
+            }
+          }}
         >
           <div className="p-4">
             <h3 className="text-2xl font-bold text-[#6D7AB5]">Ultra Spa</h3>
@@ -297,9 +331,9 @@ function PetSpa() {
                 </li>
               ))}
             </ul>
-            <button className="bg-[#6D7AB5] text-[#FFFFFF] hover:bg-[#4E5C8A] active:bg-[#4E5C8A] border border-[#4E5C8A] font-bold text-lg py-3 px-6 rounded-full w-full transition-all duration-300 shadow-sm hover:shadow-md">
+            <Button className=" font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
               Book Now
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>

@@ -9,11 +9,14 @@ import GearDetail from "./pages/shop/Gear/GearDetail";
 import Homepage from "./pages/Homepage";
 import Cart from "./pages/cart/Cart";
 
-//Booking page
+//Dat: Booking page
 import Booking from "./pages/Booking";
-
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
+import PetListForBooking from "./pages/Booking/petListForBooking";
+import PetUnLogin from "./pages/Booking/petUnLogin";
+
+// Part Thuc User
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
 import LoginFormContent from "./pages/Login/Login";
 import ForgotPasswordFormContent from "./pages/Login/ForgotPassword";
@@ -26,6 +29,8 @@ import PetAdoptionPage from "./pages/shop/Pet/PetAdoptionPage";
 import GearManagement from "./pages/Admin/GearManagement";
 import Checkout from "./pages/cart/Checkout";
 import Profile from "./pages/User/Profile";
+import Receipt from "./pages/cart/Receipt";
+import ThankYou from "./pages/cart/thank-you";
 
 export default function App() {
   return (
@@ -39,11 +44,14 @@ export default function App() {
         <Route path="/petshop" element={<OurPets />} />
         <Route path="/pet/:id" element={<PetAdoptionPage />} />
 
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/booking" element={<Booking />} />
+        <Route path="/contact" element={<Contact />} />
 
+        <Route path="/booking" element={<Booking />} />
         <Route path="/petspa" element={<PetSpa />} />
         <Route path="/petvet" element={<PetVet />} />
+        <Route path="/petlist" element={<PetListForBooking />} />
+        <Route path="/petunlogin" element={<PetUnLogin />} />
+
         <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
 
         <Route path="/login" element={<LoginFormContent />} />
@@ -62,7 +70,8 @@ export default function App() {
         <Route path="/checkout" element={<Checkout />} />
 
         <Route path="/profile" element={<Profile />} />
-
+        <Route path="/checkout/result" element={<Receipt />} />
+        <Route path="/thank-you" element={<ThankYou />} />
       </Routes>
       <Footer />
     </div>

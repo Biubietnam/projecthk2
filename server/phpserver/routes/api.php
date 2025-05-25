@@ -15,6 +15,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdoptionRequestController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\StripeController;
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
 
@@ -83,4 +85,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/confirm-payment', [StripeController::class, 'confirmPayment']);
+    Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
+});
 
+Route::middleware('auth:sanctum')->group(function () {
+        Route::get('receipts/{transaction}', [ReceiptController::class, 'show']);
+});
