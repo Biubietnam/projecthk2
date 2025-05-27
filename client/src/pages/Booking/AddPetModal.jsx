@@ -37,8 +37,9 @@ const AddPetModal = ({ onClose, onPetAdded }) => {
     axios
       .post("http://localhost:8000/api/userpets", submitData)
       .then((res) => {
-        alert("Thêm thú cưng thành công!");
+        alert("Add Pet Success!");
         onPetAdded(res.data); // callback update danh sách
+
         onClose(); // đóng modal
         // Reset form
         setFormData({
@@ -57,8 +58,6 @@ const AddPetModal = ({ onClose, onPetAdded }) => {
           alert("Lỗi nhập liệu: " + JSON.stringify(err.response.data.errors));
         } else if (err.response && err.response.status === 401) {
           alert("Lỗi nhập liệu: " + JSON.stringify(err.response.data.errors));
-        } else {
-          alert("Lỗi không xác định!");
         }
       });
   };

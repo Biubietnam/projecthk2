@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 const SlotSelector = ({ allSlots, bookedSlots, formData, setFormData }) => {
+  //Phân khung gio thanh cac 6 khung/trang
   const slotsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -10,6 +11,19 @@ const SlotSelector = ({ allSlots, bookedSlots, formData, setFormData }) => {
     (currentPage + 1) * slotsPerPage
   );
 
+  // Kiểm tra khung giờ quá khứ (cùng ngày)
+  // so với thời điểm hiện tại
+  const today = new Date().toISOString().split("T")[0];
+  const now = new Date();
+
+  const isPastSlot = (slot) => {
+    if (formData.date !== today) return false;
+    const [hour, minute] = slot.split(":").map(Number);
+    const slotTime = new Date();
+    slotTime.setHours(hour, minute, 0, 0);
+    return slotTime < now;
+  };
+  // Hàm để xử lý nút trước và sau
   const handlePrev = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
@@ -36,26 +50,28 @@ const SlotSelector = ({ allSlots, bookedSlots, formData, setFormData }) => {
         <div className="grid grid-cols-2 gap-3 w-full">
           {paginatedSlots.map((slot) => {
             const isBooked = bookedSlots.includes(slot);
+            const isPast = isPastSlot(slot);
+            const isDisabled = isBooked || isPast;
             const isSelected = formData.time_slot === slot;
 
             return (
               <button
                 key={slot}
                 type="button"
-                disabled={isBooked}
+                disabled={isDisabled}
                 onClick={() =>
-                  !isBooked && setFormData({ ...formData, time_slot: slot })
+                  !isDisabled && setFormData({ ...formData, time_slot: slot })
                 }
                 className={`w-full py-2 px-3 rounded-md border text-sm font-medium transition-all
                 ${
-                  isBooked
+                  isDisabled
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
                     : isSelected
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white hover:bg-blue-100 text-gray-700 border-gray-300"
                 }`}
               >
-                {slot} {isBooked ? "(Đã đặt)" : ""}
+                {slot} {isBooked ? "(Đã đặt)" : isPast ? "(Đã qua)" : ""}
               </button>
             );
           })}

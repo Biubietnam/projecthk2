@@ -1,12 +1,11 @@
-// if user logged in, show the pet list
+//if user logged in, show the pet list
 //if user dont have pet, show the message
 //if user have pet, show the pet list
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { useModal } from "../../Appwrapper";
 import BookingModal from "./BookingModal";
 import AddPetModal from "./AddPetModal";
-import Button from "../../components/Button";
 
 import axios from "axios";
 
@@ -24,17 +23,19 @@ function PetListForBooking() {
   const AddPetClick = () => {
     openModal({
       title: `ADD PET`,
-      body: <AddPetModal onClose={closeModal} />,
+      body: (
+        <AddPetModal
+          onClose={closeModal}
+          onPetAdded={() => {
+            closeModal();
+            fetchPetList(); // Cập nhật lại danh sách thú cưng sau khi thêm}
+          }}
+        />
+      ),
     });
   };
 
   // Phần này về bảng
-
-  //Hiệu ứng bóng
-  const shadowEffect = "shadow-lg hover:shadow-xl";
-
-  //Hiệu ứng phóng to
-  const scaleEffect = "hover:scale-110";
 
   //Hiệu ứng con trỏ
   const cursorEffect = "cursor-pointer";
@@ -52,19 +53,16 @@ function PetListForBooking() {
   //xu ly lý khi người dùng chưa đăng nhập
   const [petList, setPetList] = useState([]);
   const [hasPet, setHasPet] = useState(false);
-  useEffect(() => {
-    // Lấy userId từ localStorage
+
+  const fetchPetList = () => {
     const userDataString = localStorage.getItem("user_info");
-
     const userId = userDataString ? JSON.parse(userDataString).id : null;
-    console.log(userId);
-    if (!userId) {
-      // Nếu không có userId, chuyển hướng về trang đăng nhập
-      alert("Please log in to view your pet list.");
-    }
-    // Kiểm tra xem bảng userpets có tồn tại hay không
 
-    // Gọi API để lấy danh sách thú cưng của người dùng
+    if (!userId) {
+      alert("Please log in to view your pet list.");
+      return;
+    }
+
     axios
       .get(`http://localhost:8000/api/user/${userId}/userpets`)
       .then((response) => {
@@ -75,7 +73,14 @@ function PetListForBooking() {
         } else {
           setHasPet(false);
         }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch pets", error);
+        setHasPet(false);
       });
+  };
+  useEffect(() => {
+    fetchPetList();
   }, []);
   return (
     <div
@@ -130,7 +135,10 @@ function PetListForBooking() {
           <p className="text-lg">😿 No pets found in your profile.</p>
           <p className="mt-2">
             Please{" "}
-            <span className="text-blue-600 font-semibold hover: cursor-pointer">
+            <span
+              className="text-blue-600 font-semibold hover: cursor-pointer"
+              onClick={AddPetClick}
+            >
               add a pet
             </span>{" "}
             to get started.
