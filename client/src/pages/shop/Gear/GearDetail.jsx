@@ -164,7 +164,7 @@ export default function GearDetail() {
 
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
         <div className="w-full lg:w-3/5 bg-white p-6 rounded-lg shadow-sm">
-          <h1 className="text-4xl font-bold text-gray-800 mb-3">{gear.name}</h1>
+          <h1 className="text-4xl  text-gray-800 mb-3">{gear.name}</h1>
 
           <div className="flex justify-between text-sm text-gray-600 mb-4">
             <div>
@@ -197,8 +197,9 @@ export default function GearDetail() {
                       <img
                         src={img}
                         alt={`Gear - ${gear.name || "Product"} - ${index + 1}`}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain select-none pointer-events-none"
                         loading="lazy"
+                        draggable={false}
                       />
                     </div>
                   </SwiperSlide>
@@ -238,7 +239,7 @@ export default function GearDetail() {
 
         <div className="lg:basis-2/5 bg-white p-6 rounded-xl shadow space-y-6">
           {/* Giá */}
-          <p className="text-4xl font-bold text-gray-800 tracking-tight">
+          <p className="text-4xl  text-gray-800 tracking-tight">
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD',

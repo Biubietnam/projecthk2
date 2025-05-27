@@ -193,7 +193,7 @@ export default function EditPet() {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Edit Pet</h1>
+        <h1 className="text-3xl ">Edit Pet</h1>
         <PawPrint className="text-customPurple w-6 h-6" />
       </div>
 

@@ -19,6 +19,10 @@ class Receipt extends Model
         'amount',
         'payment_status',
         'shipping_status',
+        'address',
+        'number',
+        'email',
+        'full_name',
     ];
 
     protected $casts = [
@@ -26,6 +30,11 @@ class Receipt extends Model
         'amount'          => 'float',
         'payment_status'  => 'string',
         'shipping_status' => 'string',
-        'date_issued'     => 'datetime'
+        'date_issued'     => 'datetime',
+        'address'         => 'string',
+        'number'          => 'string',
+        'email'           => 'string',
+        'full_name'       => 'string',
     ];
+
 }

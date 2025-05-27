@@ -68,7 +68,7 @@ export default function PetManagement() {
       </div >
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Pet Management</h1>
+        <h1 className="text-3xl ">Pet Management</h1>
         <Link to="/admin/pets/create" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
           + Add New Pet
         </Link>

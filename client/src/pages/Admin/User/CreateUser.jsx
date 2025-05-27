@@ -62,7 +62,7 @@ export default function CreateUser() {
             </div>
 
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Create New User</h1>
+                <h1 className="text-3xl ">Create New User</h1>
                 <UserPlus className="text-customPurple w-6 h-6" />
             </div>
 

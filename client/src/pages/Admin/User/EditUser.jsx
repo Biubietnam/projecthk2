@@ -84,7 +84,7 @@ export default function EditUser() {
                     Edit Profile Info
                 </Link>
 
-                <h1 className="text-3xl font-bold text-center">Edit User</h1>
+                <h1 className="text-3xl  text-center">Edit User</h1>
 
                 <UserCog className="absolute right-0 w-6 h-6 text-customPurple" />
             </div>

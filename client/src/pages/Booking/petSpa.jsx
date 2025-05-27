@@ -173,7 +173,7 @@ function PetSpa() {
           }}
         >
           <div className="p-4">
-            <h3 className="text-2xl font-bold text-[#6D7AB5]">Basic Spa</h3>
+            <h3 className="text-2xl  text-[#6D7AB5]">Basic Spa</h3>
             <p className="text-gray-600 text-lg mb-2 leading-relaxed">
               10-Step Relaxation Ritual
             </p>
@@ -212,7 +212,7 @@ function PetSpa() {
               ))}
             </ul>
           </div>
-          <Button className="mt-[232px] font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="mt-[232px]  text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
           </Button>
         </div>
@@ -231,7 +231,7 @@ function PetSpa() {
           }}
         >
           <div className="p-4">
-            <h3 className="text-2xl font-bold text-[#6D7AB5]">Premium Spa</h3>
+            <h3 className="text-2xl  text-[#6D7AB5]">Premium Spa</h3>
             <p className="text-gray-600 text-lg mb-4 leading-relaxed">
               11-Step Ultimate Care
             </p>
@@ -272,7 +272,7 @@ function PetSpa() {
             </ul>
           </div>
 
-          <Button className="mt-[112px] font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+          <Button className="mt-[112px]  text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
             Book Now
           </Button>
         </div>
@@ -291,7 +291,7 @@ function PetSpa() {
           }}
         >
           <div className="p-4">
-            <h3 className="text-2xl font-bold text-[#6D7AB5]">Ultra Spa</h3>
+            <h3 className="text-2xl  text-[#6D7AB5]">Ultra Spa</h3>
             <p className="text-gray-600 text-lg mb-2 leading-relaxed">
               12 Steps of Pet Luxury
             </p>
@@ -331,7 +331,7 @@ function PetSpa() {
                 </li>
               ))}
             </ul>
-            <Button className=" font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
+            <Button className="  text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md">
               Book Now
             </Button>
           </div>

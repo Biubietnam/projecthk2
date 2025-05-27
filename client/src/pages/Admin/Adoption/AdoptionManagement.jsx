@@ -80,7 +80,7 @@ export default function AdoptionManagement() {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Adoption Management</h1>
+        <h1 className="text-3xl ">Adoption Management</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-x-auto border border-gray-200">

@@ -170,7 +170,7 @@ export default function CreateGear() {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Create New Gear</h1>
+        <h1 className="text-3xl ">Create New Gear</h1>
         <Wrench className="text-customPurple w-6 h-6" />
       </div>
 

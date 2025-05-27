@@ -106,7 +106,7 @@ export default function GearShop() {
     ) : (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="text-center">
-                <h1 className="text-4xl mb-2 font-bold font-poetsen flex items-center justify-center gap-2 animate-fade-in">
+                <h1 className="text-4xl mb-2  font-poetsen flex items-center justify-center gap-2 animate-fade-in">
                     🛍️ Gear Shop
                 </h1>
                 <p className="text-gray-600 mb-6">Quality products for your beloved pets</p>
