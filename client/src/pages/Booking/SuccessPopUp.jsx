@@ -1,7 +1,10 @@
 // SuccessPopup.jsx
 import React, { useEffect } from "react";
+import { useState } from "react";
 
 const SuccessPopup = ({ message, onClose }) => {
+  // Success popup state
+
   useEffect(() => {
     const timer = setTimeout(onClose, 3000); // 3 giây tự ẩn popup
     return () => clearTimeout(timer);
@@ -39,7 +42,7 @@ const SuccessPopup = ({ message, onClose }) => {
           </svg>
 
           <h3 className="text-green-700 text-xl font-semibold">
-            🐾📆 Appointment booked successfully!
+            🐾 SUCCESSFULLY!
           </h3>
           <p className="text-gray-700">{message}</p>
         </div>

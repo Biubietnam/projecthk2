@@ -1,118 +1,114 @@
-//if user logged in, show the pet list
-//if user dont have pet, show the message
-//if user have pet, show the pet list
 import React, { useEffect, useState } from "react";
-
 import { useModal } from "../../Appwrapper";
 import BookingModal from "./BookingModal";
 import AddPetModal from "./AddPetModal";
-
 import axios from "axios";
 
 function PetListForBooking() {
-  //Phần này về form
+  // Modal control: mở và đóng modal
   const { openModal, closeModal } = useModal();
 
-  const BookingClick = () => {
+  // State lưu danh sách thú cưng
+  const [petList, setPetList] = useState([]);
+  // State xác định user có pet hay không
+  const [hasPet, setHasPet] = useState(false);
+
+  /**
+   * Hàm gọi modal đặt lịch cho pet
+   */
+  const openBookingModal = (pet) => {
+    // Lưu pet đã chọn vào localStorage để modal BookingModal dùng
+    localStorage.setItem("selectedPet", JSON.stringify(pet));
     openModal({
-      title: `BOOKING FORM`,
       body: <BookingModal onClose={closeModal} />,
     });
   };
 
-  const AddPetClick = () => {
+  /**
+   * Hàm gọi modal thêm pet mới
+   */
+  const openAddPetModal = () => {
     openModal({
       body: (
         <AddPetModal
           onClose={closeModal}
           onPetAdded={() => {
-            closeModal();
-            fetchPetList(); // Cập nhật lại danh sách thú cưng sau khi thêm}
+            // Sau khi thêm pet, fetch lại danh sách pet mới
+            fetchPetList();
           }}
         />
       ),
     });
   };
 
-  // Phần này về bảng
-
-  //Hiệu ứng con trỏ
-  const cursorEffect = "cursor-pointer";
-
-  //Hiệu ứng chuyển tiếp
-  const transitionEffect = "transition duration-200";
-
-  //Hiệu ứng bố cục và nhóm (Layout and Group Effect)
-  const layoutEffect = "relative overflow-hidden group";
-
-  //Hiệu ứng cho các card petVet và petSpa
-  const baseEffect = ` ${cursorEffect} `;
-  const transitionAndLayoutEffect = `${transitionEffect} ${layoutEffect}`;
-
-  //xu ly lý khi người dùng chưa đăng nhập
-  const [petList, setPetList] = useState([]);
-  const [hasPet, setHasPet] = useState(false);
-
+  /**
+   * Hàm lấy danh sách pet từ backend theo userId
+   */
   const fetchPetList = () => {
+    // Lấy userId từ localStorage
     const userDataString = localStorage.getItem("user_info");
     const userId = userDataString ? JSON.parse(userDataString).id : null;
 
+    // Nếu chưa đăng nhập, thông báo và không fetch nữa
     if (!userId) {
       alert("Please log in to view your pet list.");
       return;
     }
 
+    // Gọi API lấy pet list
     axios
       .get(`http://localhost:8000/api/user/${userId}/userpets`)
       .then((response) => {
-        const userpets = response.data;
-        if (userpets.length > 0) {
-          setPetList(userpets);
-          setHasPet(true);
-        } else {
-          setHasPet(false);
-        }
+        const userpets = response.data || [];
+        setPetList(userpets);
+        setHasPet(userpets.length > 0);
       })
       .catch((error) => {
         console.error("Failed to fetch pets", error);
+        setPetList([]);
         setHasPet(false);
       });
   };
+
+  // Khi component mount, gọi fetchPetList
   useEffect(() => {
     fetchPetList();
   }, []);
+
   return (
-    <div
-      className={`min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto`}
-    >
-      <h1 className="text-3xl  text-center text-[#6D7AB5] mb-6">
+    <div className="min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto">
+      <h1 className="text-3xl text-center text-[#6D7AB5] mb-6">
         STEP 1: 🐶 Choose Your Pet to Serve
       </h1>
 
+      {/* Nếu có pet, hiển thị bảng pet */}
       {hasPet ? (
-        <div className="overflow-x-auto rounded-xl shadow-md ">
+        <div className="overflow-x-auto rounded-xl shadow-md">
           <table className="min-w-full border text-sm text-gray-700 bg-white">
             <thead>
               <tr className="bg-[#F0F4FF] text-[#4A5A93] uppercase text-xs tracking-wider">
-                <th className="px-4 py-3 border">#</th>
-                <th className="px-4 py-3 border">Name</th>
-                <th className="px-4 py-3 border">Species</th>
-                <th className="px-4 py-3 border">Breed</th>
-                <th className="px-4 py-3 border">Age</th>
-                <th className="px-4 py-3 border">Gender</th>
-                <th className="px-4 py-3 border">Weight (kg)</th>
-                <th className="px-4 py-3 border">Notes</th>
+                {[
+                  "#",
+                  "Name",
+                  "Species",
+                  "Breed",
+                  "Age",
+                  "Gender",
+                  "Weight (kg)",
+                  "Notes",
+                ].map((header) => (
+                  <th key={header} className="px-4 py-3 border">
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {petList.map((pet, index) => (
                 <tr
                   key={pet.id}
-                  className={`hover:bg-[#E0E7FF] transition duration-200 ${baseEffect} ${transitionAndLayoutEffect}`}
-                  onClick={() => {
-                    localStorage.setItem("selectedPet", JSON.stringify(pet));
-                    BookingClick();
-                  }}
+                  className="cursor-pointer hover:bg-[#E0E7FF] transition duration-200 relative overflow-hidden group"
+                  onClick={() => openBookingModal(pet)}
                 >
                   <td className="px-4 py-3 border text-center">{index + 1}</td>
                   <td className="px-4 py-3 border font-medium">{pet.name}</td>
@@ -128,31 +124,34 @@ function PetListForBooking() {
               ))}
             </tbody>
           </table>
+
+          {/* Nút thêm pet */}
           <div className="flex justify-center py-4">
             <button
+              onClick={openAddPetModal}
               className="bg-[#6D7AB5] text-white px-6 py-2 rounded hover:bg-[#5A6A9B] transition-colors"
-              onClick={AddPetClick}
             >
               Add More Pet
             </button>
           </div>
         </div>
       ) : (
+        // Nếu không có pet nào, hiện thông báo và nút thêm pet
         <div className="text-center mt-8 text-gray-600">
           <p className="text-lg">😿 No pets found in your profile.</p>
           <p className="mt-2">
             Please{" "}
             <span
-              className="text-blue-600 font-semibold hover: cursor-pointer"
-              onClick={AddPetClick}
+              onClick={openAddPetModal}
+              className="text-blue-600 font-semibold cursor-pointer"
             >
               add a pet
             </span>{" "}
             to get started.
           </p>
           <button
+            onClick={openAddPetModal}
             className="mt-4 bg-[#6D7AB5] text-white px-6 py-2 rounded hover:bg-[#5A6A9B] transition-colors"
-            onClick={AddPetClick}
           >
             Add Pet
           </button>
@@ -161,4 +160,5 @@ function PetListForBooking() {
     </div>
   );
 }
+
 export default PetListForBooking;
