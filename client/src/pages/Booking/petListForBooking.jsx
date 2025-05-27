@@ -54,17 +54,16 @@ function PetListForBooking() {
         STEP 1: 🐶 Choose Your Pet to Serve
       </h1>
 
-      <div className="flex justify-center mb-8">
-        <button
-          onClick={openAddPetModal}
-          className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-pink-500 hover:to-yellow-500 text-white px-8 py-3 rounded-xl shadow-lg transition-transform transform hover:scale-105"
-        >
-          + Add More Pet
-        </button>
-      </div>
-
       {hasPet ? (
-        <div className="overflow-x-auto rounded-2xl shadow-lg border border-gray-200 bg-white">
+        <div className="overflow-x-auto rounded-2xl  ">
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={openAddPetModal}
+              className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-pink-500 hover:to-yellow-500 text-white px-8 py-3 rounded-xl shadow-lg transition-transform transform hover:scale-105"
+            >
+              + Add More Pet
+            </button>
+          </div>
           <table className="min-w-full border-collapse text-gray-800">
             <thead>
               <tr className="bg-[#E4E9F7] text-[#3B4371] uppercase text-xs sm:text-sm md:text-base font-semibold tracking-wide select-none">
@@ -145,17 +144,16 @@ function PetListForBooking() {
           >
             + Add Pet
           </button>
-
-          {showAddPetModal && (
-            <AddPetModal
-              onClose={() => setShowAddPetModal(false)}
-              onPetAdded={() => {
-                fetchPetList();
-                setShowAddPetModal(false);
-              }}
-            />
-          )}
         </div>
+      )}
+      {showAddPetModal && (
+        <AddPetModal
+          onClose={() => setShowAddPetModal(false)}
+          onPetAdded={() => {
+            fetchPetList();
+            setShowAddPetModal(false);
+          }}
+        />
       )}
     </div>
   );
