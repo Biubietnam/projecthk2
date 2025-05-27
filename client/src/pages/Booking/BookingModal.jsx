@@ -4,18 +4,12 @@ import SlotSelector from "./SlotSelector";
 import SuccessPopup from "./SuccessPopUp";
 
 const BookingModal = ({ onClose }) => {
-  // State to hold all time slots for the selected service
   const [allSlots, setAllSlots] = useState([]);
-  // State to hold already booked slots (disabled)
   const [bookedSlots, setBookedSlots] = useState([]);
-  // Loading indicator for time slot fetching
   const [loadingSlots, setLoadingSlots] = useState(false);
-  // Submitting indicator for the booking form
   const [submitting, setSubmitting] = useState(false);
-  // State for form validation error messages
   const [errorMsg, setErrorMsg] = useState("");
-
-  // Booking form state: date, service, time slot, and notes
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     date: "",
     service_id: "",
@@ -23,21 +17,9 @@ const BookingModal = ({ onClose }) => {
     notes: "",
   });
 
-  // Get user info from localStorage (parse once)
-  const userData = React.useMemo(
-    () => JSON.parse(localStorage.getItem("user_info") || "null"),
-    []
-  );
-  // Get selected pet info from localStorage
-  const petData = React.useMemo(
-    () => JSON.parse(localStorage.getItem("selectedPet") || "null"),
-    []
-  );
+  const userData = JSON.parse(localStorage.getItem("user_info") || "null");
+  const petData = JSON.parse(localStorage.getItem("selectedPet") || "null");
 
-  /**
-   * Handle input changes in the form
-   * Reset time_slot if service_id or date is changed
-   */
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -47,15 +29,8 @@ const BookingModal = ({ onClose }) => {
     }));
   }, []);
 
-  // Success popup state
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  /**
-   * useEffect to fetch time slots whenever service_id or date changes
-   */
   useEffect(() => {
     if (!formData.service_id || !formData.date) {
-      // Reset if service or date not selected
       setAllSlots([]);
       setBookedSlots([]);
       setFormData((prev) => ({ ...prev, time_slot: "" }));
@@ -63,7 +38,6 @@ const BookingModal = ({ onClose }) => {
     }
 
     let isMounted = true;
-
     setLoadingSlots(true);
     axios
       .get("http://localhost:8000/api/booked-time-slots", {
@@ -93,9 +67,6 @@ const BookingModal = ({ onClose }) => {
     };
   }, [formData.service_id, formData.date]);
 
-  /**
-   * Form validation before submission
-   */
   const validateForm = () => {
     if (!userData) {
       setErrorMsg("You need to log in to book an appointment.");
@@ -121,14 +92,9 @@ const BookingModal = ({ onClose }) => {
     return true;
   };
 
-  /**
-   * Submit form handler
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
     setSubmitting(true);
 
     const payload = {
@@ -144,15 +110,9 @@ const BookingModal = ({ onClose }) => {
       await axios.post("http://localhost:8000/api/bookings", payload);
       setShowSuccess(true);
     } catch (err) {
-      if (err.response?.status === 409) {
-        alert(
-          err.response.data.error || "This time slot has already been booked."
-        );
-      } else if (err.response?.data?.error) {
-        alert("Error: " + err.response.data.error);
-      } else {
-        alert("Booking failed. Please try again.");
-      }
+      const msg =
+        err.response?.data?.error || "Booking failed. Please try again.";
+      alert(msg);
       console.error(err);
     } finally {
       setSubmitting(false);
@@ -162,51 +122,42 @@ const BookingModal = ({ onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose}></div>
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
+      ></div>
 
       {/* Modal content */}
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-lg z-50 relative">
-        {/* Close button */}
+      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto p-6 animate-fadeIn scale-95">
         <button
           onClick={onClose}
           className="absolute top-3 right-4 text-gray-600 hover:text-red-500 text-xl"
-          aria-label="Close"
         >
           ×
         </button>
 
-        <h2 className="text-2xl text-center mb-4 font-semibold">
+        <h2 className="text-2xl text-center font-semibold mb-4 text-[#374151]">
           Book Appointment
         </h2>
 
-        {/* Error message */}
         {errorMsg && (
-          <div className="mb-3 text-red-600 font-medium text-center">
+          <p className="text-center text-red-500 font-medium mb-4">
             {errorMsg}
-          </div>
+          </p>
         )}
 
-        {/* Booking form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Pet info */}
           {petData && (
-            <>
-              <div className="grid grid-cols-2 gap-4">
-                <ReadOnlyInput label="Name" value={petData.name} />
-                <ReadOnlyInput label="Species" value={petData.species} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <ReadOnlyInput label="Breed" value={petData.breed} />
-                <ReadOnlyInput label="Age" value={petData.age} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <ReadOnlyInput label="Gender" value={petData.gender} />
-                <ReadOnlyInput label="Weight (kg)" value={petData.weight_kg} />
-              </div>
-            </>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ReadOnlyInput label="Name" value={petData.name} />
+              <ReadOnlyInput label="Species" value={petData.species} />
+              <ReadOnlyInput label="Breed" value={petData.breed} />
+              <ReadOnlyInput label="Age" value={petData.age} />
+              <ReadOnlyInput label="Gender" value={petData.gender} />
+              <ReadOnlyInput label="Weight (kg)" value={petData.weight_kg} />
+            </div>
           )}
 
-          {/* Service selector */}
           <SelectInput
             label="Service"
             name="service_id"
@@ -221,7 +172,6 @@ const BookingModal = ({ onClose }) => {
             ]}
           />
 
-          {/* Date picker */}
           <div>
             <label className="text-sm font-medium block mb-1">Date</label>
             <input
@@ -235,10 +185,12 @@ const BookingModal = ({ onClose }) => {
             />
           </div>
 
-          {/* Time slot selector */}
           {loadingSlots ? (
-            <div className="text-center py-2 text-gray-500">
-              Loading time slots... 🕒
+            <div className="text-center py-4">
+              <div className="h-6 w-6 mx-auto border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="text-sm mt-2 text-gray-500">
+                Loading time slots...
+              </div>
             </div>
           ) : (
             <SlotSelector
@@ -249,7 +201,6 @@ const BookingModal = ({ onClose }) => {
             />
           )}
 
-          {/* Notes */}
           <div>
             <label className="text-sm font-medium block mb-1">Notes</label>
             <textarea
@@ -257,12 +208,11 @@ const BookingModal = ({ onClose }) => {
               value={formData.notes}
               onChange={handleChange}
               rows={3}
-              placeholder="Enter notes (if any)..."
               className="w-full border rounded px-3 py-2 resize-none"
-            ></textarea>
+              placeholder="Additional notes..."
+            />
           </div>
 
-          {/* Submit button */}
           <button
             type="submit"
             disabled={submitting}
@@ -271,13 +221,12 @@ const BookingModal = ({ onClose }) => {
             {submitting ? "Submitting..." : "Book Appointment"}
           </button>
 
-          {/* Success popup */}
           {showSuccess && (
             <SuccessPopup
               message="Thank you for booking! We will contact you soon."
               onClose={() => {
-                onClose();
                 setShowSuccess(false);
+                onClose();
               }}
             />
           )}
@@ -287,7 +236,6 @@ const BookingModal = ({ onClose }) => {
   );
 };
 
-// Read-only input field with label
 const ReadOnlyInput = ({ label, value }) => (
   <div>
     <label className="text-sm font-medium block mb-1">{label}</label>
@@ -295,12 +243,11 @@ const ReadOnlyInput = ({ label, value }) => (
       type="text"
       value={value}
       readOnly
-      className="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
+      className="w-full border rounded px-3 py-2 bg-gray-100"
     />
   </div>
 );
 
-// Select input with label
 const SelectInput = ({ label, name, value, onChange, options }) => (
   <div>
     <label className="text-sm font-medium block mb-1">{label}</label>

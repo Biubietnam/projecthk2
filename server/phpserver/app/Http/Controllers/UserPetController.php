@@ -42,4 +42,48 @@ class UserPetController extends Controller
             'data'    => $pet
         ], 201);
     }
+    // delete pet
+    public function destroy($id)
+{
+    $pet = UserPet::find($id);
+    if (!$pet) {
+        return response()->json(['error' => 'Pet not found'], 404);
+    }
+
+    $pet->delete();
+
+    return response()->json(['message' => 'Pet deleted successfully']);
+}
+//view all pets of a user
+public function index($userId)
+{
+    $pets = UserPet::where('user_id', $userId)->get();
+    return response()->json($pets);
+}
+// Update pet details
+public function update(Request $request, $id)
+{
+    $pet = UserPet::find($id);
+    if (!$pet) {
+        return response()->json(['error' => 'Pet not found'], 404);
+    }
+
+    $validated = $request->validate([
+        'name'      => 'required|string|max:255',
+        'breed'     => 'required|string|max:255',
+        'age'       => 'nullable|integer|min:0',
+        'gender'    => 'required|string|in:Male,Female,Unknown',
+        'species'   => 'required|string|in:Dog,Cat,Reptile,Rodent',
+        'weight_kg' => 'nullable|numeric|min:0',
+        'notes'     => 'nullable|string',
+    ]);
+
+    $pet->update($validated);
+
+    return response()->json([
+        'message' => 'Pet updated successfully',
+        'data'    => $pet
+    ]);
+}
+
 }

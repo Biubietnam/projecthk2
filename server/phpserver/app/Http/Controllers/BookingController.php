@@ -48,12 +48,38 @@ class BookingController extends Controller
         ]);
     }
 
-    // API: Get all bookings
-    public function index()
-    {
-        $bookings = Booking::all();
-        return response()->json($bookings);
+ // API: Get all bookings of a specific user
+public function showUserBookings($userId)
+{
+    $bookings = Booking::with(['pet', 'service'])
+        ->where('user_id', $userId)
+        ->get()
+        ->map(function ($booking) {
+            return [
+                'id' => $booking->id,
+                'pet' => $booking->pet,
+                'service_name' => $booking->service->service_name ?? null,
+                'date' => $booking->date,
+                'time_slot' => $booking->time_slot,
+                'notes' => $booking->notes,
+            ];
+        });
+
+    return response()->json($bookings);
+}
+// API: Delete a booking by ID
+public function destroy($id)
+{
+    $booking = Booking::find($id);
+
+    if (!$booking) {
+        return response()->json(['error' => 'Booking not found'], 404);
     }
+
+    $booking->delete();
+
+    return response()->json(['message' => 'Booking deleted successfully']);
+}
 
     // API: Create a new booking
     public function store(Request $request)

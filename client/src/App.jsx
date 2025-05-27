@@ -18,6 +18,8 @@ import PetListForBooking from "./pages/Booking/petListForBooking";
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
 import AddPetModal from "./pages/Booking/AddPetModal";
+import MyBooking from "./pages/Booking/MyBooking";
+import MyPets from "./pages/Booking/MyPets";
 
 // Part Thuc User
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
@@ -53,7 +55,6 @@ function ScrollToTop() {
   return null;
 }
 
-
 export default function App() {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
@@ -69,11 +70,8 @@ export default function App() {
         <Route path="/petshop" element={<OurPets />} />
         <Route path="/pet/:id" element={<PetAdoptionPage />} />
         {/* Part Booking: Dat*/}
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/booking" element={<Booking />} />
-
-        <Route path="/contact" element={<Contact />} />
-
+        <Route path="/mypets" element={<MyPets />} />
+        <Route path="/mybooking" element={<MyBooking />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/petspa" element={<PetSpa />} />
         <Route path="/petvet" element={<PetVet />} />
@@ -83,7 +81,7 @@ export default function App() {
         <Route path="/petlist" element={<PetListForBooking />} />
         <Route path="/petunlogin" element={<PetUnLogin />} />
         <Route path="/addpetmodal" element={<AddPetModal />} />
-
+        <Route path="/contact" element={<Contact />} />
         <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
         <Route path="/login" element={<LoginFormContent />} />
         <Route

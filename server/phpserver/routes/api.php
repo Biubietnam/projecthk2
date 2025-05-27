@@ -94,13 +94,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
 });
 // Dat Part: UserPetController
-// Lấy ID của người dùng và trả về danh sách thú cưng của người dùng đó
-Route::get('/user/{id}/userpets', [UserPetController::class, 'getUserPets']);
+
+//Hiển thi day đủ thông tin cua dat lich
+Route::get('/user/{id}/bookings', [BookingController::class, 'showUserBookings']);
+Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 Route::get('/booked-time-slots', [BookingController::class, 'getBookedTimeSlots']);
-Route::get('/bookings', [BookingController::class, 'index']);
 Route::post('/bookings', [BookingController::class, 'store']);
 Route::get('/booked-slots', [BookingController::class, 'getBookedSlots']);
+//Hien thi day du thong tin cua pet
+Route::delete('/pets/{id}', [UserPetController::class, 'destroy']);
+Route::get('/user/{id}/userpets', [UserPetController::class, 'getUserPets']);
 Route::post('/userpets', [UserPetController::class, 'store']);
+Route::put('/userpets/{id}', [UserPetController::class, 'update']);
+
 
 Route::get('/vnpay/return', [PaymentController::class, 'vnpayReturn']);
 
