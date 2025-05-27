@@ -22,7 +22,6 @@ function PetListForBooking() {
 
   const AddPetClick = () => {
     openModal({
-      title: `ADD PET`,
       body: (
         <AddPetModal
           onClose={closeModal}
@@ -91,7 +90,7 @@ function PetListForBooking() {
       </h1>
 
       {hasPet ? (
-        <div className="overflow-x-auto rounded-xl shadow-md">
+        <div className="overflow-x-auto rounded-xl shadow-md ">
           <table className="min-w-full border text-sm text-gray-700 bg-white">
             <thead>
               <tr className="bg-[#F0F4FF] text-[#4A5A93] uppercase text-xs tracking-wider">
@@ -129,6 +128,14 @@ function PetListForBooking() {
               ))}
             </tbody>
           </table>
+          <div className="flex justify-center py-4">
+            <button
+              className="bg-[#6D7AB5] text-white px-6 py-2 rounded hover:bg-[#5A6A9B] transition-colors"
+              onClick={AddPetClick}
+            >
+              Add More Pet
+            </button>
+          </div>
         </div>
       ) : (
         <div className="text-center mt-8 text-gray-600">

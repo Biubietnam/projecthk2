@@ -1,21 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 const SlotSelector = ({ allSlots, bookedSlots, formData, setFormData }) => {
-  //Phân khung gio thanh cac 6 khung/trang
-  const slotsPerPage = 6;
+  // Divide slots into pages, 4 slots per page
+  const slotsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(0);
 
   const totalPages = Math.ceil(allSlots.length / slotsPerPage);
-  const paginatedSlots = allSlots.slice(
-    currentPage * slotsPerPage,
-    (currentPage + 1) * slotsPerPage
-  );
 
-  // Kiểm tra khung giờ quá khứ (cùng ngày)
-  // so với thời điểm hiện tại
+  // Paginate slots using useMemo for performance
+  const paginatedSlots = useMemo(() => {
+    const start = currentPage * slotsPerPage;
+    return allSlots.slice(start, start + slotsPerPage);
+  }, [allSlots, currentPage]);
+
+  // Get today's date and current time
   const today = new Date().toISOString().split("T")[0];
   const now = new Date();
 
+  /**
+   * Check if the given time slot is in the past
+   * Only applies if the selected date is today
+   */
   const isPastSlot = (slot) => {
     if (formData.date !== today) return false;
     const [hour, minute] = slot.split(":").map(Number);
@@ -23,20 +28,21 @@ const SlotSelector = ({ allSlots, bookedSlots, formData, setFormData }) => {
     slotTime.setHours(hour, minute, 0, 0);
     return slotTime < now;
   };
-  // Hàm để xử lý nút trước và sau
+
+  // Navigation handlers for paging
   const handlePrev = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
+    if (currentPage > 0) setCurrentPage((prev) => prev - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages - 1) setCurrentPage((prev) => prev + 1);
   };
 
   return (
     <div className="w-full">
-      <label className="block mb-2 font-medium">Khung giờ</label>
+      <label className="block mb-2 font-medium">Time Slot</label>
       <div className="flex items-center gap-3">
-        {/* Nút trái */}
+        {/* Previous Button */}
         <button
           type="button"
           onClick={handlePrev}
@@ -46,7 +52,7 @@ const SlotSelector = ({ allSlots, bookedSlots, formData, setFormData }) => {
           ←
         </button>
 
-        {/* Thẻ khung giờ */}
+        {/* Time Slot Buttons */}
         <div className="grid grid-cols-2 gap-3 w-full">
           {paginatedSlots.map((slot) => {
             const isBooked = bookedSlots.includes(slot);
@@ -63,21 +69,21 @@ const SlotSelector = ({ allSlots, bookedSlots, formData, setFormData }) => {
                   !isDisabled && setFormData({ ...formData, time_slot: slot })
                 }
                 className={`w-full py-2 px-3 rounded-md border text-sm font-medium transition-all
-                ${
-                  isDisabled
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
-                    : isSelected
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white hover:bg-blue-100 text-gray-700 border-gray-300"
-                }`}
+                  ${
+                    isDisabled
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
+                      : isSelected
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white hover:bg-blue-100 text-gray-700 border-gray-300"
+                  }`}
               >
-                {slot} {isBooked ? "(Đã đặt)" : isPast ? "(Đã qua)" : ""}
+                {slot} {isBooked ? "(Booked)" : isPast ? "(Past)" : ""}
               </button>
             );
           })}
         </div>
 
-        {/* Nút phải */}
+        {/* Next Button */}
         <button
           type="button"
           onClick={handleNext}
