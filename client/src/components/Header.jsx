@@ -97,7 +97,7 @@ export default function Header() {
                   >
                     Admin Dashboard
                   </Link>
-                  
+
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -111,6 +111,20 @@ export default function Header() {
                     onClick={() => setDropdownOpen(false)}
                   >
                     My Orders
+                  </Link>
+                  <Link
+                    to="/mybooking"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Booking
+                  </Link>
+                  <Link
+                    to="/mypets"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Pets
                   </Link>
                   {userInfo.role?.name === "admin" && (
                     <Link
@@ -205,6 +219,20 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     My Orders
+                  </Link>
+                  <Link
+                    to="/mybooking"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Booking
+                  </Link>
+                  <Link
+                    to="/mypets"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Pets
                   </Link>
                   {userInfo.role?.name === "admin" && (
                     <Link
