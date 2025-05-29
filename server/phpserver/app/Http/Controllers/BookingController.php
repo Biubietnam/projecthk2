@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Booking; // Đảm bảo bạn đã import model Booking
-use App\Models\Service; // Đảm bảo bạn đã import model Service
+use App\Models\Booking;
+use App\Models\Service;
 
 class BookingController extends Controller
 {
-     // Hàm sinh khung giờ theo duration
+    // Generate time slots based on service duration
     private function generateTimeSlots($start, $end, $duration)
     {
         $slots = [];
@@ -23,13 +23,12 @@ class BookingController extends Controller
         return $slots;
     }
 
-    // API lấy giờ đã đặt
+    // API: Get all available and booked time slots for a given date and service
     public function getBookedTimeSlots(Request $request)
     {
         $date = $request->query('date');
         $serviceId = $request->query('service_id');
 
-        // Lấy duration của dịch vụ
         $service = Service::find($serviceId);
         if (!$service) {
             return response()->json(['error' => 'Service not found'], 404);
@@ -38,64 +37,81 @@ class BookingController extends Controller
         $duration = $service->duration_minutes;
         $allSlots = $this->generateTimeSlots('08:00', '17:00', $duration);
 
-        // Lấy giờ đã đặt
         $bookedSlots = Booking::where('date', $date)
             ->where('service_id', $serviceId)
             ->pluck('time_slot')
             ->toArray();
 
-        // Trả về cả giờ có thể chọn và giờ đã đặt
         return response()->json([
             'all_slots' => $allSlots,
             'booked_slots' => $bookedSlots
         ]);
     }
-        // Lấy danh sách booking (có thể thêm lọc sau)
-    public function index()
-    {
-        $bookings = Booking::all();
-        return response()->json($bookings);
+
+ // API: Get all bookings of a specific user
+public function showUserBookings($userId)
+{
+    $bookings = Booking::with(['pet', 'service'])
+        ->where('user_id', $userId)
+        ->get()
+        ->map(function ($booking) {
+            return [
+                'id' => $booking->id,
+                'pet' => $booking->pet,
+                'service_name' => $booking->service->service_name ?? null,
+                'date' => $booking->date,
+                'time_slot' => $booking->time_slot,
+                'notes' => $booking->notes,
+            ];
+        });
+
+    return response()->json($bookings);
+}
+// API: Delete a booking by ID
+public function destroy($id)
+{
+    $booking = Booking::find($id);
+
+    if (!$booking) {
+        return response()->json(['error' => 'Booking not found'], 404);
     }
 
-    // Tạo booking mới
+    $booking->delete();
+
+    return response()->json(['message' => 'Booking deleted successfully']);
+}
+
+    // API: Create a new booking
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|integer',
-            'pet_id' => 'required|integer',
-            'service_id' => 'required|integer',
-            'date' => 'required|date',
-            'time_slot' => 'required|string',
+            'user_id' => 'required|integer|exists:users,id',
+        'pet_id' => 'required|integer|exists:user_pets,id',
+        'service_id' => 'required|integer',
+        'date' => 'required|date',
+        'time_slot' => 'required|string',
         ]);
 
-        // Kiểm tra thời gian đã đặt chưa
         $exists = Booking::where('service_id', $request->service_id)
             ->where('date', $request->date)
             ->where('time_slot', $request->time_slot)
             ->exists();
 
         if ($exists) {
-            return response()->json(['error' => 'Thời gian này đã được đặt trước'], 409);
+            return response()->json(['error' => 'This time slot has already been booked'], 409);
         }
 
-        $booking = Booking::create($request->all());
+        $service = Service::find($request->service_id);
+        if (!$service) {
+            return response()->json(['error' => 'Service not found'], 404);
+        }
 
-        return response()->json(['message' => 'Đặt lịch thành công', 'booking' => $booking], 201);
+       $bookingData = $request->all();
+        $bookingData['service_name'] = $service->service_name; // Thêm tên service vào dữ liệu
+
+        $booking = Booking::create($bookingData); // Dùng dữ liệu đã cập nhật
+
+
+        return response()->json(['message' => 'Booking created successfully', 'booking' => $booking], 201);
     }
-    public function getBookedSlots(Request $request)
-{
-    $date = $request->query('date');
-    $serviceId = $request->query('service_id');
-
-    if (!$date || !$serviceId) {
-        return response()->json(['error' => 'Thiếu thông tin'], 400);
-    }
-
-    $bookedSlots =  Booking::table('bookings')
-        ->where('date', $date)
-        ->where('service_id', $serviceId)
-        ->pluck('time_slot');
-
-    return response()->json($bookedSlots);
-}
 }

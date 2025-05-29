@@ -1,116 +1,121 @@
-// if user logged in, show the pet list
-//if user dont have pet, show the message
-//if user have pet, show the pet list
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useModal } from "../../Appwrapper";
 import BookingModal from "./BookingModal";
-
+import AddPetModal from "./AddPetModal";
 import axios from "axios";
 
 function PetListForBooking() {
-  //Phần này về form
   const { openModal, closeModal } = useModal();
+  const [petList, setPetList] = useState([]);
+  const [hasPet, setHasPet] = useState(false);
+  const [showAddPetModal, setShowAddPetModal] = useState(false);
 
-  const handleDetailsClick = () => {
+  const openBookingModal = (pet) => {
+    localStorage.setItem("selectedPet", JSON.stringify(pet));
     openModal({
-      title: `BOOKING FORM`,
       body: <BookingModal onClose={closeModal} />,
     });
   };
 
-  // Phần này về bảng
-  // DÙng navigate để điều hướng đến các trang khác
-  const navigate = useNavigate();
+  const openAddPetModal = () => {
+    setShowAddPetModal(true);
+  };
 
-  //Hiệu ứng bóng
-  const shadowEffect = "shadow-lg hover:shadow-xl";
-
-  //Hiệu ứng phóng to
-  const scaleEffect = "hover:scale-110";
-
-  //Hiệu ứng con trỏ
-  const cursorEffect = "cursor-pointer";
-
-  //Hiệu ứng chuyển tiếp
-  const transitionEffect = "transition duration-200";
-
-  //Hiệu ứng bố cục và nhóm (Layout and Group Effect)
-  const layoutEffect = "relative overflow-hidden group";
-
-  //Hiệu ứng cho các card petVet và petSpa
-  const baseEffect = ` ${cursorEffect} `;
-  const transitionAndLayoutEffect = `${transitionEffect} ${layoutEffect}`;
-
-  //xu ly lý khi người dùng chưa đăng nhập
-  const [petList, setPetList] = useState([]);
-  const [hasPet, setHasPet] = useState(false);
-  useEffect(() => {
-    // Lấy userId từ localStorage
+  const fetchPetList = () => {
     const userDataString = localStorage.getItem("user_info");
-
     const userId = userDataString ? JSON.parse(userDataString).id : null;
-    console.log(userId);
-    if (!userId) {
-      // Nếu không có userId, chuyển hướng về trang đăng nhập
-      alert("Please log in to view your pet list.");
-    }
-    // Kiểm tra xem bảng userpets có tồn tại hay không
 
-    // Gọi API để lấy danh sách thú cưng của người dùng
+    if (!userId) {
+      alert("Please log in to view your pet list.");
+      return;
+    }
+
     axios
       .get(`https://thoriumstudio.xyz/api/user/${userId}/userpets`)
       .then((response) => {
-        const userpets = response.data;
-        if (userpets.length > 0) {
-          setPetList(userpets);
-          setHasPet(true);
-        } else {
-          setHasPet(false);
-        }
+        const userpets = response.data || [];
+        setPetList(userpets);
+        setHasPet(userpets.length > 0);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch pets", error);
+        setPetList([]);
+        setHasPet(false);
       });
+  };
+
+  useEffect(() => {
+    fetchPetList();
   }, []);
+
   return (
-    <div
-      className={`min-h-screen w-full max-w-[1280px] px-4 py-20 sm:px-6 md:px-8 lg:px-16 xl:px-24 mx-auto`}
-    >
-      <h1 className="text-3xl  text-center text-[#6D7AB5] mb-6">
+    <div className="min-h-screen w-full max-w-[1280px] px-4 sm:px-6 lg:px-8 py-16 mx-auto font-sans">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#4F5D9B] mb-8 tracking-wide drop-shadow-sm">
         STEP 1: 🐶 Choose Your Pet to Serve
       </h1>
 
       {hasPet ? (
-        <div className="overflow-x-auto rounded-xl shadow-md">
-          <table className="min-w-full border text-sm text-gray-700 bg-white">
+        <div className="overflow-x-auto rounded-2xl  ">
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={openAddPetModal}
+              className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-pink-500 hover:to-yellow-500 text-white px-8 py-3 rounded-xl shadow-lg transition-transform transform hover:scale-105"
+            >
+              + Add More Pet
+            </button>
+          </div>
+          <table className="min-w-full border-collapse text-gray-800">
             <thead>
-              <tr className="bg-[#F0F4FF] text-[#4A5A93] uppercase text-xs tracking-wider">
-                <th className="px-4 py-3 border">#</th>
-                <th className="px-4 py-3 border">Name</th>
-                <th className="px-4 py-3 border">Species</th>
-                <th className="px-4 py-3 border">Breed</th>
-                <th className="px-4 py-3 border">Age</th>
-                <th className="px-4 py-3 border">Gender</th>
-                <th className="px-4 py-3 border">Weight (kg)</th>
-                <th className="px-4 py-3 border">Notes</th>
+              <tr className="bg-[#E4E9F7] text-[#3B4371] uppercase text-xs sm:text-sm md:text-base font-semibold tracking-wide select-none">
+                {[
+                  "#",
+                  "Name",
+                  "Species",
+                  "Breed",
+                  "Age",
+                  "Gender",
+                  "Weight (kg)",
+                  "Notes",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="px-4 sm:px-6 py-3 border-b border-gray-300 text-center"
+                  >
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
+
             <tbody>
               {petList.map((pet, index) => (
                 <tr
                   key={pet.id}
-                  className={`hover:bg-[#E0E7FF] transition duration-200 ${baseEffect} ${transitionAndLayoutEffect}`}
-                  onClick={() => {
-                    localStorage.setItem("selectedPet", JSON.stringify(pet));
-                    handleDetailsClick();
-                  }}
+                  className="cursor-pointer hover:bg-[#DCE3FF] transition-colors duration-300 border-b border-gray-200"
+                  onClick={() => openBookingModal(pet)}
                 >
-                  <td className="px-4 py-3 border text-center">{index + 1}</td>
-                  <td className="px-4 py-3 border font-medium">{pet.name}</td>
-                  <td className="px-4 py-3 border">{pet.species}</td>
-                  <td className="px-4 py-3 border">{pet.breed}</td>
-                  <td className="px-4 py-3 border">{pet.age}</td>
-                  <td className="px-4 py-3 border capitalize">{pet.gender}</td>
-                  <td className="px-4 py-3 border">{pet.weight_kg}</td>
-                  <td className="px-4 py-3 border text-gray-500 italic">
+                  <td className="px-4 sm:px-6 py-3 text-center font-semibold text-sm sm:text-base">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 font-semibold text-sm sm:text-base">
+                    {pet.name}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 capitalize text-sm sm:text-base">
+                    {pet.species}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 capitalize text-sm sm:text-base">
+                    {pet.breed}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 text-center text-sm sm:text-base">
+                    {pet.age}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 capitalize text-center text-sm sm:text-base">
+                    {pet.gender}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 text-center text-sm sm:text-base">
+                    {pet.weight_kg}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 italic text-gray-500 max-w-xs truncate text-sm sm:text-base">
                     {pet.notes || "—"}
                   </td>
                 </tr>
@@ -119,16 +124,39 @@ function PetListForBooking() {
           </table>
         </div>
       ) : (
-        <div className="text-center mt-8 text-gray-600">
-          <p className="text-lg">😿 No pets found in your profile.</p>
-          <p className="mt-2">
-            Please{" "}
-            <span className="text-blue-600 font-semibold">add a pet</span> to
-            get started.
+        <div className="text-center mt-12 text-gray-600 px-4 sm:px-0">
+          <p className="text-xl sm:text-2xl font-semibold">
+            😿 No pets found in your profile.
           </p>
+          <p className="mt-3 text-lg sm:text-xl">
+            Please{" "}
+            <span
+              onClick={openAddPetModal}
+              className="text-[#4F5D9B] font-semibold cursor-pointer underline hover:text-[#3B4371]"
+            >
+              add a pet
+            </span>{" "}
+            to get started.
+          </p>
+          <button
+            onClick={openAddPetModal}
+            className="mt-6 text-lg sm:text-xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-pink-500 hover:to-yellow-500 text-white px-8 py-3 rounded-xl shadow-lg transition-transform transform hover:scale-105"
+          >
+            + Add Pet
+          </button>
         </div>
+      )}
+      {showAddPetModal && (
+        <AddPetModal
+          onClose={() => setShowAddPetModal(false)}
+          onPetAdded={() => {
+            fetchPetList();
+            setShowAddPetModal(false);
+          }}
+        />
       )}
     </div>
   );
 }
+
 export default PetListForBooking;

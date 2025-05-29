@@ -10,13 +10,13 @@ import { loadStripe } from "@stripe/stripe-js"
 const stripePromise = loadStripe("pk_test_51RPkKYCksw0msKNEl8oiXWfeBxczpThjgO7hriExdGjHg8MDg7WO5E411S68j00H34IqtziW8CKdGHNngFTFNAO100r6z6QPiv")
 
 function MoMoIcon() {
-  return (
-    <img
-      src="/img/momo_square_pinkbg.svg"
-      alt="MoMo Logo"
-      className="w-7 h-7"
-    />
-  );
+    return (
+        <img
+            src="/img/momo_square_pinkbg.svg"
+            alt="MoMo Logo"
+            className="w-7 h-7"
+        />
+    );
 }
 
 
@@ -44,9 +44,6 @@ function CheckoutForm({ totalAmount, onSuccess, onCancel }) {
         try {
             const { error, paymentIntent } = await stripe.confirmPayment({
                 elements,
-                confirmParams: {
-                    return_url: window.location.origin + "/thank-you",
-                },
                 redirect: "if_required",
             })
 
@@ -148,7 +145,7 @@ export default function Checkout() {
 
     const handlePaymentMethodSelect = async (method) => {
         setFormData({ ...formData, paymentMethod: method })
-
+        console.log("Selected payment method:", method)
         if (method === "card") {
             setStripeLoading(true)
             try {
@@ -189,21 +186,34 @@ export default function Checkout() {
         e.preventDefault()
 
         if (formData.paymentMethod === "card") {
-            // For credit card, we'll open the Stripe modal
             handlePaymentMethodSelect("card")
             return
         }
-
-        // For other payment methods
-        setSubmitting(true)
-        try {
-            await new Promise((res) => setTimeout(res, 1500))
-            alert("🎉 Order placed successfully!")
-            navigate("/thank-you")
-        } catch (err) {
-            alert("❌ Failed to place order. Please try again.")
-        } finally {
-            setSubmitting(false)
+        if (formData.paymentMethod === "cod") {
+            setSubmitting(true)
+            try {
+                const token = localStorage.getItem("access_token")
+                const resp = await axios.post(
+                    "https://thoriumstudio.xyz/api/create-order",
+                    {
+                        items: cartItems.map(i => ({ id: i.id, quantity: i.quantity })),
+                        customer: {
+                            fullName: formData.fullName,
+                            email: formData.email,
+                            phone: formData.phone,
+                            address: formData.address,
+                        },
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                const orderId = resp.data.transaction_id
+                navigate(`/thank-you?order=${orderId}`)
+            } catch (err) {
+                console.error("COD order failed:", err)
+                alert("❌ Failed to place cash order. Please try again.")
+            } finally {
+                setSubmitting(false)
+            }
         }
     }
 

@@ -5,16 +5,31 @@ import { Link } from "react-router-dom";
 import { Users, ShoppingCart, Package, PawPrint, HeartHandshake } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { BarChart2 } from "lucide-react";
+import axios from "axios";
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user_info"));
 
     useEffect(() => {
-        if (!user || user.role?.name !== "admin") {
-            navigate("/");
-        }
-    }, []);
+        const checkAdmin = async () => {
+            try {
+                const token = localStorage.getItem("access_token");
+                await axios.get(
+                    "https://thoriumstudio.xyz/api/admin",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } catch (err) {
+                navigate("/");
+            }
+        };
+
+        checkAdmin();
+    }, [navigate]);
 
     function SalesCard() {
         const miniChartData = [

@@ -11,14 +11,15 @@ import Receipt from "./pages/cart/Receipt";
 import ThankYou from "./pages/cart/thank-you";
 import { useLocation } from "react-router-dom";
 
-
 //Dat: Booking page
 import Booking from "./pages/Booking";
 import PetUnLogin from "./pages/Booking/petUnLogin";
 import PetListForBooking from "./pages/Booking/petListForBooking";
 import PetSpa from "./pages/Booking/petSpa";
 import PetVet from "./pages/Booking/petVet";
-import ServiceBooking from "./pages/Booking/serviceBooking";
+import AddPetModal from "./pages/Booking/AddPetModal";
+import MyBooking from "./pages/Booking/MyBooking";
+import MyPets from "./pages/Booking/MyPets";
 
 // Part Thuc User
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
@@ -43,6 +44,7 @@ import EditProfile from "./pages/Admin/User/EditProfile";
 import OrderManagement from "./pages/Admin/Order/OrderManagement";
 import AdoptionManagement from "./pages/Admin/Adoption/AdoptionManagement";
 import { useEffect } from "react";
+import AboutUs from "./pages/AboutUs";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -53,7 +55,6 @@ function ScrollToTop() {
 
   return null;
 }
-
 
 export default function App() {
   const { pathname } = useLocation();
@@ -70,21 +71,18 @@ export default function App() {
         <Route path="/petshop" element={<OurPets />} />
         <Route path="/pet/:id" element={<PetAdoptionPage />} />
         {/* Part Booking: Dat*/}
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/booking" element={<Booking />} />
-
-        <Route path="/contact" element={<Contact />} />
-
+        <Route path="/mypets" element={<MyPets />} />
+        <Route path="/mybooking" element={<MyBooking />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/petspa" element={<PetSpa />} />
         <Route path="/petvet" element={<PetVet />} />
         <Route path="/petUnLogin" element={<PetUnLogin />} />
         <Route path="/petlist" element={<PetListForBooking />} />
-        <Route path="/serviceBooking" element={<ServiceBooking />} />
 
         <Route path="/petlist" element={<PetListForBooking />} />
         <Route path="/petunlogin" element={<PetUnLogin />} />
-
+        <Route path="/addpetmodal" element={<AddPetModal />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/reset/:token" element={<ResetPasswordFormContent />} />
         <Route path="/login" element={<LoginFormContent />} />
         <Route
@@ -104,14 +102,17 @@ export default function App() {
         <Route path="/admin/users/create" element={<CreateUser />} />
         <Route path="/admin/users/edit/profile/:id" element={<EditProfile />} />
         <Route path="/admin/ordermanagement" element={<OrderManagement />} />
-        <Route path="/admin/adoptionmanagement" element={<AdoptionManagement />} />
+        <Route
+          path="/admin/adoptionmanagement"
+          element={<AdoptionManagement />}
+        />
 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/checkout/result" element={<Receipt />} />
         <Route path="/thank-you" element={<ThankYou />} />
-
+        <Route path="/aboutus" element={<AboutUs />} />
       </Routes>
       {!isAdmin && <Footer />}
     </div>
