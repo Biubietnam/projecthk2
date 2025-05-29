@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\{
     ResetPasswordController,
     VerificationController,
 };
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\GearController;
@@ -52,6 +53,17 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin', function () {
+        $user = Auth::user();
+        $roleId = $user->role_id ?? 0;
+
+        if ($roleId > 0 && $roleId <= 4) {
+            return response()->json(['role_id' => $roleId]);
+        }
+
+        // otherwise 401 Unauthorized
+        return response()->json(['error' => 'Unauthorized'], 401);
+    });
     Route::get('/admin/users', function () {
         return User::with('role')->get();
     });
@@ -69,6 +81,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::put('/admin/gears/{id}', [GearController::class, 'update']);
     Route::post('/admin/gears', [GearController::class, 'store']);
     Route::delete('/admin/gears/{id}', [GearController::class, 'destroy']);
+    Route::get('/admin/orders', [ReceiptController::class, 'getorders']);
 });
 
 

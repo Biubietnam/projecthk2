@@ -16,16 +16,23 @@ class StripeController extends Controller
 
     public function createCashOrder(Request $request)
     {
+        $authUser = Auth::user();
+        if (!$authUser) {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
         $items = $request->input('items', []);
         if (!is_array($items) || empty($items)) {
             return response()->json(['error' => 'No items provided.'], 422);
         }
-        $gearMap = Gear::whereIn('id', collect($items)->pluck('id'))->get()
-            ->keyBy('id');
+
+        $gearMap = Gear::whereIn('id', collect($items)->pluck('id'))->get()->keyBy('id');
+
         $lineItems = collect($items)
             ->map(function ($i) use ($gearMap) {
                 $gear = $gearMap->get($i['id']);
                 if (!$gear) return null;
+
                 $qty = max(0, (int)$i['quantity']);
                 return [
                     'id'       => $gear->id,
@@ -36,16 +43,47 @@ class StripeController extends Controller
                 ];
             })
             ->filter();
+
         if ($lineItems->isEmpty()) {
             return response()->json(['error' => 'No valid items found.'], 422);
-            $dollars = $lineItems->sum('subtotal');
-            $amount  = round($dollars * 100);
-            $customer  = $request->input('customer');
         }
+
+        $totalDollars = $lineItems->sum('subtotal');
+
+
+        $fullName = $request->input('customer.fullName');
+        $email    = $request->input('customer.email');
+        $phone    = $request->input('customer.phone');
+        $address  = $request->input('customer.address');
+
+        $count = Receipt::count() + 1;
+        $txnId = 'VN' . str_pad($count, 6, '0', STR_PAD_LEFT);
+
+        Receipt::create([
+            'transaction_id' => $txnId,
+            'user_id'        => $authUser->id,
+            'items'          => $lineItems->toArray(),
+            'amount'         => $totalDollars,
+            'payment_status' => 'cash',
+            'full_name'      => $fullName,
+            'email'          => $email,
+            'number'         => $phone,
+            'address'        => $address,
+        ]);
+
+        return response()->json([
+            'success'        => true,
+            'transaction_id' => $txnId,
+        ], 201);
     }
+
     public function createPaymentIntent(Request $request)
     {
 
+        $authUser = Auth::user();
+        if (!$authUser) {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
 
         Stripe::setApiKey(config('services.stripe.secret'));
         $items = $request->input('items', []);
