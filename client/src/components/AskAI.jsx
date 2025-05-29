@@ -6,7 +6,7 @@ export default function AskAI() {
   const [response, setResponse] = useState('');
 
   const handleAsk = async () => {
-    const res = await axios.post('http://localhost:8002/api/ask-ai', {
+    const res = await axios.post('https://thoriumstudio.xyz/api/ask-ai', {
       message: userInput
     });
     setResponse(res.data.answer);

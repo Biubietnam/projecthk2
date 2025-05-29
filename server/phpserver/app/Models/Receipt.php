@@ -9,6 +9,7 @@ class Receipt extends Model
 {
     protected $table = 'receipt';
 
+    // We rely on MySQL default timestamp for date_issued
     public $timestamps = false;
 
     protected $fillable = [
@@ -35,4 +36,5 @@ class Receipt extends Model
         'email'           => 'string',
         'full_name'       => 'string',
     ];
+
 }

@@ -5,7 +5,7 @@ export default function Contact() {
   return (
     <div className="text-gray-700 min-h-screen py-10 mt-10">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold">Contact Us</h1>
+        <h1 className="text-3xl ">Contact Us</h1>
         <p>We’re here to help with all your pet care needs</p>
       </div>
 
@@ -15,7 +15,7 @@ export default function Contact() {
           <p className="text-sm text-gray-500 mb-2">Fill out the form below and we'll get back to you as soon as possible</p>
           <form className="space-y-4">
             <div className="text-sm">
-              <label className="block mb-1 font-bold text-gray-500">Full Name</label>
+              <label className="block mb-1  text-gray-500">Full Name</label>
               <input
                 type="text"
                 className="w-full p-2 border border-gray-700 rounded"
@@ -24,7 +24,7 @@ export default function Contact() {
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <label className="block mb-1 font-bold text-gray-500">Email</label>
+                <label className="block mb-1  text-gray-500">Email</label>
                 <input
                   type="email"
                   className="w-full p-2 border border-gray-700 rounded"
@@ -32,7 +32,7 @@ export default function Contact() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-bold text-gray-500">Phone (optional)</label>
+                <label className="block mb-1  text-gray-500">Phone (optional)</label>
                 <input
                   type="text"
                   className="w-full p-2 border border-gray-700 rounded"
@@ -41,7 +41,7 @@ export default function Contact() {
               </div>
             </div>
             <div className="text-sm">
-              <label className="block mb-1 font-bold text-gray-500">Subject</label>
+              <label className="block mb-1  text-gray-500">Subject</label>
               <select className="w-full p-2 border border-gray-700 rounded">
                 <option>Select a subject</option>
                 <option>Appointments</option>
@@ -50,7 +50,7 @@ export default function Contact() {
               </select>
             </div>
             <div className="text-sm">
-              <label className="block mb-1 font-bold text-gray-500">Message</label>
+              <label className="block mb-1  text-gray-500">Message</label>
               <textarea
                 className="w-full p-2 h-24 border border-gray-700 rounded"
                 placeholder="How can we help you?"

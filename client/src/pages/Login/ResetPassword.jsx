@@ -51,7 +51,7 @@ export default function ResetPasswordFormContent() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8002/api/reset",
+                "https://thoriumstudio.xyz/api/reset",
                 {
                     email,
                     password,

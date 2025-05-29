@@ -3,24 +3,39 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'user_id', 'pet_id', 'service_type', 'date', 'time_slot', 'status', 'notes'
+        'user_id',
+        'pet_id',
+        'service_id',
+        'date',
+        'time_slot',
+        'status',
+        'notes',
     ];
 
+    // Booking thuộc về một người dùng
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // Booking thuộc về một thú cưng
     public function pet()
     {
         return $this->belongsTo(UserPet::class, 'pet_id');
     }
-}
 
+    // Booking liên kết với một dịch vụ
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
+}

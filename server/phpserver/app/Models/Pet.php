@@ -17,14 +17,17 @@ class Pet extends Model
         'color',
         'tags',
         'adoptionFee',
-        'image',
+        'images',
+        'main_image',
         'careDiet',
         'careExercise',
         'careGrooming',
+        'adopted',
     ];
 
     protected $casts = [
         'tags' => 'array',
+        'images' => 'array',
     ];
 
     public function adoptionRequests()

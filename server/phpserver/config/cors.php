@@ -6,7 +6,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3001'],
+    'allowed_origins' => ['https://thoriumstudio.xyz', 'http://localhost:3001'],
 
     'allowed_origins_patterns' => [],
 

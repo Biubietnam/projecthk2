@@ -14,7 +14,7 @@ export default function ThankYou() {
       try {
         const token = localStorage.getItem("access_token");
         const resp = await axios.get(
-          `http://localhost:8002/api/receipts/${orderId}`,
+          `https://thoriumstudio.xyz/api/receipts/${orderId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setReceiptData(resp.data);

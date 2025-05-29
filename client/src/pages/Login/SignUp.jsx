@@ -26,7 +26,7 @@ export default function SignUpFormContent() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8002/api/register",
+        "https://thoriumstudio.xyz/api/register",
         {
           name,
           email,

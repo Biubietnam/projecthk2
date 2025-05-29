@@ -13,7 +13,8 @@ class Gear extends Model
         'price',
         'petType',
         'category',
-        'image',
+        'images',
+        'main_image',
         'highlights',
         'details',
         'shipping_info',
@@ -26,10 +27,7 @@ class Gear extends Model
 
     protected $casts = [
         'highlights' => 'array',
-        'stock' => 'integer',
-        'rating' => 'float',
-        'reviews_count' => 'integer',
-        'is_featured' => 'boolean',
+        'images' => 'array',
     ];
 
     public function reviews()

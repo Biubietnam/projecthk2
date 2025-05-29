@@ -99,7 +99,7 @@ export default function Sidebar() {
         } lg:hidden`}
       >
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-bold text-customPurple">PetZone</h2>
+          <h2 className="text-xl  text-customPurple">PetZone</h2>
           <Button onClick={() => setIsOpen(false)} className="p-1" color="#6D7AB5" aria-label="Close Menu">
             <X className="w-5 h-5" />
           </Button>

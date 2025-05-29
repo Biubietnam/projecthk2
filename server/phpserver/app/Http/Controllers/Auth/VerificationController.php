@@ -70,7 +70,7 @@ class VerificationController extends Controller
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
   <div class="bg-white p-8 rounded-lg shadow-md text-center">
-    <h1 class="text-2xl font-bold text-{$color}-600 mb-4">{$title}</h1>
+    <h1 class="text-2xl  text-{$color}-600 mb-4">{$title}</h1>
     <p class="text-gray-700 mb-6">{$message}</p>
     <p id="countdown" class="text-gray-500">Redirecting in 10 seconds...</p>
   </div>

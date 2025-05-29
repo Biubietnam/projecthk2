@@ -14,7 +14,7 @@ export default function LoginFormContent() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectTo = location.state?.redirectTo || "/";
+  const redirectTo = location.state?.redirectTo || "/admin/dashboard";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ export default function LoginFormContent() {
     try {
       
       const res = await axios.post(
-        "http://localhost:8002/api/login",
+        "https://thoriumstudio.xyz/api/login",
         {
           email,
           password,
@@ -39,6 +39,7 @@ export default function LoginFormContent() {
 
       setTimeout(() => {
         navigate(redirectTo);
+        window.location.reload();
       }, 500);
     } catch (err) {
       console.error("Login Error:", err);
@@ -51,7 +52,7 @@ export default function LoginFormContent() {
 
   const openGoogleLoginPopup = () => {
     const popup = window.open(
-      "http://localhost:8002/auth/google/redirect",
+      "https://thoriumstudio.xyz/auth/google/redirect",
       "GoogleLogin",
       "width=500,height=600"
     );
@@ -65,7 +66,7 @@ export default function LoginFormContent() {
     }, 500);
 
     window.addEventListener("message", function handler(event) {
-      if (event.origin !== "http://localhost:8002") return;
+      if (event.origin !== "https://thoriumstudio.xyz") return;
 
       const { type, token, user } = event.data;
       if (type === "OAUTH_SUCCESS") {
@@ -80,6 +81,7 @@ export default function LoginFormContent() {
 
         window.removeEventListener("message", handler);
         navigate(redirectTo);
+        window.location.reload();
       }
     });
   };
@@ -96,9 +98,8 @@ export default function LoginFormContent() {
 
         {message && (
           <div
-            className={`mb-3 text-center font-semibold ${
-              messageType === "success" ? "text-green-600" : "text-red-600"
-            }`}
+            className={`mb-3 text-center font-semibold ${messageType === "success" ? "text-green-600" : "text-red-600"
+              }`}
           >
             {message}
           </div>
@@ -164,9 +165,8 @@ export default function LoginFormContent() {
               width="full"
               position="center"
               disabled={isLoading}
-              className={`flex justify-center items-center ${
-                isLoading ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+              className={`flex justify-center items-center ${isLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
             >
               {isLoading ? (
                 <svg
@@ -195,7 +195,22 @@ export default function LoginFormContent() {
             </Button>
           </div>
 
-          <Button onClick={openGoogleLoginPopup}>Sign in with Google</Button>
+          <Button
+            type="button"
+            onClick={openGoogleLoginPopup}
+            className="w-full flex items-center justify-center gap-3 border rounded-lg py-2"
+            color="white"
+            textColor="#374151"
+            hoverColor="#E5E7EB"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            <span className="text-sm font-medium">Sign in with Google</span>
+          </Button>
+
         </form>
 
         <p className="text-sm text-center text-gray-500 mt-6">

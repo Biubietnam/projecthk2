@@ -1,7 +1,6 @@
 import { Check, Calendar, CreditCard, Package, Printer, Home } from "lucide-react"
 import Button from "../../components/Button"
 
-
 export default function Receipt({
   orderId,
   date,
@@ -35,7 +34,7 @@ export default function Receipt({
           <div className="bg-green-100 p-3 rounded-full mb-4">
             <Check className="text-green-600 w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">Payment Successful!</h1>
+          <h1 className="text-2xl  text-gray-800">Payment Successful!</h1>
           <p className="text-gray-600">Thank you for your purchase</p>
         </div>
 
@@ -43,7 +42,7 @@ export default function Receipt({
         <div className="flex items-center justify-between border-b pb-4 mb-4">
           <div className="flex items-center">
             <div>
-              <h2 className="font-bold text-lg text-[#6D7AB5]">{shop.name}</h2>
+              <h2 className=" text-lg text-[#6D7AB5]">{shop.name}</h2>
               <p className="text-sm text-gray-600">{shop.phone}</p>
             </div>
           </div>
@@ -81,7 +80,7 @@ export default function Receipt({
           </div>
           <div>
             <p className="text-sm text-gray-500">Customer</p>
-            <p className="font-medium">{cust.name}</p>
+<p className="font-medium">{cust.name}</p>
             <p className="text-sm text-gray-600">{cust.email}</p>
           </div>
         </div>
@@ -104,7 +103,7 @@ export default function Receipt({
 
         {/* Totals */}
         <div className="space-y-2 mb-6">
-          <div className="flex justify-between font-bold text-lg">
+          <div className="flex justify-between  text-lg">
             <span>Total</span>
             <span>${total}</span>
           </div>

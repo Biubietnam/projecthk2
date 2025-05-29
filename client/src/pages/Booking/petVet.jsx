@@ -58,7 +58,7 @@ function PetVet() {
               navigate("/petUnLogin");
               window.scrollTo(0, 0);
             }}
-            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+            className=" text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
           >
             Book Now
           </CheckLogButton>
@@ -120,7 +120,7 @@ function PetVet() {
               navigate("/petUnLogin");
               window.scrollTo(0, 0);
             }}
-            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+            className=" text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
           >
             Book Now
           </CheckLogButton>
@@ -158,7 +158,7 @@ function PetVet() {
               navigate("/petUnLogin");
               window.scrollTo(0, 0);
             }}
-            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+            className=" text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
           >
             Book Now
           </CheckLogButton>
@@ -223,7 +223,7 @@ function PetVet() {
               navigate("/petUnLogin");
               window.scrollTo(0, 0);
             }}
-            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+            className=" text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
           >
             Book Now
           </CheckLogButton>
@@ -261,7 +261,7 @@ function PetVet() {
               navigate("/petUnLogin");
               window.scrollTo(0, 0);
             }}
-            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+            className=" text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
           >
             Book Now
           </CheckLogButton>
@@ -350,7 +350,7 @@ function PetVet() {
               navigate("/petUnLogin");
               window.scrollTo(0, 0);
             }}
-            className="font-bold text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
+            className=" text-lg py-3 px-6  w-full transition-all duration-300 shadow-sm hover:shadow-md"
           >
             Book Now
           </CheckLogButton>

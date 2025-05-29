@@ -30,8 +30,8 @@ export default function GearDetail() {
     const fetchGear = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:8002/api/gears/${id}`);
-        const reviewsResponse = await axios.get(`http://localhost:8002/api/gears/${id}/reviews`);
+        const response = await axios.get(`https://thoriumstudio.xyz/api/gears/${id}`);
+        const reviewsResponse = await axios.get(`https://thoriumstudio.xyz/api/gears/${id}/reviews`);
         if (reviewsResponse.status !== 200) {
           throw new Error("Failed to fetch reviews data");
         }
@@ -78,7 +78,7 @@ export default function GearDetail() {
         return alert("Please select a rating.");
       }
       await axios.post(
-        `http://localhost:8002/api/gears/${id}/review`,
+        `https://thoriumstudio.xyz/api/gears/${id}/review`,
         {
           ...formData,
         },
@@ -89,7 +89,7 @@ export default function GearDetail() {
         }
       );
 
-      const updatedReviews = await axios.get(`http://localhost:8002/api/gears/${id}/reviews`);
+      const updatedReviews = await axios.get(`https://thoriumstudio.xyz/api/gears/${id}/reviews`);
       setReviews(updatedReviews.data);
       setFormData({
         comment: "",
@@ -106,7 +106,7 @@ export default function GearDetail() {
     if (!token) return alert("You must be logged in to add items to the cart.");
     try {
       await axios.post(
-        `http://localhost:8002/api/cart/add/${id}`,
+        `https://thoriumstudio.xyz/api/cart/add/${id}`,
         {
           quantity: quantity,
         },
@@ -164,7 +164,7 @@ export default function GearDetail() {
 
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
         <div className="w-full lg:w-3/5 bg-white p-6 rounded-lg shadow-sm">
-          <h1 className="text-4xl font-bold text-gray-800 mb-3">{gear.name}</h1>
+          <h1 className="text-4xl  text-gray-800 mb-3">{gear.name}</h1>
 
           <div className="flex justify-between text-sm text-gray-600 mb-4">
             <div>
@@ -197,8 +197,9 @@ export default function GearDetail() {
                       <img
                         src={img}
                         alt={`Gear - ${gear.name || "Product"} - ${index + 1}`}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain select-none pointer-events-none"
                         loading="lazy"
+                        draggable={false}
                       />
                     </div>
                   </SwiperSlide>
@@ -238,7 +239,7 @@ export default function GearDetail() {
 
         <div className="lg:basis-2/5 bg-white p-6 rounded-xl shadow space-y-6">
           {/* Giá */}
-          <p className="text-4xl font-bold text-gray-800 tracking-tight">
+          <p className="text-4xl  text-gray-800 tracking-tight">
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD',

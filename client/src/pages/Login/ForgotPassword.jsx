@@ -17,7 +17,7 @@ export default function ForgotPasswordFormContent() {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:8002/api/forgot",
+        "https://thoriumstudio.xyz/api/forgot",
         {
           email,
         }

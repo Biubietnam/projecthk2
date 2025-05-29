@@ -9,7 +9,6 @@ export default function ContentPetDetail({ pet }) {
     const { closeModal } = useModal();
 
     const handleSaveClick = () => console.log(`Save clicked for ${pet.name}`);
-    const handleScheduleClick = () => console.log(`Schedule clicked for ${pet.name}`);
 
     return (
         <div className="text-left text-sm w-full text-gray-700">
@@ -46,7 +45,7 @@ export default function ContentPetDetail({ pet }) {
             <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-1/3 flex-shrink-0">
                     <div className="h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden mb-3 shadow">
-                        <img src={pet.image} alt={pet.name} className="object-cover w-full h-full" onError={(e) => { e.target.onerror = null; e.target.parentElement.innerHTML = '<span class="text-xs italic text-gray-400">No Image</span>'; }} />
+                        <img src={pet.main_image} alt={pet.name} className="object-cover w-full h-full" onError={(e) => { e.target.onerror = null; e.target.parentElement.innerHTML = '<span class="text-xs italic text-gray-400">No Image</span>'; }} />
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                         {pet.tags.map(tag => (
@@ -150,12 +149,6 @@ export default function ContentPetDetail({ pet }) {
                     className="p-2 border border-gray-300 text-gray-500 rounded-md hover:bg-gray-100 hover:text-gray-700 transition"
                 >
                     <Heart className="w-5 h-5" />
-                </button>
-                <button
-                    onClick={handleScheduleClick}
-                    className="py-2 px-4 bg-gray-100 text-gray-800 text-sm rounded-md hover:bg-gray-200 border border-gray-200 transition font-medium"
-                >
-                    Schedule Appointment
                 </button>
                 <Link to={`/pet/${pet.id}`} onClick={closeModal} className="py-2 px-4 bg-customPurple text-white text-sm rounded-md hover:bg-customPurpleDark transition font-medium">
                     Adopt Me

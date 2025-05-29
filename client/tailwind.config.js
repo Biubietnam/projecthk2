@@ -21,6 +21,12 @@ module.exports = {
         poetsen: ['"Poetsen One"', 'sans-serif'],
         winky: ['"Winky Rough"', 'cursive'],
       },
+      '.swiper .swiper-wrapper': {
+        display: 'grid !important',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(0, 1fr))',
+        gridAutoRows: 'auto',
+        rowGap: '30px',
+      }
     },
   },
   plugins: [],
