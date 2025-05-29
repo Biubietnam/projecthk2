@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -12,6 +12,41 @@ import { Loader } from 'lucide-react';
 import { Navigation, Pagination, Grid } from 'swiper/modules';
 import Button from '../../../components/Button';
 
+function Breadcrumb() {
+    const location = useLocation();
+    const paths = location.pathname.split('/').filter(Boolean);
+    const breadcrumbList = [];
+
+    paths.forEach((segment, index) => {
+        const path = '/' + paths.slice(0, index + 1).join('/');
+        breadcrumbList.push({
+            label: decodeURIComponent(segment.charAt(0).toUpperCase() + segment.slice(1)),
+            to: path,
+        });
+    });
+
+    return (
+        <nav className="text-sm text-gray-500 mb-4 flex items-center gap-1" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-customPurple text-gray-500 flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+                </svg>
+                Home
+            </Link>
+            {breadcrumbList.map((item, idx) => (
+                <React.Fragment key={item.to}>
+                    <span className="text-gray-400">/</span>
+                    {idx === breadcrumbList.length - 1 ? (
+                        <span className="text-gray-700 font-medium">{item.label}</span>
+                    ) : (
+                        <Link to={item.to} className="hover:text-customPurple">{item.label}</Link>
+                    )}
+                </React.Fragment>
+            ))}
+        </nav>
+    );
+}
+
 export default function GearShop() {
     const [gears, setGears] = useState([]);
     const [petFilter, setPetFilter] = useState('All');
@@ -19,6 +54,7 @@ export default function GearShop() {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
     const [buttonLoading, setButtonLoading] = useState(false);
+    const topRef = useRef(null);
 
     useEffect(() => {
         axios.get('http://localhost:8000/api/gears')
@@ -92,6 +128,31 @@ export default function GearShop() {
         }
     };
 
+    const smoothScrollToTopRef = (targetRef, duration = 500) => {
+        if (!targetRef?.current) return;
+
+        const targetY = targetRef.current.getBoundingClientRect().top + window.scrollY;
+        const startY = window.scrollY;
+        const distanceY = targetY - startY;
+        const startTime = performance.now();
+
+        const animateScroll = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeInOut = progress < 0.5
+                ? 2 * progress * progress
+                : -1 + (4 - 2 * progress) * progress;
+
+            window.scrollTo(0, startY + distanceY * easeInOut);
+
+            if (elapsed < duration) {
+                requestAnimationFrame(animateScroll);
+            }
+        };
+
+        requestAnimationFrame(animateScroll);
+    };
+
     const showSwiper = filteredGears.length > 0;
 
     return loading ? (
@@ -105,8 +166,9 @@ export default function GearShop() {
         </div>
     ) : (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
-            <div className="text-center">
-                <h1 className="text-4xl font-semibold text-gray-900 mb-2 tracking-tight">🛍️ Gear Shop</h1>
+            <Breadcrumb />
+            <div ref={topRef} className="text-center">
+                <h1 className="text-4xl text-gray-900 mb-2 tracking-tight">🛍️ Gear Shop</h1>
                 <p className="text-gray-500 text-sm">Premium products for your beloved pets</p>
             </div>
 
@@ -174,6 +236,11 @@ export default function GearShop() {
                             modules={[Navigation, Pagination, Grid]}
                             spaceBetween={30}
                             slidesPerView={3}
+                            slidesPerGroup={3}
+                            speed={500}
+                            onSlideChange={() => {
+                                smoothScrollToTopRef(topRef, 500);
+                            }}
                             grid={{
                                 rows: 2,
                                 fill: 'row',
@@ -207,7 +274,7 @@ export default function GearShop() {
                                             <img
                                                 src={product.main_image}
                                                 alt={product.name}
-                                                className="max-h-full max-w-full object-contain transition-transform duration-300 ease-in-out group-hover:scale-105"
+                                                className="max-h-full max-w-full object-contain transition duration-500 ease-in-out transform group-hover:scale-105"
                                                 loading="lazy"
                                             />
                                         </div>

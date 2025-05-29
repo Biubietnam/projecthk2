@@ -25,7 +25,6 @@ class FavoritePetController extends Controller
         }
     }
 
-    //Check with id
     public function check(Request $request, $petId)
     {
         /** @var \App\Models\User $user */
@@ -41,4 +40,3 @@ class FavoritePetController extends Controller
         return response()->json($user->favoritePets);
     }
 }
-

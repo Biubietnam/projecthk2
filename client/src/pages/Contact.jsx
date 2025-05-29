@@ -3,6 +3,42 @@ import Button from "../components/Button";
 import { Loader } from "lucide-react";
 import axios from "axios";
 import { Mail } from "lucide-react"
+import { Link, useLocation } from "react-router-dom";
+
+function Breadcrumb() {
+  const location = useLocation();
+  const paths = location.pathname.split('/').filter(Boolean);
+  const breadcrumbList = [];
+
+  paths.forEach((segment, index) => {
+    const path = '/' + paths.slice(0, index + 1).join('/');
+    breadcrumbList.push({
+      label: decodeURIComponent(segment.charAt(0).toUpperCase() + segment.slice(1)),
+      to: path,
+    });
+  });
+
+  return (
+    <nav className="text-sm text-gray-500 mb-4 flex items-center gap-1" aria-label="Breadcrumb">
+      <Link to="/" className="hover:text-customPurple text-gray-500 flex items-center gap-1">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+        </svg>
+        Home
+      </Link>
+      {breadcrumbList.map((item, idx) => (
+        <React.Fragment key={item.to}>
+          <span className="text-gray-400">/</span>
+          {idx === breadcrumbList.length - 1 ? (
+            <span className="text-gray-700 font-medium">{item.label}</span>
+          ) : (
+            <Link to={item.to} className="hover:text-customPurple">{item.label}</Link>
+          )}
+        </React.Fragment>
+      ))}
+    </nav>
+  );
+}
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -48,7 +84,8 @@ export default function Contact() {
   };
 
   return (
-    <div className="text-gray-700 min-h-screen py-10 mt-10">
+    <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+      <Breadcrumb />
       <div className="text-center mb-10">
         <h1 className="text-4xl font-semibold text-gray-900 tracking-tight flex justify-center items-center gap-2">
           <Mail className="w-8 h-8 text-customPurpleDark" />
