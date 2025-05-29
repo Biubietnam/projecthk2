@@ -3,6 +3,7 @@ import { useModal } from "../../Appwrapper";
 import BookingModal from "./BookingModal";
 import AddPetModal from "./AddPetModal";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function PetListForBooking() {
   const { openModal, closeModal } = useModal();
@@ -10,10 +11,16 @@ function PetListForBooking() {
   const [hasPet, setHasPet] = useState(false);
   const [showAddPetModal, setShowAddPetModal] = useState(false);
 
+  const navigate = useNavigate();
+
+  const handleModalClose = () => {
+    closeModal(); // Gọi hàm đóng modal cũ
+    navigate("/mybooking"); // Chuyển trang sang MyBooking
+  };
   const openBookingModal = (pet) => {
     localStorage.setItem("selectedPet", JSON.stringify(pet));
     openModal({
-      body: <BookingModal onClose={closeModal} />,
+      body: <BookingModal onClose={handleModalClose} />,
     });
   };
 
