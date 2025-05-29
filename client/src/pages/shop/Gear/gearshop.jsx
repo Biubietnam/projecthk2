@@ -168,7 +168,7 @@ export default function GearShop() {
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <Breadcrumb />
             <div ref={topRef} className="text-center">
-                <h1 className="text-4xl text-gray-900 mb-2 tracking-tight">🛍️ Gear Shop</h1>
+                <h1 className="text-4xl text-gray-900 mb-2 tracking-tight font-semibold">🛍️ Gear Shop</h1>
                 <p className="text-gray-500 text-sm">Premium products for your beloved pets</p>
             </div>
 

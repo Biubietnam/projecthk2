@@ -34,7 +34,7 @@ export default function Receipt({
           <div className="bg-green-100 p-3 rounded-full mb-4">
             <Check className="text-green-600 w-8 h-8" />
           </div>
-          <h1 className="text-2xl  text-gray-800">Payment Successful!</h1>
+          <h1 className="text-2xl  text-gray-800">Order Successful!</h1>
           <p className="text-gray-600">Thank you for your purchase</p>
         </div>
 
@@ -81,7 +81,7 @@ export default function Receipt({
           <div>
             <p className="text-sm text-gray-500">Customer</p>
 <p className="font-medium">{cust.name}</p>
-            <p className="text-sm text-gray-600">{cust.email}</p>
+<p className="text-sm text-gray-600">{cust.email}</p>
           </div>
         </div>
 

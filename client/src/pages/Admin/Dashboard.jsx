@@ -3,16 +3,30 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Users, ShoppingCart, Package, PawPrint, HeartHandshake, MessageSquare, Mail, CalendarClock, Home } from "lucide-react";
+import axios from "axios";
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem("user_info"));
 
     useEffect(() => {
-        if (!user || user.role?.name !== "admin") {
-            navigate("/");
-        }
-    }, []);
+        const checkAdmin = async () => {
+            try {
+                const token = localStorage.getItem("access_token");
+                await axios.get(
+                    "http://localhost:8000/api/admin",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } catch (err) {
+                navigate("/");
+            }
+        };
+
+        checkAdmin();
+    }, [navigate]);
 
     function AdminCard({ icon: Icon, title, desc, to }) {
         return (

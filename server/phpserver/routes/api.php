@@ -25,6 +25,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContactReplyController;
 use App\Http\Controllers\FeedbackReplyController;
 use App\Http\Controllers\FavoritePetController;
+use Illuminate\Support\Facades\Auth;
+
 
 Route::get('/pets/{id}', [PetController::class, 'show']);
 Route::get('/pets', [PetController::class, 'index']);
@@ -57,6 +59,18 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin', function () {
+        $user = Auth::user();
+        $roleId = $user->role_id ?? 0;
+
+        if ($roleId > 0 && $roleId <= 4) {
+            return response()->json(['role_id' => $roleId]);
+        }
+        return response()->json(['error' => 'Unauthorized'], 401);
+    });
+
+    Route::get('/admin/orders', [ReceiptController::class, 'getorders']);
+
     Route::get('/admin/users', function () {
         return User::with('role')->get();
     });
@@ -107,6 +121,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/admin/feedbacks/{id}/replies', [FeedbackReplyController::class, 'store']);
     Route::delete('/admin/feedbacks/replies/{id}', [FeedbackReplyController::class, 'destroy']);
 });
+
+
 
 Route::post('/feedback', [FeedbackController::class, 'store']);
 Route::post('/contacts', [ContactController::class, 'store']);

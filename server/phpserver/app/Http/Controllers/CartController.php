@@ -30,6 +30,15 @@ class CartController extends Controller
 
         $item = $cart->items()->where('gear_id', $gear->id)->first();
 
+        $currentQtyInCart = $item ? $item->quantity : 0;
+        $newTotalQuantity = $currentQtyInCart + $quantity;
+
+        if ($newTotalQuantity > $gear->stock) {
+            return response()->json([
+                'error' => 'Quantity exceeds available stock. Only ' . ($gear->stock - $currentQtyInCart) . ' more can be added.'
+            ], 400);
+        }
+
         if ($item) {
             $item->increment('quantity', $quantity);
         } else {
@@ -49,9 +58,16 @@ class CartController extends Controller
     public function update(Request $request, $itemId)
     {
         $item = CartItem::findOrFail($itemId);
+        $newQty = $request->input('quantity');
+
+        if ($newQty > $item->gear->stock) {
+            return response()->json([
+                'error' => 'Quantity exceeds available stock.'
+            ], 400);
+        }
 
         $item->update([
-            'quantity' => $request->input('quantity')
+            'quantity' => $newQty
         ]);
 
         return response()->json([

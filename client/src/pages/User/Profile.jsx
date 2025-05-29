@@ -158,7 +158,7 @@ export default function Profile({ id }) {
 
       {favoritePets.length > 0 && (
         <div className="w-full max-w-5xl mt-12">
-          <h2 className="text-xl mb-6">🐾 Favorite Pets</h2>
+          <h2 className="text-xl mb-6 font-semibold">🐾 Favorite Pets</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {favoritePets.map((pet) => (
               <div

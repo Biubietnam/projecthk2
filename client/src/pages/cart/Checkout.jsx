@@ -10,15 +10,14 @@ import { loadStripe } from "@stripe/stripe-js"
 const stripePromise = loadStripe("pk_test_51RPkKYCksw0msKNEl8oiXWfeBxczpThjgO7hriExdGjHg8MDg7WO5E411S68j00H34IqtziW8CKdGHNngFTFNAO100r6z6QPiv")
 
 function MoMoIcon() {
-  return (
-    <img
-      src="/img/momo_square_pinkbg.svg"
-      alt="MoMo Logo"
-      className="w-7 h-7"
-    />
-  );
+    return (
+        <img
+            src="/img/momo_square_pinkbg.svg"
+            alt="MoMo Logo"
+            className="w-7 h-7"
+        />
+    );
 }
-
 
 function CheckoutForm({ totalAmount, onSuccess, onCancel }) {
     const stripe = useStripe()
@@ -44,9 +43,6 @@ function CheckoutForm({ totalAmount, onSuccess, onCancel }) {
         try {
             const { error, paymentIntent } = await stripe.confirmPayment({
                 elements,
-                confirmParams: {
-                    return_url: window.location.origin + "/thank-you",
-                },
                 redirect: "if_required",
             })
 
@@ -90,7 +86,7 @@ export default function Checkout() {
         paymentMethod: "cod",
     })
     const [cartItems, setCartItems] = useState([])
-    const [totalAmount, setTotalAmount] = useState(0)
+const [totalAmount, setTotalAmount] = useState(0)
     const [submitting, setSubmitting] = useState(false)
     const [clientSecret, setClientSecret] = useState("")
     const [showStripeModal, setShowStripeModal] = useState(false)
@@ -148,7 +144,7 @@ export default function Checkout() {
 
     const handlePaymentMethodSelect = async (method) => {
         setFormData({ ...formData, paymentMethod: method })
-
+        console.log("Selected payment method:", method)
         if (method === "card") {
             setStripeLoading(true)
             try {
@@ -167,7 +163,7 @@ export default function Checkout() {
                         paymentMethod: formData.paymentMethod,
                     },
                     {
-                        headers: {
+headers: {
                             Authorization: `Bearer ${token}`
                         }
                     }
@@ -189,21 +185,34 @@ export default function Checkout() {
         e.preventDefault()
 
         if (formData.paymentMethod === "card") {
-            // For credit card, we'll open the Stripe modal
             handlePaymentMethodSelect("card")
             return
         }
-
-        // For other payment methods
-        setSubmitting(true)
-        try {
-            await new Promise((res) => setTimeout(res, 1500))
-            alert("🎉 Order placed successfully!")
-            navigate("/thank-you")
-        } catch (err) {
-            alert("❌ Failed to place order. Please try again.")
-        } finally {
-            setSubmitting(false)
+        if (formData.paymentMethod === "cod") {
+            setSubmitting(true)
+            try {
+                const token = localStorage.getItem("access_token")
+                const resp = await axios.post(
+                    "http://localhost:8000/api/create-order",
+                    {
+                        items: cartItems.map(i => ({ id: i.id, quantity: i.quantity })),
+                        customer: {
+                            fullName: formData.fullName,
+                            email: formData.email,
+                            phone: formData.phone,
+                            address: formData.address,
+                        },
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                const orderId = resp.data.transaction_id
+                navigate(`/thank-you?order=${orderId}`)
+            } catch (err) {
+                console.error("COD order failed:", err)
+                alert("❌ Failed to place cash order. Please try again.")
+            } finally {
+                setSubmitting(false)
+            }
         }
     }
 
@@ -236,7 +245,7 @@ export default function Checkout() {
 
     const paymentOptions = [
         { value: "cod", label: "Cash on Delivery", icon: <FaMoneyBillAlt className="text-green-600 text-2xl" /> },
-        { value: "card", label: "Credit/Debit Card", icon: <FaCreditCard className="text-blue-600 text-2xl" /> },
+{ value: "card", label: "Credit/Debit Card", icon: <FaCreditCard className="text-blue-600 text-2xl" /> },
         { value: "Momo", label: "Momo", icon: <MoMoIcon className="text-yellow-600 text-2xl" /> },
     ]
 
@@ -299,7 +308,7 @@ export default function Checkout() {
                             {cartItems.map((item) => (
                                 <li key={item.id} className="grid grid-cols-3 items-center px-4 py-2">
                                     <span className="truncate text-gray-900">{item.gear.name}</span>
-                                    <span className="text-center text-gray-700">x{item.quantity}</span>
+<span className="text-center text-gray-700">x{item.quantity}</span>
                                     <span className="text-right font-medium text-gray-900">
                                         {new Intl.NumberFormat("en-US", {
                                             style: "currency",
@@ -353,7 +362,7 @@ export default function Checkout() {
                                 required
                                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                             />
-                        </div>
+</div>
                         <div>
                             <label className="block text-sm font-medium mb-1">Phone</label>
                             <input
@@ -411,7 +420,7 @@ export default function Checkout() {
             </div>
 
             {/* Stripe Payment Modal */}
-            {showStripeModal && clientSecret && (
+{showStripeModal && clientSecret && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h3 className="text-xl mb-4">Complete Your Payment</h3>

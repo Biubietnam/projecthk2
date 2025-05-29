@@ -3,7 +3,9 @@ import Button from "../components/Button";
 import { Loader } from "lucide-react";
 import axios from "axios";
 import { Mail } from "lucide-react"
+import toast, { Toaster } from 'react-hot-toast';
 import { Link, useLocation } from "react-router-dom";
+import { useBreakpoint } from "../pages/hooks/useBreakpoint";
 
 function Breadcrumb() {
   const location = useLocation();
@@ -49,6 +51,7 @@ export default function Contact() {
     message: "",
   });
   const [loading, setLoading] = useState(false);
+  const isMobile = useBreakpoint();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +67,7 @@ export default function Contact() {
     try {
       const response = await axios.post("http://localhost:8000/api/contacts", formData);
       if (response.status === 201) {
-        alert("Message sent successfully!");
+        toast.success("Message sent successfully!");
         setFormData({
           full_name: "",
           email: "",
@@ -73,11 +76,11 @@ export default function Contact() {
           message: "",
         });
       } else {
-        alert("Failed to send message.");
+        toast.error("Failed to send message. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      alert("An error occurred.");
+      toast.error("An error occurred while sending your message. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -85,6 +88,26 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+      <Toaster
+        position={isMobile ? "bottom-center" : "bottom-right"}
+        reverseOrder={false}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#fefefe',
+            color: '#333',
+            borderRadius: '12px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+            padding: '14px 16px',
+            fontSize: '14px',
+            fontWeight: '500',
+          },
+          iconTheme: {
+            primary: '#10b981', // Emerald
+            secondary: '#ECFDF5',
+          },
+        }}
+      />
       <Breadcrumb />
       <div className="text-center mb-10">
         <h1 className="text-4xl font-semibold text-gray-900 tracking-tight flex justify-center items-center gap-2">
