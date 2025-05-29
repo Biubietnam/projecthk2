@@ -8,7 +8,7 @@ use App\Models\Service;
 
 class BookingController extends Controller
 {
-    // Generate time slots based on service duration
+    // Tạo danh sách khung giờ theo duration service
     private function generateTimeSlots($start, $end, $duration)
     {
         $slots = [];
@@ -23,7 +23,7 @@ class BookingController extends Controller
         return $slots;
     }
 
-    // API: Get all available and booked time slots for a given date and service
+    // API: Lấy khung giờ đã đặt và tất cả khung giờ có thể đặt cho service + date
     public function getBookedTimeSlots(Request $request)
     {
         $date = $request->query('date');
@@ -39,6 +39,7 @@ class BookingController extends Controller
 
         $bookedSlots = Booking::where('date', $date)
             ->where('service_id', $serviceId)
+            ->whereNotIn('status', ['Cancelled'])  // loại trừ booking đã hủy
             ->pluck('time_slot')
             ->toArray();
 
@@ -48,53 +49,54 @@ class BookingController extends Controller
         ]);
     }
 
- // API: Get all bookings of a specific user
-public function showUserBookings($userId)
-{
-    $bookings = Booking::with(['pet', 'service'])
-        ->where('user_id', $userId)
-        ->get()
-        ->map(function ($booking) {
-            return [
-                'id' => $booking->id,
-                'pet' => $booking->pet,
-                'service_name' => $booking->service->service_name ?? null,
-                'date' => $booking->date,
-                'time_slot' => $booking->time_slot,
-                'notes' => $booking->notes,
-            ];
-        });
+    // API: Lấy booking theo user và theo tab (upcoming/history)
+    public function showUserBookings(Request $request, $userId)
+    {
+        $type = $request->query('type', 'upcoming'); // Mặc định là upcoming
 
-    return response()->json($bookings);
-}
-// API: Delete a booking by ID
-public function destroy($id)
-{
-    $booking = Booking::find($id);
+        $query = Booking::with(['pet', 'service'])
+            ->where('user_id', $userId);
 
-    if (!$booking) {
-        return response()->json(['error' => 'Booking not found'], 404);
+        if ($type === 'upcoming') {
+            $query->whereIn('status', ['Pending', 'Confirmed']);
+        } elseif ($type === 'history') {
+            $query->whereIn('status', ['Completed', 'Cancelled']);
+        }
+
+        $bookings = $query
+            ->orderBy('date', 'desc')
+            ->get()
+            ->map(function ($booking) {
+                return [
+                    'id' => $booking->id,
+                    'pet' => $booking->pet,
+                    'service_name' => optional($booking->service)->service_name,
+                    'date' => $booking->date,
+                    'time_slot' => $booking->time_slot,
+                    'notes' => $booking->notes,
+                    'status' => $booking->status,
+                ];
+            });
+
+        return response()->json($bookings);
     }
 
-    $booking->delete();
-
-    return response()->json(['message' => 'Booking deleted successfully']);
-}
-
-    // API: Create a new booking
+    // API: Tạo booking mới
     public function store(Request $request)
     {
         $request->validate([
             'user_id' => 'required|integer|exists:users,id',
-        'pet_id' => 'required|integer|exists:user_pets,id',
-        'service_id' => 'required|integer',
-        'date' => 'required|date',
-        'time_slot' => 'required|string',
+            'pet_id' => 'required|integer|exists:user_pets,id',
+            'service_id' => 'required|integer|exists:services,id',
+            'date' => 'required|date',
+            'time_slot' => 'required|string',
         ]);
 
+        // Kiểm tra trùng slot, loại bỏ booking đã hủy
         $exists = Booking::where('service_id', $request->service_id)
             ->where('date', $request->date)
             ->where('time_slot', $request->time_slot)
+            ->whereNotIn('status', ['Cancelled'])
             ->exists();
 
         if ($exists) {
@@ -106,12 +108,31 @@ public function destroy($id)
             return response()->json(['error' => 'Service not found'], 404);
         }
 
-       $bookingData = $request->all();
-        $bookingData['service_name'] = $service->service_name; // Thêm tên service vào dữ liệu
+        $bookingData = $request->all();
+        $bookingData['service_name'] = $service->service_name;
+        $bookingData['status'] = 'Pending';
 
-        $booking = Booking::create($bookingData); // Dùng dữ liệu đã cập nhật
-
+        $booking = Booking::create($bookingData);
 
         return response()->json(['message' => 'Booking created successfully', 'booking' => $booking], 201);
+    }
+
+    // API: Hủy booking (update status thành Cancelled)
+    public function cancel($id)
+    {
+        $booking = Booking::find($id);
+
+        if (!$booking) {
+            return response()->json(['error' => 'Booking not found'], 404);
+        }
+
+        if ($booking->status === 'Cancelled') {
+            return response()->json(['error' => 'Booking is already cancelled'], 400);
+        }
+
+        $booking->status = 'Cancelled';
+        $booking->save();
+
+        return response()->json(['message' => 'Booking cancelled successfully']);
     }
 }

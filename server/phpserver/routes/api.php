@@ -96,11 +96,11 @@ Route::middleware('auth:sanctum')->group(function () {
 // Dat Part: UserPetController
 
 //Hiển thi day đủ thông tin cua dat lich
-Route::get('/user/{id}/bookings', [BookingController::class, 'showUserBookings']);
-Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
+
 Route::get('/booked-time-slots', [BookingController::class, 'getBookedTimeSlots']);
+Route::get('/user/{userId}/bookings', [BookingController::class, 'showUserBookings']);
 Route::post('/bookings', [BookingController::class, 'store']);
-Route::get('/booked-slots', [BookingController::class, 'getBookedSlots']);
+Route::delete('/bookings/{id}', [BookingController::class, 'cancel']);
 //Hien thi day du thong tin cua pet
 Route::delete('/pets/{id}', [UserPetController::class, 'destroy']);
 Route::get('/user/{id}/userpets', [UserPetController::class, 'getUserPets']);
