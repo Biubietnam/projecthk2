@@ -34,4 +34,9 @@ class Pet extends Model
     {
         return $this->hasMany(AdoptionRequest::class);
     }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(User::class, 'favorite_pets')->withTimestamps();
+    }
 }

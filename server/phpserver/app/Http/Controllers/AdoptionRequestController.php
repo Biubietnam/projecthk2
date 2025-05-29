@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\AdoptionRequestReceived;
 use Illuminate\Support\Facades\Mail;
+use App\Models\AdoptionResponse;
+use App\Mail\AdoptionRequestApproved;
 
 class AdoptionRequestController extends Controller
 {
@@ -43,37 +45,87 @@ class AdoptionRequestController extends Controller
         return response()->json(['message' => 'Adoption request submitted.', 'data' => $adoption]);
     }
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
-        $request = AdoptionRequest::with('pet')->findOrFail($id);
+        $validated = $request->validate([
+            'note' => 'nullable|string',
+            'scheduled_at' => 'nullable|date',
+        ]);
 
-        if ($request->pet->adopted) {
+        $adoptionRequest = AdoptionRequest::with('pet')->findOrFail($id);
+
+        if ($adoptionRequest->pet->adopted) {
             return response()->json(['message' => 'Pet already adopted.'], 400);
         }
 
-        $request->update([
+        $adoptionRequest->update([
             'status' => 'approved',
             'approved_at' => now(),
+            'scheduled_at' => $validated['scheduled_at'] ?? null,
         ]);
 
-        $request->pet->update([
-            'adopted' => true,
-        ]);
+        $adoptionRequest->pet->update(['adopted' => true]);
 
-        AdoptionRequest::where('pet_id', $request->pet_id)
-            ->where('id', '!=', $request->id)
-            ->update(['status' => 'rejected']);
+        $response = AdoptionResponse::create([
+            'adoption_request_id' => $adoptionRequest->id,
+            'responder_id' => Auth::id(),
+            'action' => 'approved',
+            'note' => $validated['note'] ?? null,
+            'responded_at' => now(),
+        ]);
+        Mail::to($adoptionRequest->user->email)->send(
+            new AdoptionRequestApproved($adoptionRequest, $response)
+        );
+
+        $otherRequests = AdoptionRequest::where('pet_id', $adoptionRequest->pet_id)
+            ->where('id', '!=', $adoptionRequest->id)
+            ->get();
+
+        foreach ($otherRequests as $request) {
+            $request->update([
+                'status' => 'rejected',
+                'note' => 'Automatically rejected because the pet has already been adopted.',
+            ]);
+
+            AdoptionResponse::create([
+                'adoption_request_id' => $request->id,
+                'responder_id' => Auth::id(),
+                'action' => 'rejected',
+                'note' => 'Auto-rejected due to another adoption approval.',
+                'responded_at' => now(),
+            ]);
+            Mail::to($request->user->email)->send(
+                new \App\Mail\AdoptionRequestRejected($request, $response)
+            );
+        }
 
         return response()->json(['message' => 'Adoption approved.']);
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = AdoptionRequest::findOrFail($id);
-
-        $request->update([
-            'status' => 'rejected',
+        $validated = $request->validate([
+            'note' => 'nullable|string',
         ]);
+
+        $adoptionRequest = AdoptionRequest::findOrFail($id);
+        $adoptionRequest->update([
+            'status' => 'rejected',
+            'note' => $validated['note'] ?? null,
+            'rejected_at' => now(),
+        ]);
+
+        AdoptionResponse::create([
+            'adoption_request_id' => $adoptionRequest->id,
+            'responder_id' => Auth::id(),
+            'action' => 'rejected',
+            'note' => $validated['note'] ?? null,
+            'responded_at' => now(),
+        ]);
+
+        Mail::to($adoptionRequest->user->email)->send(
+            new \App\Mail\AdoptionRequestRejected($adoptionRequest, new AdoptionResponse())
+        );
 
         return response()->json(['message' => 'Adoption request rejected.']);
     }
@@ -85,11 +137,11 @@ class AdoptionRequestController extends Controller
 
         return response()->json(['message' => 'Adoption request deleted.']);
     }
-    
+
     public function check($petId)
     {
         $user = Auth::user();
-        
+
         $hasRequest = $user->hasAdoptionRequestForPet($petId);
 
         return response()->json(['has_request' => $hasRequest]);

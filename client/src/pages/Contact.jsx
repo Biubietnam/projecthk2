@@ -1,16 +1,103 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../components/Button";
+import { Loader } from "lucide-react";
+import axios from "axios";
+import { Mail } from "lucide-react"
+import { Link, useLocation } from "react-router-dom";
+
+function Breadcrumb() {
+  const location = useLocation();
+  const paths = location.pathname.split('/').filter(Boolean);
+  const breadcrumbList = [];
+
+  paths.forEach((segment, index) => {
+    const path = '/' + paths.slice(0, index + 1).join('/');
+    breadcrumbList.push({
+      label: decodeURIComponent(segment.charAt(0).toUpperCase() + segment.slice(1)),
+      to: path,
+    });
+  });
+
+  return (
+    <nav className="text-sm text-gray-500 mb-4 flex items-center gap-1" aria-label="Breadcrumb">
+      <Link to="/" className="hover:text-customPurple text-gray-500 flex items-center gap-1">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+        </svg>
+        Home
+      </Link>
+      {breadcrumbList.map((item, idx) => (
+        <React.Fragment key={item.to}>
+          <span className="text-gray-400">/</span>
+          {idx === breadcrumbList.length - 1 ? (
+            <span className="text-gray-700 font-medium">{item.label}</span>
+          ) : (
+            <Link to={item.to} className="hover:text-customPurple">{item.label}</Link>
+          )}
+        </React.Fragment>
+      ))}
+    </nav>
+  );
+}
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "General Inquiry",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post("http://localhost:8000/api/contacts", formData);
+      if (response.status === 201) {
+        alert("Message sent successfully!");
+        setFormData({
+          full_name: "",
+          email: "",
+          phone: "",
+          subject: "General Inquiry",
+          message: "",
+        });
+      } else {
+        alert("Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      alert("An error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="text-gray-700 min-h-screen py-10 mt-10">
+    <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+      <Breadcrumb />
       <div className="text-center mb-10">
-        <h1 className="text-3xl ">Contact Us</h1>
-        <p>We’re here to help with all your pet care needs</p>
+        <h1 className="text-4xl font-semibold text-gray-900 tracking-tight flex justify-center items-center gap-2">
+          <Mail className="w-8 h-8 text-customPurpleDark" />
+          Contact Us
+        </h1>
+        <p className="text-gray-500 text-sm mt-2">
+          We're here to help with all your pet care needs
+        </p>
       </div>
 
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 px-4 items-stretch">
-        <div className="p-6 rounded-lg border border-customPurple bg-white">
+        <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
           <h2 className="text-xl font-semibold">Send Us a Message</h2>
           <p className="text-sm text-gray-500 mb-2">Fill out the form below and we'll get back to you as soon as possible</p>
           <form className="space-y-4">
@@ -18,7 +105,10 @@ export default function Contact() {
               <label className="block mb-1  text-gray-500">Full Name</label>
               <input
                 type="text"
-                className="w-full p-2 border border-gray-700 rounded"
+                name="full_name"
+                value={formData.full_name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
                 placeholder="John Smith"
               />
             </div>
@@ -27,7 +117,10 @@ export default function Contact() {
                 <label className="block mb-1  text-gray-500">Email</label>
                 <input
                   type="email"
-                  className="w-full p-2 border border-gray-700 rounded"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
                   placeholder="john@example.com"
                 />
               </div>
@@ -35,35 +128,58 @@ export default function Contact() {
                 <label className="block mb-1  text-gray-500">Phone (optional)</label>
                 <input
                   type="text"
-                  className="w-full p-2 border border-gray-700 rounded"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
                   placeholder="(555) 123-4567"
                 />
               </div>
             </div>
             <div className="text-sm">
               <label className="block mb-1  text-gray-500">Subject</label>
-              <select className="w-full p-2 border border-gray-700 rounded">
-                <option>Select a subject</option>
-                <option>Appointments</option>
-                <option>Feedback</option>
-                <option>Other</option>
+              <select
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
+              >
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Technical Issue">Technical Issue</option>
+                <option value="Custom Request">Custom Request</option>
+                <option value="Emergency">Emergency</option>
+                <option value="Others">Others</option>
               </select>
             </div>
             <div className="text-sm">
               <label className="block mb-1  text-gray-500">Message</label>
               <textarea
-                className="w-full p-2 h-24 border border-gray-700 rounded"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
                 placeholder="How can we help you?"
               ></textarea>
             </div>
-            <Button position="center" width="full" className="mt-3 px-4 py-2 rounded text-sm">
-              Send Message
+            <Button
+              className="w-full py-2 mt-3 text-sm rounded-md flex items-center justify-center"
+              disabled={loading}
+              onClick={handleSubmit}
+            >
+              {loading ? (
+                <>
+                  <Loader className="animate-spin h-4 w-4 mr-2" />
+                  Sending...
+                </>
+              ) : (
+                "Send Message"
+              )}
             </Button>
           </form>
 
           <div className="mt-8">
             <h2 className="text-xl font-semibold">Find Us Here</h2>
-            <div className="w-full h-64 rounded overflow-hidden border border-gray-300">
+            <div className="w-full h-64 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
               <iframe
                 title="Our Location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4689.851234228488!2d106.6796292112956!3d10.79090305888078!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752fcdf5e6b00b%3A0xed1c6762515e1113!2sFPT%20Aptech!5e1!3m2!1svi!2s!4v1745154702691!5m2!1svi!2s"
@@ -78,7 +194,7 @@ export default function Contact() {
         </div>
 
         <div className="flex flex-col h-full justify-between space-y-6">
-          <div className=" p-6 rounded-lg border border-customPurple bg-white">
+          <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
             <h2 className="text-lg font-semibold mb-2">Contact Information</h2>
             <ul className="text-sm text-gray-500 space-y-2">
               <li><strong>Phone:</strong> (555) 123-4567</li>
@@ -93,18 +209,16 @@ export default function Contact() {
             </ul>
           </div>
 
-          <div className=" p-6 rounded-lg border border-customPurple bg-white">
-            <h2 className="text-lg font-semibold mb-2">Emergency Services</h2>
-            <p className="text-sm text-gray-500">
+          <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Emergency Services</h2>
+            <p className="text-sm text-gray-500 leading-relaxed">
               Emergency Phone: (555) 987-6543<br />
               Our emergency line is available 24/7 for urgent pet care needs.
             </p>
-            <Button position="center" width="full" className="mt-3 text-sm">
-              Emergency Instructions
-            </Button>
+            <Button className="mt-4 text-sm">Emergency Instructions</Button>
           </div>
 
-          <div className=" p-6 rounded-lg border border-customPurple bg-white">
+          <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
             <h2 className="text-lg font-semibold mb-2">FAQs</h2>
             <ul className="text-sm text-gray-500 space-y-2">
               <li><strong>Do you offer house calls?</strong><br />Yes, please call our office.</li>

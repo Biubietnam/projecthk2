@@ -10,6 +10,8 @@ import Cart from "./pages/cart/Cart";
 import Receipt from "./pages/cart/Receipt";
 import ThankYou from "./pages/cart/thank-you";
 import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+
 
 //Dat: Booking page
 import Booking from "./pages/Booking";
@@ -43,7 +45,8 @@ import CreateUser from "./pages/Admin/User/CreateUser";
 import EditProfile from "./pages/Admin/User/EditProfile";
 import OrderManagement from "./pages/Admin/Order/OrderManagement";
 import AdoptionManagement from "./pages/Admin/Adoption/AdoptionManagement";
-import { useEffect } from "react";
+import FeedbackManagement from "./pages/Admin/Feedback/FeedbackManagement";
+import ContactManagement from "./pages/Admin/Contact/ContactManagement";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -59,12 +62,18 @@ export default function App() {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
   return (
-    <div className="App font-concert bg-gray-100 min-h-screen">
+    <div
+      className={`App font-concert min-h-screen ${isAdmin
+          ? "bg-gray-100"
+          : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
+        }`}
+    >
       <ScrollToTop />
       {!isAdmin && <Header />}
 
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path="/*" element={<Homepage />} />
         <Route path="/gearshop" element={<GearShop />} />
         <Route path="/gear/:id" element={<GearDetail />} />
         <Route path="/petshop" element={<OurPets />} />
@@ -101,10 +110,9 @@ export default function App() {
         <Route path="/admin/users/create" element={<CreateUser />} />
         <Route path="/admin/users/edit/profile/:id" element={<EditProfile />} />
         <Route path="/admin/ordermanagement" element={<OrderManagement />} />
-        <Route
-          path="/admin/adoptionmanagement"
-          element={<AdoptionManagement />}
-        />
+        <Route path="/admin/adoptionmanagement" element={<AdoptionManagement />} />
+        <Route path="/admin/feedbackmanagement" element={<FeedbackManagement />} />
+        <Route path="/admin/contactmanagement" element={<ContactManagement />} />
 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />

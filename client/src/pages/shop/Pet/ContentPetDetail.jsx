@@ -1,14 +1,47 @@
 //Thuc
-import React, { useState } from "react";
-import { CheckCircle2, Heart } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { CheckCircle2, Heart, Loader } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { useModal } from '../../../Appwrapper';
+import axios from "axios";
 
 export default function ContentPetDetail({ pet }) {
     const [activeTab, setActiveTab] = useState('About');
     const { closeModal } = useModal();
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const handleSaveClick = () => console.log(`Save clicked for ${pet.name}`);
+    useEffect(() => {
+        setLoading(true);
+        axios.get(`http://localhost:8000/api/favorite/${pet.id}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+        }).then(res => {
+            setIsFavorite(res.data.is_favorite === true);
+            console.log('Favorite pets fetched:', res.data);
+        }).catch(err => {
+            console.error('Error fetching favorites:', err);
+        }).finally(() => {
+            setLoading(false);
+        });
+    }, []);
+
+    const toggleFavorite = (petId) => {
+        setLoading(true);
+        axios.post(`http://localhost:8000/api/favorite/${petId}`, {}, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            }
+        }).then(() => {
+            setIsFavorite(!isFavorite);
+            console.log(`Pet ${petId} favorite status toggled.`);
+        }).catch(err => {
+            console.error('Failed to toggle favorite:', err);
+        }).finally(() => {
+            setLoading(false);
+        });
+    };
 
     return (
         <div className="text-left text-sm w-full text-gray-700">
@@ -144,12 +177,23 @@ export default function ContentPetDetail({ pet }) {
 
             <div className="mt-6 pt-5 border-t border-gray-200 flex flex-wrap justify-end items-center gap-3">
                 <button
-                    onClick={handleSaveClick}
+                    onClick={() => toggleFavorite(pet.id)}
+                    aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                     title="Save this pet"
-                    className="p-2 border border-gray-300 text-gray-500 rounded-md hover:bg-gray-100 hover:text-gray-700 transition"
+                    className={`p-2 border rounded-md transition flex items-center justify-center
+    ${isFavorite
+                            ? "border-red-300 bg-red-100 text-red-600 hover:bg-red-200"
+                            : "border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700"}
+  `}
+                    disabled={loading}
                 >
-                    <Heart className="w-5 h-5" />
+                    {loading ? (
+                        <Loader className="w-5 h-5 animate-spin" />
+                    ) : (
+                        <Heart className="w-5 h-5" />
+                    )}
                 </button>
+
                 <Link to={`/pet/${pet.id}`} onClick={closeModal} className="py-2 px-4 bg-customPurple text-white text-sm rounded-md hover:bg-customPurpleDark transition font-medium">
                     Adopt Me
                 </Link>
