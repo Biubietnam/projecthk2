@@ -135,4 +135,23 @@ class BookingController extends Controller
 
         return response()->json(['message' => 'Booking cancelled successfully']);
     }
+//BookManageMent part
+    public function index()
+{
+    $bookings = Booking::with(['pet', 'service', 'user'])->orderBy('date', 'desc')->get();
+
+    return response()->json($bookings);
+}
+
+public function update(Request $request, $id)
+{
+    $booking = Booking::find($id);
+    if (!$booking) {
+        return response()->json(['error' => 'Booking not found'], 404);
+    }
+
+    $booking->update($request->only(['status', 'notes', 'time_slot', 'date', 'service_id', 'pet_id']));
+
+    return response()->json(['message' => 'Booking updated successfully', 'booking' => $booking]);
+}
 }
