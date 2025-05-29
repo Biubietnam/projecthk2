@@ -20,6 +20,7 @@ module.exports = {
         concert: ['"Concert One"', 'cursive'],
         poetsen: ['"Poetsen One"', 'sans-serif'],
         winky: ['"Winky Rough"', 'cursive'],
+        montserrat: ['"Montserrat"', 'sans-serif'],
       },
       '.swiper .swiper-wrapper': {
         display: 'grid !important',

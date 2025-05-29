@@ -63,7 +63,7 @@ export default function App() {
   const isAdmin = pathname.startsWith("/admin");
   return (
     <div
-      className={`App font-concert min-h-screen ${isAdmin
+      className={`App font-montserrat min-h-screen ${isAdmin
           ? "bg-gray-100"
           : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
         }`}

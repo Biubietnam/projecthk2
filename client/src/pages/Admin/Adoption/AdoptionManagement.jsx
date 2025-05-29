@@ -167,7 +167,6 @@ export default function AdoptionManagement() {
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700 uppercase">
             <tr>
-              <th className="p-4">ID</th>
               <th className="p-4">User ID</th>
               <th className="p-4">Pet ID</th>
               <th className="p-4">Status</th>
@@ -189,7 +188,6 @@ export default function AdoptionManagement() {
             ) : (
               requests.map((request) => (
                 <tr key={request.id} className="border-t hover:bg-gray-50">
-                  <td className="p-4">{request.id}</td>
                   <td className="p-4">{request.user_id}</td>
                   <td className="p-4">{request.pet_id}</td>
                   <td className="p-4">

@@ -9,6 +9,18 @@ use App\Models\Gear;
 
 class ReceiptController extends Controller
 {
+    public function getorders()
+    {
+        $authUser = Auth::user();
+        if (!$authUser) {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
+        $orders = Receipt::orderBy('transaction_id')->orderBy('transaction_id')->get();
+
+        return response()->json($orders);
+    }
+
     public function show($transactionId)
     {
         $receipt = Receipt::where('transaction_id', $transactionId)->firstOrFail();
