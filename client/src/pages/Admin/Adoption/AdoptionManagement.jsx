@@ -2,12 +2,93 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Loader } from "lucide-react";
+import { useModal } from '../../../Appwrapper';
+import AdoptionResponseForm from "./AdoptionResponseForm";
+import ReactApexChart from "react-apexcharts";
+import dayjs from "dayjs";
+
+function AdoptionAreaChart({ data }) {
+  const grouped = data.reduce((acc, item) => {
+    const date = dayjs(item.requested_at).format("YYYY-MM-DD");
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+
+  const sortedDates = Object.keys(grouped).sort();
+  const seriesData = sortedDates.map(date => ({ x: date, y: grouped[date] }));
+
+  const options = {
+    chart: { type: 'area', toolbar: { show: false }, zoom: { enabled: false } },
+    stroke: { curve: 'smooth', width: 2 },
+    fill: {
+      type: 'gradient',
+      gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] }
+    },
+    dataLabels: { enabled: false },
+    xaxis: { type: 'category', labels: { rotate: -45 } },
+    yaxis: { labels: { formatter: val => Math.floor(val) } },
+    tooltip: { x: { format: 'yyyy-MM-dd' }, theme: 'light' },
+    colors: ['#10B981']
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <h2 className="text-lg text-gray-700 mb-4">Adoption Requests Over Time</h2>
+      <ReactApexChart options={options} series={[{ name: 'Adoptions', data: seriesData }]} type="area" height={240} />
+    </div>
+  );
+}
+
+function AdoptionDonutChart({ data }) {
+  const pending = data.filter(r => r.status === 'pending').length;
+  const approved = data.filter(r => r.status === 'approved').length;
+  const rejected = data.filter(r => r.status === 'rejected').length;
+  const total = pending + approved + rejected;
+
+  const series = [approved, rejected, pending];
+  const options = {
+    chart: { type: 'donut' },
+    labels: ['Approved', 'Rejected', 'Pending'],
+    colors: ['#10B981', '#EF4444', '#F59E0B'],
+    legend: { position: 'bottom' },
+    dataLabels: {
+      enabled: true,
+      dropShadow: { enabled: false }
+    },
+    tooltip: {
+      y: {
+        formatter: (val, { w }) => {
+          const t = w?.globals?.seriesTotals?.reduce((a, b) => a + b, 0) || total;
+          const pct = ((val / t) * 100).toFixed(1);
+          return `${val} requests (${pct}%)`;
+        }
+      }
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            total: { show: true, label: 'Total', formatter: () => total }
+          }
+        }
+      }
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <h2 className="text-lg text-gray-700 mb-4">Request Status</h2>
+      <ReactApexChart options={options} series={series} type="donut" height={240} />
+    </div>
+  );
+}
+
 
 export default function AdoptionManagement() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingApprove, setLoadingApprove] = useState(false);
+  const { openModal } = useModal();
 
   const fetchAdoptions = async () => {
     try {
@@ -28,20 +109,14 @@ export default function AdoptionManagement() {
     fetchAdoptions();
   }, []);
 
-  const handleApprove = async (id) => {
-    try {
-      setLoadingApprove(true);
-      const token = localStorage.getItem("access_token");
-      await axios.patch(`http://localhost:8000/api/adoption-requests/${id}/approve`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("Adoption request approved successfully!");
-      fetchAdoptions();
-    } catch (err) {
-      console.error("Error approving adoption request:", err);
-    } finally {
-      setLoadingApprove(false);
-    }
+  const showAdoptionResponseForm = (adoptID) => {
+    const request = requests.find(r => r.id === adoptID);
+    if (!request) return;
+    const userName = request.user?.name || "Unknown User";
+    openModal({
+      title: `Respond to: ${userName}`,
+      body: <AdoptionResponseForm request={request} />,
+    });
   };
 
   return loading ? (
@@ -54,7 +129,12 @@ export default function AdoptionManagement() {
       </div>
     </div>
   ) : (
-    <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+    <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <AdoptionAreaChart data={requests} />
+        <AdoptionDonutChart data={requests} />
+      </div>
+
       <div className="mb-2">
         <Link
           to="/admin/dashboard"
@@ -114,9 +194,9 @@ export default function AdoptionManagement() {
                   <td className="p-4">{request.pet_id}</td>
                   <td className="p-4">
                     <span className={`px-2 py-1 rounded text-xs inline-block ${request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        request.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          request.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'
+                      request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                        request.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'
                       }`}>
                       {request.status}
                     </span>
@@ -134,19 +214,22 @@ export default function AdoptionManagement() {
                     <div className="flex justify-center gap-2">
                       {request.status === 'pending' && (
                         <button
-                          onClick={() => handleApprove(request.id)}
-                          className={`px-2 py-1 text-xs ${loadingApprove ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-100 text-blue-700 hover:bg-blue-200 transition'} rounded`}
-                          disabled={loadingApprove}
+                          onClick={() => showAdoptionResponseForm(request.id)}
+                          className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
                         >
-                          {loadingApprove ? <Loader className="animate-spin h-4 w-4" /> : "Approve"}
+                          Respond
                         </button>
                       )}
-                      <button
-                        onClick={() => alert(`Reject request #${request.id}`)}
-                        className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
-                      >
-                        Reject
-                      </button>
+                      {(request.status === 'approved' || request.status === 'rejected') && (
+                        <span
+                          className={`px-2 py-1 text-xs rounded capitalize ${request.status === 'approved'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700'
+                            }`}
+                        >
+                          {request.status}
+                        </span>
+                      )}
                     </div>
                   </td>
                 </tr>

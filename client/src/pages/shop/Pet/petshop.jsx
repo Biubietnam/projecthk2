@@ -82,39 +82,39 @@ export default function OurPets() {
   ) : (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
       <div className="text-center mb-10">
-        <h1 className="text-4xl mb-2  font-poetsen flex items-center justify-center gap-2 animate-fade-in">
-          🐾 Find Your Perfect Pet
-        </h1>
-        <p className="text-gray-600 mt-2">Browse our selection of adorable pets looking for a loving home</p>
+        <h1 className="text-4xl font-semibold text-gray-900 mb-2 tracking-tight">🐾 Find Your Perfect Pet</h1>
+        <p className="text-gray-500 text-sm">Browse our selection of adorable pets looking for a loving home</p>
       </div>
 
-      <div className="flex flex-col items-center gap-6 mb-10">
+      <div className="w-full flex justify-center mb-6">
         <input
           type="text"
           placeholder="Search by name or breed..."
-          className="w-full md:w-1/2 px-4 py-2 rounded-md border border-customPurple text-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search pets by name or breed"
+          className="w-full max-w-lg px-5 py-3 text-sm rounded-full bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-customPurpleDark focus:outline-none placeholder-gray-400 transition"
         />
+      </div>
 
-        <div className="flex justify-center gap-4 flex-wrap">
-          {dynamicPetTypes.map((type) => (
-            <button
-              key={type}
-              onClick={() => setSelectedType(type)}
-              className={`flex flex-col items-center justify-center w-20 h-20 rounded-full border text-sm transition
-      ${selectedType === type
-                  ? "bg-customPurple text-white border-customPurple"
-                  : "bg-white text-gray-700 border-gray-300 hover:border-customPurple"
-                }`}
-              aria-label={`Filter pets by ${type}`}
-            >
-              {getTypeIcon(type)}
-              <span className="mt-1">{type}</span>
-            </button>
-          ))}
-        </div>
+      <div className="flex justify-center gap-3 flex-wrap mb-6">
+        {dynamicPetTypes.map((type) => (
+          <button
+            key={type}
+            onClick={() => setSelectedType(type)}
+            className={`flex flex-col items-center justify-center w-20 h-20 rounded-xl border text-xs font-medium transition-all duration-200
+        ${selectedType === type
+                ? "bg-customPurpleDark text-white border-customPurple shadow-md"
+                : "bg-white text-gray-600 border-gray-200 hover:border-customPurpleDark hover:text-customPurpleDark"}
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-customPurple focus:scale-105
+        active:scale-95
+      `}
+            aria-label={`Filter pets by ${type}`}
+          >
+            {getTypeIcon(type)}
+            <span className="mt-1">{type}</span>
+          </button>
+        ))}
       </div>
 
       <div>
@@ -154,7 +154,6 @@ export default function OurPets() {
                     <div>
                       <div className="h-48 w-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
                         {pet.main_image ? (
-                          // Ảnh chỉ xem không tải lại
                           <img
                             src={pet.main_image}
                             alt={pet.name}

@@ -26,7 +26,10 @@ module.exports = {
         gridTemplateColumns: 'repeat(auto-fill, minmax(0, 1fr))',
         gridAutoRows: 'auto',
         rowGap: '30px',
-      }
+      },
+      backgroundImage: {
+        'pet-pattern': "url('./assets/pet-pattern.svg')",
+      },
     },
   },
   plugins: [],

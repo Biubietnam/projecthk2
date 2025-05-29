@@ -14,8 +14,8 @@ import Button from '../../../components/Button';
 
 export default function GearShop() {
     const [gears, setGears] = useState([]);
-    const [petFilter, setPetFilter] = useState('All Gears');
-    const [categoryFilter, setCategoryFilter] = useState('All Categories');
+    const [petFilter, setPetFilter] = useState('All');
+    const [categoryFilter, setCategoryFilter] = useState('All');
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
     const [buttonLoading, setButtonLoading] = useState(false);
@@ -34,18 +34,18 @@ export default function GearShop() {
 
     const dynamicPetTypes = useMemo(() => {
         const types = new Set(gears.map(p => p.petType));
-        return ['All Gears', ...Array.from(types).sort()];
+        return ['All', ...Array.from(types).sort()];
     }, [gears]);
 
     const dynamicCategories = useMemo(() => {
         const categories = new Set(gears.map(p => p.category));
-        return ['All Categories', ...Array.from(categories).sort()];
+        return ['All', ...Array.from(categories).sort()];
     }, [gears]);
 
     const filteredGears = useMemo(() => {
         return gears.filter((gear) => {
-            const matchesType = petFilter === 'All Gears' || gear.petType === petFilter;
-            const matchesCategory = categoryFilter === 'All Categories' || gear.category === categoryFilter;
+            const matchesType = petFilter === 'All' || gear.petType === petFilter;
+            const matchesCategory = categoryFilter === 'All' || gear.category === categoryFilter;
             const matchesSearch = search === '' || gear.name.toLowerCase().includes(search.toLowerCase()) || gear.description.toLowerCase().includes(search.toLowerCase());
             return matchesType && matchesCategory && matchesSearch;
         });
@@ -106,56 +106,58 @@ export default function GearShop() {
     ) : (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
             <div className="text-center">
-                <h1 className="text-4xl mb-2  font-poetsen flex items-center justify-center gap-2 animate-fade-in">
-                    🛍️ Gear Shop
-                </h1>
-                <p className="text-gray-600 mb-6">Quality products for your beloved pets</p>
+                <h1 className="text-4xl font-semibold text-gray-900 mb-2 tracking-tight">🛍️ Gear Shop</h1>
+                <p className="text-gray-500 text-sm">Premium products for your beloved pets</p>
             </div>
 
             <div className="w-full flex justify-center mt-6">
                 <input
                     type="text"
                     placeholder="Search products..."
-                    className="w-full max-w-xl px-5 py-3 rounded-full border border-customPurple shadow-sm focus:outline-none focus:ring-2 focus:ring-customPurple focus:border-transparent text-sm"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     aria-label="Search products"
+                    className="w-full max-w-lg px-5 py-3 text-sm rounded-full bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-customPurpleDark focus:outline-none placeholder-gray-400 transition"
                 />
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
                 <div className="flex flex-col gap-4 w-full">
                     <div>
-                        <div className="flex justify-center gap-4 flex-wrap">
+                        <div className="flex justify-center gap-3 flex-wrap">
                             {dynamicPetTypes.map((type) => (
                                 <button
                                     key={type}
                                     onClick={() => setPetFilter(type)}
-                                    className={`flex flex-col items-center justify-center w-20 h-20 rounded-full border text-sm transition
-      ${petFilter === type
-                                            ? "bg-customPurple text-white border-customPurple"
-                                            : "bg-white text-gray-700 border-gray-300 hover:border-customPurple"
-                                        }`}
+                                    className={`flex flex-col items-center justify-center w-20 h-20 rounded-xl border text-xs font-medium transition-all duration-200
+    ${petFilter === type
+                                            ? "bg-customPurpleDark text-white border-customPurple shadow-md"
+                                            : "bg-white text-gray-600 border-gray-200 hover:border-customPurpleDark hover:text-customPurpleDark"}
+    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-customPurple focus:scale-105
+    active:scale-95
+  `}
                                     aria-label={`Filter pets by ${type}`}
                                 >
                                     {getTypeIcon(type)}
                                     <span className="mt-1">{type}</span>
                                 </button>
+
                             ))}
                         </div>
                     </div>
 
-                    <div>
-                        <p className="text-sm font-medium text-gray-600 mb-1">Filter by Category:</p>
-                        <div className="flex flex-wrap gap-2">
+                    <div className="flex justify-center">
+                        <div className="flex flex-wrap gap-2 mt-2">
                             {dynamicCategories.map((type) => (
                                 <button
                                     key={type}
                                     onClick={() => setCategoryFilter(type)}
-                                    className={`px-4 py-1.5 rounded-full border text-sm transition transform active:scale-95 focus:outline-none focus:ring-2 ${categoryFilter === type
-                                        ? 'bg-customPurple text-white border-customPurple shadow'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:border-customPurple'
-                                        }`}
+                                    className={`px-4 py-1.5 text-sm rounded-full transition-all duration-200 border 
+          ${categoryFilter === type
+                                            ? "bg-customPurpleDark text-white border-customPurple shadow"
+                                            : "bg-white text-gray-700 border-gray-300 hover:border-indigo-400 hover:text-customPurpleDark"}
+          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-customPurple focus:scale-105 active:scale-95
+        `}
                                 >
                                     {type}
                                 </button>
