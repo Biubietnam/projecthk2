@@ -17,7 +17,7 @@ export default function FeedbackReplyForm({ feedback, onSuccess }) {
             setLoading(true);
             const token = localStorage.getItem("access_token");
 
-            await axios.post(`http://localhost:8000/api/admin/feedbacks/${feedback.id}/replies`, {
+            await axios.post(`http://localhost:8000/api/admin/feedbacks/${feedback.id}/reply`, {
                 message,
             }, {
                 headers: { Authorization: `Bearer ${token}` },

@@ -1,13 +1,13 @@
 //Thuc
 import React, { useState, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { PawPrint, Trash2 } from "lucide-react";
 import Button from "../../../components/Button";
 import { Loader } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function CreatePet() {
-  const navigate = useNavigate();
   const fileInputRef = useRef();
   const mainInputRef = useRef();
   const [mainImage, setMainImage] = useState(null);
@@ -129,11 +129,10 @@ export default function CreatePet() {
         },
       });
 
-      alert("Pet created successfully!");
-      navigate("/admin/petmanagement");
+      toast.success("Pet created successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to create pet: " + err.message);
+      toast.error('Failed to create pet. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -157,6 +156,24 @@ export default function CreatePet() {
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <div className="mb-2">
         <Link
           to="/admin/petmanagement"
@@ -306,7 +323,7 @@ export default function CreatePet() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
                   {imagePreviews.map((src, idx) => (
                     <div key={idx} className="relative group">
-                      <img src={src} className="h-24 w-24 object-cover rounded shadow" />
+                      <img src={src} alt={`Uploaded ${idx + 1}`} className="h-24 w-24 object-cover rounded shadow" />
                       <button
                         type="button"
                         onClick={(e) => {

@@ -7,6 +7,7 @@ import FeedbackReplyForm from "./FeedbackReplyForm";
 import dayjs from 'dayjs';
 import { Eye, MessageCircle, Trash2, LayoutDashboard } from 'lucide-react';
 import ReactApexChart from "react-apexcharts";
+import toast, { Toaster } from "react-hot-toast";
 
 // Biểu đồ theo thời gian
 function FeedbackAreaChart({ data }) {
@@ -89,6 +90,7 @@ export default function FeedbackManagement() {
       });
       setFeedbacks(data);
     } catch (err) {
+      toast.error("Failed to fetch feedbacks.");
       console.error("Error fetching feedbacks:", err);
     } finally {
       setLoading(false);
@@ -104,7 +106,7 @@ export default function FeedbackManagement() {
       });
       setFeedbacks(prev => prev.filter(fb => fb.id !== id));
     } catch (err) {
-      alert("Failed to delete feedback.");
+      toast.error("Failed to delete feedback.");
       console.error(err);
     }
   };
@@ -121,6 +123,24 @@ export default function FeedbackManagement() {
 
   return (
     <div className="min-h-screen max-w-6xl mx-auto px-4 py-8 space-y-8 text-gray-700">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FeedbackAreaChart data={feedbacks} />

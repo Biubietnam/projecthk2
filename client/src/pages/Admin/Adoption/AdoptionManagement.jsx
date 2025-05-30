@@ -6,6 +6,7 @@ import { useModal } from '../../../Appwrapper';
 import AdoptionResponseForm from "./AdoptionResponseForm";
 import ReactApexChart from "react-apexcharts";
 import dayjs from "dayjs";
+import toast, { Toaster } from "react-hot-toast";
 
 function AdoptionAreaChart({ data }) {
   const grouped = data.reduce((acc, item) => {
@@ -99,6 +100,7 @@ export default function AdoptionManagement() {
       });
       setRequests(response.data);
     } catch (err) {
+      toast.error("Failed to fetch adoption requests");
       console.error("Error fetching adoption requests:", err);
     } finally {
       setLoading(false);
@@ -130,6 +132,24 @@ export default function AdoptionManagement() {
     </div>
   ) : (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <AdoptionAreaChart data={requests} />
         <AdoptionDonutChart data={requests} />

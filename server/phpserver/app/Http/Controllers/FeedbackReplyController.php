@@ -6,6 +6,8 @@ use App\Models\FeedbackReply;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\FeedbackReplied;
+use Illuminate\Support\Facades\Mail;
 
 class FeedbackReplyController extends Controller
 {
@@ -17,8 +19,6 @@ class FeedbackReplyController extends Controller
             ->get();
         return response()->json($replies);
     }
-
-    
 
     public function store(Request $request, $feedbackId)
     {
@@ -33,6 +33,14 @@ class FeedbackReplyController extends Controller
             'responder_id'  => Auth::id(),
             'message'       => $request->message,
         ]);
+
+        try {
+            Mail::to($feedback->email)->send(new FeedbackReplied($reply));
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to send email: ' . $e->getMessage(),
+            ], 500);
+        }
 
         return response()->json([
             'message' => 'Reply sent successfully',

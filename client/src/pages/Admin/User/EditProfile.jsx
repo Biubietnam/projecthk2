@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Button from "../../../components/Button";
 import { UserCog, Edit3, Trash2 } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EditProfile() {
   const { id } = useParams();
@@ -13,11 +14,7 @@ export default function EditProfile() {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const fileInputRef = useRef();
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback( async () => {
     try {
       const token = localStorage.getItem("access_token");
       const res = await axios.get(`http://localhost:8000/api/admin/users/${id}/profile`, {
@@ -26,11 +23,15 @@ export default function EditProfile() {
       setProfile(res.data.profile);
       setAvatarPreview(res.data.profile.avatar_url);
     } catch (err) {
-      alert("Failed to load profile.");
+      toast.error("Failed to load profile.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+    useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -95,6 +96,24 @@ export default function EditProfile() {
 
   return (
     <div className="min-h-screen w-full px-4 max-w-screen-lg mx-auto text-gray-700 py-10 mt-10">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <div className="mb-2">
         <Link to="/admin/usermanagement" className="inline-flex items-center text-sm text-customPurple hover:underline">
           ← Back to User Management

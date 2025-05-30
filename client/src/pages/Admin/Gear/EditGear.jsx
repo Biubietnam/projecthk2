@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { Wrench, Trash2 } from "lucide-react";
 import Button from "../../../components/Button";
+import { Loader } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function EditGear() {
     const { id } = useParams();
-    const navigate = useNavigate();
     const [gear, setGear] = useState(null);
     const [loading, setLoading] = useState(true);
     const fileInputRef = useRef();
@@ -20,12 +22,9 @@ export default function EditGear() {
     const [mainImagePreview, setMainImagePreview] = useState(null);
     const [existingMainImage, setExistingMainImage] = useState(null);
 
-    useEffect(() => {
-        fetchGear();
-    }, []);
-
-    const fetchGear = async () => {
+    const fetchGear = useCallback(async () => {
         try {
+            setLoading(true);
             const token = localStorage.getItem("access_token");
             const res = await axios.get(`http://localhost:8000/api/gears/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -37,12 +36,18 @@ export default function EditGear() {
             });
             setExistingImages(res.data.images || []);
             setExistingMainImage(res.data.main_image || "");
+            console.log("Fetched gear data:", res.data);
         } catch (err) {
-            alert("Failed to load gear.");
+            toast.error("Failed to load gear.");
+            console.error("Error fetching gear:", err);
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        fetchGear();
+    }, [fetchGear]);
 
     const handleChange = (e) => {
         setGear({ ...gear, [e.target.name]: e.target.value });
@@ -51,7 +56,7 @@ export default function EditGear() {
     const handleImageChange = (e) => {
         const newFiles = Array.from(e.target.files);
         const total = (gear.images?.length || 0) + newFiles.length;
-        if (total > 5) return alert("Only up to 5 images are allowed.");
+        if (total > 5) return toast.error("Only up to 5 images are allowed.");
 
         const allowed = newFiles.slice(0, 5 - (gear.images?.length || 0));
         const newPreviews = allowed.map((file) => URL.createObjectURL(file));
@@ -64,11 +69,11 @@ export default function EditGear() {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
         const total = (gear.images?.length || 0) + files.length;
-        if (total > 5) return alert("Only up to 5 images are allowed.");
+        if (total > 5) return toast.error("Only up to 5 images are allowed.");
 
         const allowed = files.slice(0, 5 - (gear.images?.length || 0));
         const newPreviews = allowed.map((file) => URL.createObjectURL(file));
-        
+
         setImages(allowed);
         setImagePreviews((prev) => [...prev, ...newPreviews]);
     };
@@ -81,7 +86,7 @@ export default function EditGear() {
             setExistingMainImage(null);
         }
     };
-    
+
     const handleMainImageDrop = (e) => {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
@@ -97,7 +102,7 @@ export default function EditGear() {
         const updatedPreviews = [...imagePreviews];
         updatedFiles.splice(index, 1);
         updatedPreviews.splice(index, 1);
-        
+
         setImages(updatedFiles);
         setImagePreviews(updatedPreviews);
     };
@@ -109,6 +114,26 @@ export default function EditGear() {
     };
 
     const handleSubmit = async (e) => {
+        if (!window.confirm("Are you sure you want to create this gear?")) {
+            return;
+        }
+
+        if (!gear.name || !gear.price || !gear.category || !mainImage) {
+            toast.error("Please fill out all required fields and upload a main image.");
+            return;
+        }
+
+        if (gear.rating && (gear.rating < 0 || gear.rating > 5)) {
+            toast.error("Rating must be between 0 and 5.");
+            return;
+        }
+
+        if (mainImage.size > 5 * 1024 * 1024 || images.some(img => img.size > 5 * 1024 * 1024)) {
+            toast.error("Each image must be under 5MB.");
+            return;
+        }
+
+        setLoading(true);
         e.preventDefault();
         try {
             const token = localStorage.getItem("access_token");
@@ -148,11 +173,12 @@ export default function EditGear() {
                 },
             });
 
-            alert("Gear updated successfully!");
-            navigate("/admin/gearmanagement");
+            toast.success("Gear updated successfully!");
         } catch (err) {
             console.error(err);
-            alert("Failed to update gear: " + err.message);
+            toast.error("Failed to update gear. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -170,10 +196,35 @@ export default function EditGear() {
         return res.data.secure_url;
     };
 
-    if (loading || !gear) return <div className="text-center py-20 text-gray-500">Loading...</div>;
-
-    return (
-        <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+    return (loading || !gear) ? (
+        <div className="w-full flex justify-center items-center py-20">
+            <Loader className="w-6 h-6 animate-spin text-customPurple" />
+        </div>
+    ) : (
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10"
+        >
+            <Toaster
+                position="bottom-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: "#f9f9f9",
+                        color: "#333",
+                        borderRadius: "12px",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                    },
+                    iconTheme: {
+                        primary: "#10b981",
+                        secondary: "#ECFDF5",
+                    },
+                }}
+            />
             <div className="mb-2">
                 <Link
                     to="/admin/gearmanagement"
@@ -195,8 +246,9 @@ export default function EditGear() {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6" encType="multipart/form-data">
                     {[
                         { label: "Name", name: "name" },
-                        { label: "Price ($)", name: "price", type: "number" },
                         { label: "Category", name: "category" },
+                        { label: "Price ($)", name: "price", type: "number" },
+                        { label: "Sale Percent (%)", name: "sale_percent", type: "number", min: 0, max: 100, step: 1, placeholder: "e.g. 20" },
                         { label: "Slug", name: "slug", placeholder: "auto-generated if left blank" },
                         { label: "Rating", name: "rating", type: "number", step: "0.1", max: "5" },
                         { label: "Stock", name: "stock", type: "number" },
@@ -211,7 +263,7 @@ export default function EditGear() {
                                 value={gear[field.name] || ""}
                                 onChange={handleChange}
                                 placeholder={field.placeholder}
-                                className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+                                className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition"
                                 required={field.name === "name"}
                             />
                         </div>
@@ -223,7 +275,7 @@ export default function EditGear() {
                             name="petType"
                             value={gear.petType}
                             onChange={handleChange}
-                            className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+                            className="appearance-none bg-white px-4 py-2 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-customPurple"
                         >
                             <option>Dogs</option>
                             <option>Cats</option>
@@ -238,7 +290,20 @@ export default function EditGear() {
                             name="is_featured"
                             value={gear.is_featured}
                             onChange={handleChange}
-                            className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+                            className="appearance-none bg-white px-4 py-2 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-customPurple"
+                        >
+                            <option value={0}>No</option>
+                            <option value={1}>Yes</option>
+                        </select>
+                    </div>
+
+                    <div className="flex flex-col">
+                        <p className="text-sm text-gray-600 mb-1">Is New?</p>
+                        <select
+                            name="is_new"
+                            value={gear.is_new}
+                            onChange={handleChange}
+                            className="appearance-none bg-white px-4 py-2 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-customPurple"
                         >
                             <option value={0}>No</option>
                             <option value={1}>Yes</option>
@@ -252,7 +317,7 @@ export default function EditGear() {
                             value={gear.highlights || ""}
                             onChange={handleChange}
                             placeholder="e.g. Water-resistant, Lightweight"
-                            className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+                            className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition"
                         />
                     </div>
 
@@ -269,14 +334,16 @@ export default function EditGear() {
                                 value={gear[field.name] || ""}
                                 onChange={handleChange}
                                 rows={field.rows}
-                                className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+                                className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition"
                             />
                         </div>
                     ))}
 
                     <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col">
-                            <p className="text-sm text-gray-600 mb-1">Main Image (required)</p>
+                            <p className="text-sm text-gray-600 mb-1">
+                                Main Image <span className="text-red-500">*</span>
+                            </p>
                             <div
                                 onDrop={handleMainImageDrop}
                                 onDragOver={(e) => e.preventDefault()}
@@ -337,14 +404,14 @@ export default function EditGear() {
                                 <div className="flex flex-wrap gap-4">
                                     {existingImages.map((url, idx) => (
                                         <div key={idx} className="relative group">
-                                            <img src={url} className="h-24 w-24 object-cover rounded shadow" />
+                                            <img src={url} alt={`Uploaded ${idx + 1}`} className="h-24 w-24 object-cover rounded shadow" />
                                             <button
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleRemoveExistingImage(idx);
                                                 }}
-                                                className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600"
+                                                className="border-dashed border-2 border-gray-200 hover:border-customPurple hover:bg-purple-50 transition duration-150"
                                             >
                                                 ❌
                                             </button>
@@ -352,14 +419,14 @@ export default function EditGear() {
                                     ))}
                                     {imagePreviews.map((src, idx) => (
                                         <div key={idx} className="relative group">
-                                            <img src={src} className="h-24 w-24 object-cover rounded shadow" />
+                                            <img src={src} alt={`Uploaded ${idx + 1}`} className="h-24 w-24 object-cover rounded shadow" />
                                             <button
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleRemoveNewImage(idx);
                                                 }}
-                                                className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600"
+                                                className="border-dashed border-2 border-gray-200 hover:border-customPurple hover:bg-purple-50 transition duration-150"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -374,12 +441,20 @@ export default function EditGear() {
                     </div>
 
                     <div className="md:col-span-2 text-center mt-4">
-                        <Button type="submit" className="w-full">
-                            Update Gear
+                        <Button
+                            type="submit"
+                            className="bg-customPurple text-white px-6 py-2 rounded-xl shadow-md hover:shadow-lg hover:bg-purple-600 active:scale-[.98] transition duration-150"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <Loader className="w-5 h-5 text-customPurple animate-spin-slow" />
+                            ) : (
+                                "Update Gear"
+                            )}
                         </Button>
                     </div>
                 </form>
             </div>
-        </div>
+        </motion.div>
     );
 }

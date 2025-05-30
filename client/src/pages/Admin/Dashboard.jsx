@@ -45,7 +45,7 @@ export default function AdminDashboard() {
     focus:outline-none focus:ring-2 focus:ring-customPurpleDark
 ">
                 <Icon className="text-customPurpleDark w-6 h-6 transition-transform group-hover:scale-105" />
-                <h2 className="text-xl text-gray-800">{title}</h2>
+                <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
                 <p className="text-gray-500 text-sm">{desc}</p>
             </Link>
 

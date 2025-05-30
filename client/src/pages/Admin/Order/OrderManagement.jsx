@@ -1,10 +1,9 @@
-// Thuc - Order Management
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
+import toast from "react-hot-toast";
 export default function OrderManagement() {
-  const [orders, setOrders] = useState([]);       // always start as an array
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
@@ -29,26 +28,27 @@ export default function OrderManagement() {
   useEffect(() => {
     fetchOrders();
   }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
+  const handleCancelOrder = async (id) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) {
+      return
+    }
 
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("access_token")
       await axios.post(
-        "https://localhost:8000/api/admin/orders",
-        data,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Order created successfully!");
-      fetchOrders();
+        `http://localhost:8000/api/admin/order/${id}/cancel`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+
+      toast.success("Order cancelled successfully!")
+      await fetchOrders()
     } catch (err) {
-      console.error("Error creating order:", err);
-      alert("Failed to create order.");
+      console.error("Error cancelling order:", err)
+      toast.error("Failed to cancel order")
     }
-  };
+  }
+
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10">
@@ -136,17 +136,20 @@ export default function OrderManagement() {
                     <td className="p-4 text-center">
                       <div className="flex justify-center gap-2">
                         <Link
-                          to={`/admin/orders/${txnId}`}
+                          to={`/admin/order/${txnId}`}
                           className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
                         >
                           View
                         </Link>
-                        <button
-                          onClick={() => alert(`Cancel order ${txnId}`)}
-                          className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
-                        >
-                          Cancel
-                        </button>
+
+                        {status === "ordered" && (
+                          <button
+                            onClick={() => handleCancelOrder(txnId)}
+                            className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
+                          >
+                            Cancel
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

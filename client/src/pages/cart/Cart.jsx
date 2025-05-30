@@ -106,7 +106,7 @@ export default function Cart() {
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-white p-4 rounded shadow-sm">
-<div className="flex items-center gap-4">
+                <div className="flex items-center gap-4">
                   <div className="w-24 h-24 bg-gray-200 rounded"></div>
                   <div className="flex-1 space-y-2">
                     <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -168,7 +168,7 @@ export default function Cart() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-<h2 className="text-lg font-semibold text-gray-800 mb-1 truncate">{item.gear.name}</h2>
+                      <h2 className="text-lg font-semibold text-gray-800 mb-1 truncate">{item.gear.name}</h2>
                       <p className="text-sm text-gray-600 mb-2 line-clamp-2">{item.gear.description}</p>
                       <p className="text-xl font-bold text-green-600">
                         {new Intl.NumberFormat("en-US", {
@@ -222,7 +222,7 @@ export default function Cart() {
                 </div>
 
                 {updatingItems.has(item.id) && (
-<div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
+                  <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-customPurple border-t-transparent rounded-full animate-spin"></div>
                     Updating...
                   </div>

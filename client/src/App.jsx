@@ -47,6 +47,10 @@ import OrderManagement from "./pages/Admin/Order/OrderManagement";
 import AdoptionManagement from "./pages/Admin/Adoption/AdoptionManagement";
 import FeedbackManagement from "./pages/Admin/Feedback/FeedbackManagement";
 import ContactManagement from "./pages/Admin/Contact/ContactManagement";
+import Orders from "./pages/Ordersview/Order";
+import OrderDetail from "./pages/Ordersview/Order-Detail";
+import AOrderDetail from "./pages/Admin/Order/Order-View";
+
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -64,8 +68,8 @@ export default function App() {
   return (
     <div
       className={`App font-montserrat min-h-screen ${isAdmin
-          ? "bg-gray-100"
-          : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
+        ? "bg-gray-100"
+        : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
         }`}
     >
       <ScrollToTop />
@@ -119,6 +123,10 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/checkout/result" element={<Receipt />} />
         <Route path="/thank-you" element={<ThankYou />} />
+        
+        <Route path="/admin/order/:id" element={<AOrderDetail />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/order/:id" element={<OrderDetail />} />
       </Routes>
       {!isAdmin && <Footer />}
     </div>

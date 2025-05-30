@@ -19,6 +19,7 @@ function MoMoIcon() {
     );
 }
 
+
 function CheckoutForm({ totalAmount, onSuccess, onCancel }) {
     const stripe = useStripe()
     const elements = useElements()
@@ -83,10 +84,11 @@ export default function Checkout() {
         email: "",
         phone: "",
         address: "",
+        country: "vn",
         paymentMethod: "cod",
     })
     const [cartItems, setCartItems] = useState([])
-const [totalAmount, setTotalAmount] = useState(0)
+    const [totalAmount, setTotalAmount] = useState(0)
     const [submitting, setSubmitting] = useState(false)
     const [clientSecret, setClientSecret] = useState("")
     const [showStripeModal, setShowStripeModal] = useState(false)
@@ -141,7 +143,24 @@ const [totalAmount, setTotalAmount] = useState(0)
         const { name, value } = e.target
         setFormData({ ...formData, [name]: value })
     }
-
+    const clearCart = async () => {
+        try {
+            const token = localStorage.getItem("access_token")
+            await axios.post(
+                "http://localhost:8000/api/cart/clear",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+            setCartItems([])
+        } catch (error) {
+            console.error("Error clearing cart:", error)
+            alert("Failed to clear cart. Please try again.")
+        }
+    }
     const handlePaymentMethodSelect = async (method) => {
         setFormData({ ...formData, paymentMethod: method })
         console.log("Selected payment method:", method)
@@ -159,11 +178,12 @@ const [totalAmount, setTotalAmount] = useState(0)
                             email: formData.email,
                             phone: formData.phone,
                             address: formData.address,
+                            country: formData.country,
                         },
                         paymentMethod: formData.paymentMethod,
                     },
                     {
-headers: {
+                        headers: {
                             Authorization: `Bearer ${token}`
                         }
                     }
@@ -201,11 +221,13 @@ headers: {
                             email: formData.email,
                             phone: formData.phone,
                             address: formData.address,
+                            country: formData.country,
                         },
                     },
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 const orderId = resp.data.transaction_id
+                clearCart()
                 navigate(`/thank-you?order=${orderId}`)
             } catch (err) {
                 console.error("COD order failed:", err)
@@ -231,6 +253,7 @@ headers: {
                 { headers: { Authorization: `Bearer ${token}` } }
             )
             const orderId = resp.data.transaction_id;
+            clearCart()
             alert("🎉 Payment successful! Order placed.")
             navigate(`/thank-you?order=${orderId}`);
         } catch (err) {
@@ -245,7 +268,7 @@ headers: {
 
     const paymentOptions = [
         { value: "cod", label: "Cash on Delivery", icon: <FaMoneyBillAlt className="text-green-600 text-2xl" /> },
-{ value: "card", label: "Credit/Debit Card", icon: <FaCreditCard className="text-blue-600 text-2xl" /> },
+        { value: "card", label: "Credit/Debit Card", icon: <FaCreditCard className="text-blue-600 text-2xl" /> },
         { value: "Momo", label: "Momo", icon: <MoMoIcon className="text-yellow-600 text-2xl" /> },
     ]
 
@@ -308,7 +331,7 @@ headers: {
                             {cartItems.map((item) => (
                                 <li key={item.id} className="grid grid-cols-3 items-center px-4 py-2">
                                     <span className="truncate text-gray-900">{item.gear.name}</span>
-<span className="text-center text-gray-700">x{item.quantity}</span>
+                                    <span className="text-center text-gray-700">x{item.quantity}</span>
                                     <span className="text-right font-medium text-gray-900">
                                         {new Intl.NumberFormat("en-US", {
                                             style: "currency",
@@ -362,7 +385,7 @@ headers: {
                                 required
                                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                             />
-</div>
+                        </div>
                         <div>
                             <label className="block text-sm font-medium mb-1">Phone</label>
                             <input
@@ -384,6 +407,20 @@ headers: {
                                 required
                                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                             />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Country</label>
+                            <select
+                                name="country"
+                                value={formData.country}
+                                onChange={handleChange}
+                                required
+                                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                            >
+                                <option value="vn">Vietnam</option>
+                                <option value="us">United States</option>
+                                <option value="sg">Singapore</option>
+                            </select>
                         </div>
                     </div>
 
@@ -420,7 +457,7 @@ headers: {
             </div>
 
             {/* Stripe Payment Modal */}
-{showStripeModal && clientSecret && (
+            {showStripeModal && clientSecret && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h3 className="text-xl mb-4">Complete Your Payment</h3>

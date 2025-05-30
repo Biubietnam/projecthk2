@@ -1,10 +1,11 @@
 // GearManagement.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { LayoutDashboard, Trash2, Pencil } from "lucide-react";
 import ReactApexChart from "react-apexcharts";
 import dayjs from "dayjs";
+import toast, { Toaster } from "react-hot-toast";
 
 function GearDonutChart({ data }) {
     const grouped = data.reduce((acc, item) => {
@@ -94,6 +95,25 @@ export default function GearManagement() {
     const [gears, setGears] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const filtered = gears.filter(g =>
+        g.name.toLowerCase().includes(search.toLowerCase())
+    );
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const currentItems = filtered.slice(startIdx, startIdx + itemsPerPage);
+    const tableRef = useRef();
+    const visiblePages = Array.from({ length: totalPages }, (_, i) => i + 1)
+        .filter(p => Math.abs(p - currentPage) <= 2);
+
+
+    useEffect(() => {
+        if (tableRef.current) {
+            tableRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [currentPage]);
 
     const fetchGears = async () => {
         try {
@@ -101,8 +121,10 @@ export default function GearManagement() {
             const response = await axios.get("http://localhost:8000/api/gears", {
                 headers: { Authorization: `Bearer ${token}` },
             });
+            console.log("Fetched gears:", response.data);
             setGears(response.data);
         } catch (err) {
+            toast.error("Failed to fetch gears. Please try again.");
             console.error("Error fetching gears:", err);
         } finally {
             setLoading(false);
@@ -119,19 +141,32 @@ export default function GearManagement() {
             setGears(prev => prev.filter(g => g.id !== id));
         } catch (err) {
             console.error("Error deleting gear:", err);
-            alert("Failed to delete gear.");
+            toast.error("Failed to delete gear. Please try again.");
         }
     };
 
     useEffect(() => { fetchGears(); }, []);
 
-    const filtered = gears.filter(g =>
-        g.name.toLowerCase().includes(search.toLowerCase())
-    );
-
-
     return (
         <div className="min-h-screen max-w-6xl mx-auto px-4 py-8 space-y-8 text-gray-700">
+            <Toaster
+                position="bottom-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: "#f9f9f9",
+                        color: "#333",
+                        borderRadius: "12px",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                    },
+                    iconTheme: {
+                        primary: "#10b981",
+                        secondary: "#ECFDF5",
+                    },
+                }}
+            />
             {/* Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <GearAreaChart data={gears} />
@@ -163,7 +198,7 @@ export default function GearManagement() {
             </div>
 
             {/* Table */}
-            <div className="bg-white shadow rounded-2xl overflow-hidden">
+            <div ref={tableRef} className="bg-white shadow rounded-2xl overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 text-sm">
                     <thead className="bg-gray-50 text-base">
                         <tr>
@@ -176,13 +211,38 @@ export default function GearManagement() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {loading ? (
-                            <tr><td colSpan="7" className="px-6 py-4 text-center text-gray-400">Loading...</td></tr>
+                            <tr>
+                                <td colSpan="7" className="px-6 py-8 text-center text-gray-400 animate-pulse">
+                                    <span className="inline-block w-6 h-6 border-4 border-customPurple border-t-transparent rounded-full animate-spin" />
+                                </td>
+                            </tr>
                         ) : filtered.length === 0 ? (
                             <tr><td colSpan="7" className="px-6 py-4 text-center text-gray-400">No gears found.</td></tr>
                         ) : (
-                            filtered.map((gear) => (
+                            currentItems.map((gear) => (
                                 <tr key={gear.id} className="hover:bg-gray-50 transition-colors text-sm">
-                                    <td className="px-6 py-4 font-medium">{gear.name}</td>
+                                    <td className="px-6 py-4 font-medium">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span
+                                                className="text-gray-800 font-semibold text-sm leading-snug line-clamp-2 max-w-xs break-words"
+                                                title={gear.name}
+                                            >
+                                                {gear.name}
+                                            </span>
+
+                                            {gear.is_new === 1 && (
+                                                <span className="text-[11px] font-medium tracking-wide bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                                                    NEW
+                                                </span>
+                                            )}
+
+                                            {gear.sale_percent > 0 && (
+                                                <span className="text-[11px] font-medium tracking-wide bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                                                    -{gear.sale_percent}%
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded whitespace-nowrap ${gear.petType === 'Dogs' ? 'bg-yellow-100 text-yellow-800' :
                                             gear.petType === 'Cats' ? 'bg-purple-100 text-purple-800' :
@@ -228,6 +288,44 @@ export default function GearManagement() {
                     </tbody>
                 </table>
             </div>
+            {!loading && filtered.length > 0 && (
+                <p className="text-sm text-gray-500 text-center mt-4">
+                    Showing {startIdx + 1}–{Math.min(startIdx + itemsPerPage, filtered.length)} of {filtered.length} gears
+                </p>
+            )}
+
+            {!loading && totalPages > 1 && (
+                <div className="flex justify-center mt-6 gap-2">
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className="px-3 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
+                        disabled={currentPage === 1}
+                    >
+                        Prev
+                    </button>
+
+                    {visiblePages.map((page) => (
+                        <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`px-3 py-1 rounded-xl border text-sm transition shadow-sm ${currentPage === page
+                                ? "bg-customPurple text-white"
+                                : "bg-white text-gray-700 hover:bg-gray-100"
+                                }`}
+                        >
+                            {page}
+                        </button>
+                    ))}
+
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className="px-3 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

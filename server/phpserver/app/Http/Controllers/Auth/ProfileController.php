@@ -3,28 +3,33 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class ProfileController extends Controller
 {
-    public function show($id)
+    public function show()
     {
-        $user = User::with('profile')->findOrFail($id);
 
-        return response()->json([
-            'user' => [
-                'id' => $user->id,
-                'email' => $user->email,
-                'name' => $user->name,
-            ],
-            'profile' => $user->profile
-        ]);
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
+        $profile = $user->profile;
+        if (!$profile) {
+            return response()->json(['error' => 'User does not have a profile.'], 404);
+        }
+        return response()->json($profile, 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $user = User::findOrFail($id);
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
 
         $profile = $user->profile;
         if (!$profile) {

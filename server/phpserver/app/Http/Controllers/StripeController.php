@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/StripeController.php
 
 namespace App\Http\Controllers;
 
@@ -56,8 +55,14 @@ class StripeController extends Controller
         $phone    = $request->input('customer.phone');
         $address  = $request->input('customer.address');
 
+        $country = strtoupper($request->input('customer.country', 'VN'));
+        if (!in_array($country, ['VN', 'US', 'SG'])) {
+            return response()->json(['error' => 'Invalid country.'], 422);
+        }
+
         $count = Receipt::count() + 1;
-        $txnId = 'VN' . str_pad($count, 6, '0', STR_PAD_LEFT);
+        $txnId = $country . str_pad($count, 6, '0', STR_PAD_LEFT);
+
 
         Receipt::create([
             'transaction_id' => $txnId,
@@ -88,12 +93,12 @@ class StripeController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
         $items = $request->input('items', []);
         if (!is_array($items) || empty($items)) {
-            return response()->json(['error' => 'No items provided.'], 422);
+return response()->json(['error' => 'No items provided.'], 422);
         }
         $gearMap = Gear::whereIn('id', collect($items)->pluck('id'))->get()
             ->keyBy('id');
         $lineItems = collect($items)
-->map(function ($i) use ($gearMap) {
+            ->map(function ($i) use ($gearMap) {
                 $gear = $gearMap->get($i['id']);
                 if (!$gear) return null;
                 $qty = max(0, (int)$i['quantity']);
@@ -135,7 +140,25 @@ class StripeController extends Controller
 
         $piId  = $request->input('payment_intent_id');
         $items = $request->input('items');
+        $gearMap = Gear::whereIn('id', collect($items)->pluck('id'))->get()->keyBy('id');
+        $lineItems = collect($items)
+            ->map(function ($i) use ($gearMap) {
+                $gear = $gearMap->get($i['id']);
+                if (!$gear) return null;
+                $qty = max(0, (int)$i['quantity']);
+                return [
+                    'id'       => $gear->id,
+                    'name'     => $gear->name,
+                    'unit'     => $gear->price,
+                    'quantity' => $qty,
+                    'subtotal' => $gear->price * $qty,
+                ];
+            })
+            ->filter();
 
+        if ($lineItems->isEmpty()) {
+            return response()->json(['error' => 'No valid items found.'], 422);
+        }
         $pi = PaymentIntent::retrieve($piId);
 
         if ($pi->status !== 'succeeded') {
@@ -151,15 +174,28 @@ class StripeController extends Controller
         $number   = $customerMeta['phone'];
         $address  = $customerMeta['address'];
 
-        $count        = Receipt::count() + 1;
-        $txnId        = 'VN' . str_pad($count, 6, '0', STR_PAD_LEFT);
-        $paidAmount   = $pi->amount_received / 100;
+        $country = strtoupper($request->input('customer.country', 'VN'));
+if (!in_array($country, ['VN', 'US', 'SG'])) {
+            return response()->json(['error' => 'Invalid country.'], 422);
+        }
 
+        $count = Receipt::count() + 1;
+        $txnId = $country . str_pad($count, 6, '0', STR_PAD_LEFT);
+
+        $paidAmount   = $pi->amount_received / 100;
+        $emailRaw = $customerMeta['email'] ?? null;
+
+
+        if (is_array($emailRaw)) {
+            $email = $emailRaw[0] ?? '';
+        } else {
+            $email = (string) $emailRaw;
+        }
 
         Receipt::create([
             'transaction_id' => $txnId,
             'user_id'        => $authUser?->id,
-            'items'          => $items,
+            'items'          => $lineItems->toArray(),
             'amount'         => $paidAmount,
             'payment_status' => 'paid',
             'full_name'      => $fullName,
@@ -168,9 +204,11 @@ class StripeController extends Controller
             'address'        => $address,
         ]);
 
+
         return response()->json([
             'success'        => true,
             'transaction_id' => $txnId,
+            'email'          => $emailRaw,
         ]);
     }
 }

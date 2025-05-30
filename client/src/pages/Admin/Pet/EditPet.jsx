@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { PawPrint, Trash2, Loader } from "lucide-react";
 import Button from "../../../components/Button";
+import toast, { Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function EditPet() {
   const { id } = useParams();
@@ -21,16 +23,12 @@ export default function EditPet() {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
 
-  useEffect(() => {
-    fetchPet();
-  }, []);
-
-  const fetchPet = async () => {
+  const fetchPet = useCallback(async () => {
     const token = localStorage.getItem("user_info");
     const user = token ? JSON.parse(token) : null;
 
     if (!user || user.role.name !== "admin") {
-      alert("You do not have permission to access this page.");
+      toast.error("You do not have permission to access this page.");
       navigate("/admin/dashboard");
       return;
     }
@@ -47,13 +45,23 @@ export default function EditPet() {
       setExistingMainImage(res.data.main_image || null);
     } catch (err) {
       console.error("Failed to load pet", err);
+      toast.error("Failed to load pet details.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchPet();
+  }, [fetchPet]);
 
   const handleChange = (e) => {
-    setPet({ ...pet, [e.target.name]: e.target.value });
+    if (e.target.name === "tags") {
+      const cleaned = e.target.value.replace(/\s*,\s*/g, ", ");
+      setPet({ ...pet, [e.target.name]: cleaned });
+    } else {
+      setPet({ ...pet, [e.target.name]: e.target.value });
+    }
   };
 
   const handleImageChange = (e) => {
@@ -91,7 +99,7 @@ export default function EditPet() {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
     const total = (pet.images?.length || 0) + files.length;
-    if (total > 5) return alert("Only up to 5 images are allowed.");
+    if (total > 5) return toast.error("Only up to 5 images are allowed.");
     const allowed = files.slice(0, 5 - (pet.images?.length || 0));
     const previews = allowed.map((file) => URL.createObjectURL(file));
 
@@ -104,7 +112,7 @@ export default function EditPet() {
     const previews = [...imagePreviews];
     updated.splice(index, 1);
     previews.splice(index, 1);
-    
+
     setImages(updated);
     setImagePreviews(previews);
   };
@@ -116,6 +124,21 @@ export default function EditPet() {
   };
 
   const handleSubmit = async (e) => {
+    if (!pet.name || pet.name.trim().length < 2) {
+      toast.error("Name must be at least 2 characters.");
+      return setLoadingButton(false);
+    }
+
+    if (pet.adoptionFee && pet.adoptionFee < 0) {
+      toast.error("Adoption fee cannot be negative.");
+      return setLoadingButton(false);
+    }
+
+    if (!mainImage && !existingMainImage) {
+      toast.error("Main image is required.");
+      return setLoadingButton(false);
+    }
+
     setLoadingButton(true);
     e.preventDefault();
     try {
@@ -129,7 +152,7 @@ export default function EditPet() {
       if (mainImage && mainImage !== existingMainImage) {
         mainImageUrl = await uploadToCloudinary(mainImage, mainFolder);
       }
-      
+
       const galleryUrls = [];
       for (const img of images || []) {
         const url = await uploadToCloudinary(img, galleryFolder);
@@ -156,8 +179,7 @@ export default function EditPet() {
         },
       });
 
-      alert("Pet updated successfully!");
-      navigate("/admin/petmanagement");
+      toast.success("Pet updated successfully!");
     } catch (err) {
       if (err.response?.status === 422) {
         console.log("Validation errors:", err.response.data.errors);
@@ -179,10 +201,35 @@ export default function EditPet() {
     return res.data.secure_url;
   };
 
-  if (loading || !pet) return <div className="text-center py-20 text-gray-500">Loading...</div>;
-
-  return (
-    <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+  return loading || !pet ? (
+    <div className="w-full flex justify-center items-center py-20">
+      <Loader className="w-6 h-6 animate-spin text-customPurple" />
+    </div>
+  ) : (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10"
+    >
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <div className="mb-2">
         <Link to="/admin/petmanagement" className="inline-flex items-center text-sm text-customPurple hover:underline">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -202,33 +249,34 @@ export default function EditPet() {
           {[{ label: "Name", name: "name" }, { label: "Breed", name: "breed" }, { label: "Age", name: "age" }, { label: "Weight", name: "weight" }, { label: "Color", name: "color" }, { label: "Adoption Fee ($)", name: "adoptionFee", type: "number" }].map((f) => (
             <div key={f.name} className="flex flex-col">
               <p className="text-sm text-gray-600 mb-1">{f.label}</p>
-              <input name={f.name} type={f.type || "text"} value={pet[f.name] || ""} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple" required={f.name === "name"} />
+              <input name={f.name} type={f.type || "text"} value={pet[f.name] || ""} onChange={handleChange} className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition"
+ required={f.name === "name"} />
             </div>
           ))}
 
           <div className="flex flex-col">
             <p className="text-sm text-gray-600 mb-1">Type</p>
-            <select name="type" value={pet.type} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple">
+            <select name="type" value={pet.type} onChange={handleChange} className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition">
               <option>Dogs</option><option>Cats</option><option>Rodents</option><option>Reptiles</option>
             </select>
           </div>
 
           <div className="flex flex-col">
             <p className="text-sm text-gray-600 mb-1">Gender</p>
-            <select name="gender" value={pet.gender} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple">
+            <select name="gender" value={pet.gender} onChange={handleChange} className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition">
               <option>Male</option><option>Female</option>
             </select>
           </div>
 
           <div className="md:col-span-2 flex flex-col">
             <p className="text-sm text-gray-600 mb-1">Tags (comma-separated)</p>
-            <input name="tags" value={pet.tags || ""} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple" />
+            <input name="tags" value={pet.tags || ""} onChange={handleChange} className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition" />
           </div>
 
           {[{ label: "Description", name: "description" }, { label: "Care Diet", name: "careDiet" }, { label: "Care Exercise", name: "careExercise" }, { label: "Care Grooming", name: "careGrooming" }].map((f) => (
             <div key={f.name} className="md:col-span-2 flex flex-col">
               <p className="text-sm text-gray-600 mb-1">{f.label}</p>
-              <textarea name={f.name} value={pet[f.name] || ""} onChange={handleChange} rows={2} className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple" />
+              <textarea name={f.name} value={pet[f.name] || ""} onChange={handleChange} rows={2} className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition" />
             </div>
           ))}
 
@@ -274,7 +322,7 @@ export default function EditPet() {
                 <div className="flex flex-wrap gap-4">
                   {existingImages.map((url, i) => (
                     <div key={i} className="relative group">
-                      <img src={url} className="h-24 w-24 object-cover rounded shadow" />
+                      <img src={url} alt={`Uploaded ${i + 1}`} className="h-24 w-24 object-cover rounded shadow" />
                       <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveExistingImage(i); }} className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600">
                         ❌
                       </button>
@@ -282,7 +330,7 @@ export default function EditPet() {
                   ))}
                   {imagePreviews.map((src, i) => (
                     <div key={i} className="relative group">
-                      <img src={src} className="h-24 w-24 object-cover rounded shadow" />
+                      <img src={src} className="h-24 w-24 object-cover rounded shadow" alt={`Preview ${i + 1}`} />
                       <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveNewImage(i); }} className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600">
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -298,7 +346,7 @@ export default function EditPet() {
 
           <div className="flex flex-col">
             <p className="text-sm text-gray-600 mb-1">Adopted</p>
-            <select name="adopted" value={pet.adopted} onChange={handleChange} className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-customPurple bg-gray-100">
+            <select name="adopted" value={pet.adopted} onChange={handleChange} className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition">
               <option value={0}>No</option>
               <option value={1}>Yes</option>
             </select>
@@ -318,6 +366,6 @@ export default function EditPet() {
           </div>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 }
