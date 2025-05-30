@@ -75,7 +75,7 @@ const EditPetModal = ({ pet, onClose, onPetUpdated }) => {
     };
 
     axios
-      .put(`http://localhost:8000/api/userpets/${formData.id}`, updateData)
+      .put(`https://thoriumstudio.xyz/api/userpets/${formData.id}`, updateData)
       .then((res) => {
         onPetUpdated(res.data.data);
         setShowSuccess(true);

@@ -10,12 +10,16 @@ class PetController extends Controller
 {
     public function index()
     {
-        return response()->json(Pet::all(), 200);
+        $availablePets = Pet::where('adopted', 0)->orWhereNull('adopted')->get();
+        return response()->json($availablePets, 200);   
     }
 
     public function show($id)
     {
         $pet = Pet::find($id);
+        if ($pet && $pet->adopted) {
+            return response()->json(['message' => 'This pet has already been adopted'], 404);
+        }
         if (!$pet) {
             return response()->json(['message' => 'Pet not found'], 404);
         }

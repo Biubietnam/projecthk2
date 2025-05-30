@@ -16,6 +16,8 @@ class AdoptionRequest extends Model
         'note',
         'requested_at',
         'approved_at',
+        'scheduled_at',
+        'rejected_at',
     ];
 
     public function user()
@@ -26,5 +28,10 @@ class AdoptionRequest extends Model
     public function pet()
     {
         return $this->belongsTo(Pet::class);
+    }
+
+    public function response()
+    {
+        return $this->hasOne(AdoptionResponse::class, 'adoption_request_id');
     }
 }

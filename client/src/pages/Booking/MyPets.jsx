@@ -21,7 +21,7 @@ const MyPet = () => {
     if (!userData?.id) return;
 
     axios
-      .get(`http://localhost:8000/api/user/${userData.id}/userpets`)
+      .get(`https://thoriumstudio.xyz/api/user/${userData.id}/userpets`)
       .then((response) => {
         setPets(response.data);
         setLoading(false);
@@ -40,7 +40,7 @@ const MyPet = () => {
     setIsDeleting(true);
 
     axios
-      .delete(`http://localhost:8000/api/pets/${confirmId}`)
+      .delete(`https://thoriumstudio.xyz/api/pets/${confirmId}`)
       .then(() => {
         setPets((prev) => prev.filter((p) => p.id !== confirmId));
         setSuccessMessage("Pet deleted successfully!");

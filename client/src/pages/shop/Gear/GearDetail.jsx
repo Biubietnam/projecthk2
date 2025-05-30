@@ -1,5 +1,6 @@
 // Thuc
-import { useParams, Link } from "react-router-dom";
+import React from "react";
+import { useParams, Link, useLocation } from "react-router-dom";
 import Button from "../../../components/Button";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -10,6 +11,41 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Plus, Minus, Loader } from 'lucide-react';
+
+function Breadcrumb() {
+  const location = useLocation();
+  const paths = location.pathname.split('/').filter(Boolean);
+  const breadcrumbList = [];
+
+  paths.forEach((segment, index) => {
+    const path = '/' + paths.slice(0, index + 1).join('/');
+    breadcrumbList.push({
+      label: decodeURIComponent(segment.charAt(0).toUpperCase() + segment.slice(1)),
+      to: path,
+    });
+  });
+
+  return (
+    <nav className="text-sm text-gray-500 mb-4 flex items-center gap-1" aria-label="Breadcrumb">
+      <Link to="/" className="hover:text-customPurple text-gray-500 flex items-center gap-1">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+        </svg>
+        Home
+      </Link>
+      {breadcrumbList.map((item, idx) => (
+        <React.Fragment key={item.to}>
+          <span className="text-gray-400">/</span>
+          {idx === breadcrumbList.length - 1 ? (
+            <span className="text-gray-700 font-medium">{item.label}</span>
+          ) : (
+            <Link to={item.to} className="hover:text-customPurple">{item.label}</Link>
+          )}
+        </React.Fragment>
+      ))}
+    </nav>
+  );
+}
 
 export default function GearDetail() {
   const { id } = useParams();
@@ -137,31 +173,7 @@ export default function GearDetail() {
     </div>
   ) : (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
-      <div className="mb-2">
-        <Link
-          to="/gearshop"
-          className="inline-flex items-center rounded text-sm text-customPurple hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="mr-1 h-4 w-4"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-
-          Back to Gear Shop
-        </Link>
-      </div >
-
+      <Breadcrumb />
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
         <div className="w-full lg:w-3/5 bg-white p-6 rounded-lg shadow-sm">
           <h1 className="text-4xl  text-gray-800 mb-3">{gear.name}</h1>

@@ -18,7 +18,7 @@ const MyBooking = () => {
     if (!userData?.id) return;
 
     axios
-      .get(`http://localhost:8000/api/user/${userData.id}/bookings`)
+      .get(`https://thoriumstudio.xyz/api/user/${userData.id}/bookings`)
       .then((response) => {
         setBookings(response.data);
         setLoading(false);
@@ -36,7 +36,7 @@ const MyBooking = () => {
   const confirmCancel = () => {
     setIsCancelling(true);
     axios
-      .delete(`http://localhost:8000/api/bookings/${confirmId}`)
+      .delete(`https://thoriumstudio.xyz/api/bookings/${confirmId}`)
       .then(() => {
         setBookings((prev) => prev.filter((b) => b.id !== confirmId));
         setSuccessMessage("Booking cancelled successfully!");

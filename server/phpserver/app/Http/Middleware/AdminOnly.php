@@ -8,14 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminOnly
 {
-    /**
-     * Kiểm tra nếu user không phải admin thì trả về lỗi 403.
-     */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user()?->load('role');
 
-        if (! $user || $user->role->name !== 'admin') {
+        if (! $user || ! in_array($user->role->name, ['admin', 'staff'])) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
 

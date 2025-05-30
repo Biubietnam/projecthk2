@@ -102,7 +102,7 @@ const AddPetModal = ({ onClose, onPetAdded }) => {
     };
 
     axios
-      .post("http://localhost:8000/api/userpets", submitData)
+      .post("https://thoriumstudio.xyz/api/userpets", submitData)
       .then((res) => {
         onPetAdded(res.data);
         setShowSuccess(true);

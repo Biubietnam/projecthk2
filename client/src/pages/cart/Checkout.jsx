@@ -84,6 +84,7 @@ export default function Checkout() {
         email: "",
         phone: "",
         address: "",
+        country: "vn",
         paymentMethod: "cod",
     })
     const [cartItems, setCartItems] = useState([])
@@ -160,6 +161,7 @@ export default function Checkout() {
                             email: formData.email,
                             phone: formData.phone,
                             address: formData.address,
+                            country: formData.country,
                         },
                         paymentMethod: formData.paymentMethod,
                     },
@@ -202,6 +204,7 @@ export default function Checkout() {
                             email: formData.email,
                             phone: formData.phone,
                             address: formData.address,
+                            country: formData.country,
                         },
                     },
                     { headers: { Authorization: `Bearer ${token}` } }
@@ -232,6 +235,7 @@ export default function Checkout() {
                 { headers: { Authorization: `Bearer ${token}` } }
             )
             const orderId = resp.data.transaction_id;
+            console.log(resp.data)
             alert("🎉 Payment successful! Order placed.")
             navigate(`/thank-you?order=${orderId}`);
         } catch (err) {
@@ -385,6 +389,20 @@ export default function Checkout() {
                                 required
                                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                             />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Country</label>
+                            <select
+                                name="country"
+                                value={formData.country}
+                                onChange={handleChange}
+                                required
+                                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                            >
+                                <option value="vn">Vietnam</option>
+                                <option value="us">United States</option>
+                                <option value="sg">Singapore</option>
+                            </select>
                         </div>
                     </div>
 

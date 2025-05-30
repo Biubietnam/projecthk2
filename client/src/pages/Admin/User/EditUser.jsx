@@ -33,7 +33,7 @@ export default function EditUser() {
         try {
             const token = localStorage.getItem("access_token");
 
-            await axios.post(`https://thoriumstudio.xyz/api/admin/users/${id}?_method=PUT`, user, {
+            await axios.put(`https://thoriumstudio.xyz/api/admin/users/${id}`, user, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -107,6 +107,7 @@ export default function EditUser() {
                         name="email"
                         type="email"
                         value={user.email || ""}
+                        onChange={handleChange}
                         className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-customPurple bg-gray-100"
                         required
                     />

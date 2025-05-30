@@ -40,7 +40,7 @@ const BookingModal = ({ onClose }) => {
     let isMounted = true;
     setLoadingSlots(true);
     axios
-      .get("http://localhost:8000/api/booked-time-slots", {
+      .get("https://thoriumstudio.xyz/api/booked-time-slots", {
         params: {
           service_id: formData.service_id,
           date: formData.date,
@@ -107,7 +107,7 @@ const BookingModal = ({ onClose }) => {
     };
 
     try {
-      await axios.post("http://localhost:8000/api/bookings", payload);
+      await axios.post("https://thoriumstudio.xyz/api/bookings", payload);
       setShowSuccess(true);
     } catch (err) {
       const msg =

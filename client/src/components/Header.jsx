@@ -44,11 +44,10 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
-      ${
-        isScrolled
+      ${isScrolled
           ? "backdrop-blur-lg bg-white/80 shadow-md py-1"
           : "bg-white py-1"
-      }
+        }
     `}
     >
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
@@ -65,11 +64,10 @@ export default function Header() {
             <Link
               key={item.name}
               to={item.path}
-              className={`relative px-4 py-2 font-medium transition-colors group ${
-                location.pathname === item.path
+              className={`relative px-4 py-2 font-medium transition-colors group ${location.pathname === item.path
                   ? "text-customPurple"
                   : "text-gray-700 hover:text-customPurple"
-              }`}
+                }`}
             >
               {item.name}
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
@@ -98,6 +96,15 @@ export default function Header() {
                     Admin Dashboard
                   </Link>
 
+                  {userInfo.role?.name === "admin" && (
+                    <Link
+                      to="/admin/dashboard"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  )}
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -156,11 +163,10 @@ export default function Header() {
 
           <Link
             to={"/cart"}
-            className={`relative px-4 py-2 font-medium transition-colors group ${
-              location.pathname === "/admin/dashboard"
+            className={`relative px-4 py-2 font-medium transition-colors group ${location.pathname === "/admin/dashboard"
                 ? "text-customPurple"
                 : "text-gray-700 hover:text-customPurple"
-            }`}
+              }`}
           >
             <ShoppingCart className="w-5 h-5" />
             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-customPurple transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
@@ -219,6 +225,20 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     My Orders
+                  </Link>
+                  <Link
+                    to="/mybooking"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Booking
+                  </Link>
+                  <Link
+                    to="/mypets"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Pets
                   </Link>
                   <Link
                     to="/mybooking"

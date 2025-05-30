@@ -53,7 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Profile::class);
     }
-    
+
     public function hasRole(string $roleName): bool
     {
         return $this->role && $this->role->name === $roleName;
@@ -82,9 +82,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasAdoptionRequestForPet($petId)
     {
         return $this->hasMany(AdoptionRequest::class)
-        ->where('pet_id', $petId)
-        ->where('status', 'pending')
-        ->exists();
+            ->where('pet_id', $petId)
+            ->where('status', 'pending')
+            ->exists();
     }
 
+    public function favoritePets()
+    {
+        return $this->belongsToMany(Pet::class, 'favorite_pets')->withTimestamps();
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
+    }
 }

@@ -1,8 +1,7 @@
-// Thuc - Order Management
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
+import toast from "react-hot-toast";
 export default function OrderManagement() {
   const [orders, setOrders] = useState([]);       // always start as an array
   const [loading, setLoading] = useState(true);
@@ -20,7 +19,7 @@ export default function OrderManagement() {
       setOrders(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching orders:", err);
-      setOrders([]); 
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -29,29 +28,30 @@ export default function OrderManagement() {
   useEffect(() => {
     fetchOrders();
   }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
+  const handleCancelOrder = async (id) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) {
+      return
+    }
 
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("access_token")
       await axios.post(
-        "https://thoriumstudio.xyz/api/admin/orders",
-        data,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Order created successfully!");
-      fetchOrders();
+        `https://thoriumstudio.xyz/api/admin/order/${id}/cancel`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+
+      toast.success("Order cancelled successfully!")
+      await fetchOrders()
     } catch (err) {
-      console.error("Error creating order:", err);
-      alert("Failed to create order.");
+      console.error("Error cancelling order:", err)
+      toast.error("Failed to cancel order")
     }
-  };
+  }
+
 
   return (
-    <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+    <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10">
       <div className="mb-2">
         <Link
           to="/admin/dashboard"
@@ -94,13 +94,13 @@ export default function OrderManagement() {
               </tr>
             ) : (
               orders.map((order) => {
-                const txnId        = order.transaction_id;
-                const userId       = order.user_id;
-                const status       = order.shipping_status.toLowerCase();
-                const payStatus    = order.payment_status.toLowerCase();
-                const total        = order.amount.toFixed(2);
-                const address      = order.address;
-                const contact      = order.number || order.email || "";
+                const txnId = order.transaction_id;
+                const userId = order.user_id;
+                const status = order.shipping_status.toLowerCase();
+                const payStatus = order.payment_status.toLowerCase();
+                const total = order.amount.toFixed(2);
+                const address = order.address;
+                const contact = order.number || order.email || "";
 
                 return (
                   <tr key={txnId} className="border-t hover:bg-gray-50">
@@ -108,26 +108,24 @@ export default function OrderManagement() {
                     <td className="p-4">{userId}</td>
                     <td className="p-4">
                       <span
-                        className={`px-2 py-1 rounded text-xs inline-block ${
-                          status === "ordered"    ? "bg-yellow-100 text-yellow-800" :
-                          status === "processing" ? "bg-blue-100 text-blue-800"   :
-                          status === "shipped"    ? "bg-purple-100 text-purple-800":
-                          status === "delivered"  ? "bg-green-100 text-green-800" :
-                          status === "cancelled"  ? "bg-red-100 text-red-800"     :
-                          "bg-gray-100 text-gray-800"
-                        }`}
+                        className={`px-2 py-1 rounded text-xs inline-block ${status === "ordered" ? "bg-yellow-100 text-yellow-800" :
+                          status === "processing" ? "bg-blue-100 text-blue-800" :
+                            status === "shipped" ? "bg-purple-100 text-purple-800" :
+                              status === "delivered" ? "bg-green-100 text-green-800" :
+                                status === "cancelled" ? "bg-red-100 text-red-800" :
+                                  "bg-gray-100 text-gray-800"
+                          }`}
                       >
                         {status}
                       </span>
                     </td>
                     <td className="p-4">
                       <span
-                        className={`px-2 py-1 rounded text-xs inline-block ${
-                          payStatus === "paid"     ? "bg-green-100 text-green-800" :
-                          payStatus === "cash"     ? "bg-blue-100 text-blue-800"  :
-                          payStatus === "refunded" ? "bg-yellow-100 text-yellow-800":
-                                                     "bg-gray-100 text-gray-800"
-                        }`}
+                        className={`px-2 py-1 rounded text-xs inline-block ${payStatus === "paid" ? "bg-green-100 text-green-800" :
+                          payStatus === "cash" ? "bg-blue-100 text-blue-800" :
+                            payStatus === "refunded" ? "bg-yellow-100 text-yellow-800" :
+                              "bg-gray-100 text-gray-800"
+                          }`}
                       >
                         {payStatus}
                       </span>
@@ -138,17 +136,20 @@ export default function OrderManagement() {
                     <td className="p-4 text-center">
                       <div className="flex justify-center gap-2">
                         <Link
-                          to={`/admin/orders/${txnId}`}
+                          to={`/admin/order/${txnId}`}
                           className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
                         >
                           View
                         </Link>
-                        <button
-                          onClick={() => alert(`Cancel order ${txnId}`)}
-                          className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
-                        >
-                          Cancel
-                        </button>
+
+                        {status === "ordered" && (
+                          <button
+                            onClick={() => handleCancelOrder(txnId)}
+                            className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
+                          >
+                            Cancel
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
