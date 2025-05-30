@@ -143,7 +143,24 @@ export default function Checkout() {
         const { name, value } = e.target
         setFormData({ ...formData, [name]: value })
     }
-
+    const clearCart = async () => {
+        try {
+            const token = localStorage.getItem("access_token")
+            await axios.post(
+                "https://thoriumstudio.xyz/api/cart/clear",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+            setCartItems([])
+        } catch (error) {
+            console.error("Error clearing cart:", error)
+            alert("Failed to clear cart. Please try again.")
+        }
+    }
     const handlePaymentMethodSelect = async (method) => {
         setFormData({ ...formData, paymentMethod: method })
         console.log("Selected payment method:", method)
@@ -210,6 +227,7 @@ export default function Checkout() {
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 const orderId = resp.data.transaction_id
+                clearCart()
                 navigate(`/thank-you?order=${orderId}`)
             } catch (err) {
                 console.error("COD order failed:", err)
@@ -235,7 +253,7 @@ export default function Checkout() {
                 { headers: { Authorization: `Bearer ${token}` } }
             )
             const orderId = resp.data.transaction_id;
-            console.log(resp.data)
+            clearCart()
             alert("🎉 Payment successful! Order placed.")
             navigate(`/thank-you?order=${orderId}`);
         } catch (err) {
