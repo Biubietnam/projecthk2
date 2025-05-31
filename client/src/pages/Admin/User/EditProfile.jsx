@@ -14,7 +14,7 @@ export default function EditProfile() {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const fileInputRef = useRef();
 
-  const fetchProfile = useCallback( async () => {
+  const fetchProfile = useCallback(async () => {
     setLoadingPage(true);
     try {
       const token = localStorage.getItem("access_token");
@@ -23,7 +23,7 @@ export default function EditProfile() {
       });
       console.log(res.data);
       setProfile(res.data);
-      setAvatarPreview(res.data.avatar_url);
+      setAvatarPreview(res.data.avatar_url?.url || res.data.avatar_url);
     } catch (err) {
       toast.error("Failed to load profile.");
     } finally {
@@ -31,7 +31,7 @@ export default function EditProfile() {
     }
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
@@ -67,7 +67,10 @@ export default function EditProfile() {
     formData.set("upload_preset", "petzone");
     formData.set("folder", `Petzone/Users/${id}/Avatar`);
     const res = await axios.post("https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload", formData);
-    return res.data.secure_url;
+    return {
+      url: res.data.secure_url,
+      public_id: res.data.public_id,
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -75,12 +78,16 @@ export default function EditProfile() {
     setLoading(true);
     try {
       const token = localStorage.getItem("access_token");
-      let avatarUrl = profile.avatar_url;
+
+      let avatarObject = profile.avatar_url;
       if (avatarFile) {
-        avatarUrl = await uploadToCloudinary(avatarFile);
+        avatarObject = await uploadToCloudinary(avatarFile);
       }
 
-      const payload = { ...profile, avatar_url: avatarUrl };
+      const payload = {
+        ...profile,
+        avatar_url: avatarObject,
+      };
 
       await axios.put(`http://localhost:8000/api/admin/user/profile`, payload, {
         headers: {
@@ -88,6 +95,7 @@ export default function EditProfile() {
           "Content-Type": "application/json",
         },
       });
+
       toast.success("Profile updated successfully!");
     } catch (err) {
       toast.error("Failed to update profile.");
@@ -97,6 +105,7 @@ export default function EditProfile() {
       fetchProfile();
     }
   };
+
 
   if (loadingPage) {
     return (

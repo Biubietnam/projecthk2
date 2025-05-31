@@ -31,6 +31,7 @@ class Pet extends Model
     protected $casts = [
         'tags' => 'array',
         'images' => 'array',
+        'main_image' => 'array',
     ];
 
     public function adoptionRequests()

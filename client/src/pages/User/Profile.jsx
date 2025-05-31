@@ -114,7 +114,7 @@ export default function Profile() {
         <div className="flex flex-col sm:flex-row gap-6">
           <div className="relative group w-28 h-28 mx-auto sm:mx-0">
             <img
-              src={avatarPreview || profile.avatar_url || 'https://ui-avatars.com/api/?name=User'}
+              src={avatarPreview || (typeof profile.avatar_url === 'string' ? profile.avatar_url : profile.avatar_url?.url) || 'https://ui-avatars.com/api/?name=User'}
               className="w-28 h-28 rounded-full object-cover border shadow-sm group-hover:brightness-90 transition"
               alt="Avatar"
             />
@@ -167,7 +167,7 @@ export default function Profile() {
                 className="cursor-pointer bg-white p-4 border border-gray-100 rounded-2xl shadow hover:shadow-md transition"
               >
                 <img
-                  src={pet.main_image || "https://via.placeholder.com/150"}
+                  src={typeof pet.main_image === 'string' ? pet.main_image : pet.main_image?.url || "https://via.placeholder.com/150"}
                   alt={pet.name}
                   className="w-full h-40 object-cover rounded-xl mb-3"
                 />

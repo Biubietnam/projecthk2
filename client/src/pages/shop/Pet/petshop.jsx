@@ -263,7 +263,11 @@ export default function OurPets() {
                       <div className="h-48 w-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
                         {pet.main_image ? (
                           <img
-                            src={pet.main_image}
+                            src={
+                              typeof pet.main_image === 'string'
+                                ? pet.main_image
+                                : pet.main_image?.url
+                            }
                             alt={pet.name}
                             className="w-full h-full object-contain select-none pointer-events-none"
                             loading="lazy"

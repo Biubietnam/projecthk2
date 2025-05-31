@@ -115,7 +115,7 @@ export default function ContentPetDetail({ pet }) {
                 <div className="flex flex-col md:flex-row gap-6">
                     <div className="w-full md:w-1/3 flex-shrink-0">
                         <div className="h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden mb-3 shadow">
-                            <img src={pet.main_image} alt={pet.name} className="object-cover w-full h-full" onError={(e) => { e.target.onerror = null; e.target.parentElement.innerHTML = '<span class="text-xs italic text-gray-400">No Image</span>'; }} />
+                            <img src={typeof pet.main_image === 'string' ? pet.main_image : pet.main_image?.url} alt={pet.name} className="object-cover w-full h-full" onError={(e) => { e.target.onerror = null; e.target.parentElement.innerHTML = '<span class="text-xs italic text-gray-400">No Image</span>'; }} />
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                             {Array.isArray(pet.tags) && pet.tags.map(tag => (

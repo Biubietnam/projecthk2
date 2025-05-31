@@ -34,8 +34,10 @@ export default function EditGear() {
                 highlights: res.data.highlights?.join(", ") || "",
                 images: [],
             });
-            setExistingImages(res.data.images || []);
-            setExistingMainImage(res.data.main_image || "");
+            setExistingImages(
+                (res.data.images || []).map(img => img.url)
+            );
+            setExistingMainImage(res.data.main_image?.url || "");
             console.log("Fetched gear data:", res.data);
         } catch (err) {
             toast.error("Failed to load gear.");
@@ -170,7 +172,8 @@ export default function EditGear() {
             const mainFolder = `Petzone/Gears/${gearId}/Main_image`;
             const galleryFolder = `Petzone/Gears/${gearId}`;
 
-            let mainImageUrl = gear.main_image || existingMainImage || "";
+            let mainImageUrl = gear.main_image?.url || existingMainImage || "";
+
             if (mainImage && mainImage !== existingMainImage) {
                 mainImageUrl = await uploadToCloudinary(mainImage, mainFolder);
             }
@@ -188,7 +191,13 @@ export default function EditGear() {
             const payload = {
                 ...gear,
                 highlights: highlightsArray,
-                images: [...existingImages, ...galleryUrls],
+                images: [
+                    ...existingImages.map(url => ({
+                        url,
+                        public_id: "",
+                    })),
+                    ...galleryUrls,
+                ],
                 main_image: mainImageUrl
             };
 
@@ -221,7 +230,10 @@ export default function EditGear() {
             formData
         );
 
-        return res.data.secure_url;
+        return {
+            url: res.data.secure_url,
+            public_id: res.data.public_id,
+        };
     };
 
     return (loading || !gear) ? (

@@ -92,7 +92,10 @@ export default function CreateGear() {
       "https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload",
       formData
     );
-    return res.data.secure_url;
+    return {
+      url: res.data.secure_url,
+      public_id: res.data.public_id,
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -145,15 +148,23 @@ export default function CreateGear() {
       const mainFolder = `Petzone/Gears/${gearId}/Main_image`;
       const galleryFolder = `Petzone/Gears/${gearId}`;
 
-      let mainImageUrl = "";
+      const mainImageData = {
+        url: "",
+        public_id: "",
+      };
+      const galleryData = [];
       if (mainImage) {
-        mainImageUrl = await uploadToCloudinary(mainImage, mainFolder);
+        const uploadedMain = await uploadToCloudinary(mainImage, mainFolder);
+        mainImageData.url = uploadedMain.url;
+        mainImageData.public_id = uploadedMain.public_id;
       }
 
-      const galleryUrls = [];
       for (const img of images) {
-        const url = await uploadToCloudinary(img, galleryFolder);
-        galleryUrls.push(url);
+        const uploadedImg = await uploadToCloudinary(img, galleryFolder);
+        galleryData.push({
+          url: uploadedImg.url,
+          public_id: uploadedImg.public_id,
+        });
       }
 
       const highlightsArray = gear.highlights
@@ -167,8 +178,8 @@ export default function CreateGear() {
         ...gear,
         slug: gear.slug || slugify(gear.name),
         highlights: highlightsArray,
-        images: galleryUrls,
-        main_image: mainImageUrl,
+        main_image: mainImageData,
+        images: galleryData,
       };
 
       await axios.post("http://localhost:8000/api/admin/gears", payload, {

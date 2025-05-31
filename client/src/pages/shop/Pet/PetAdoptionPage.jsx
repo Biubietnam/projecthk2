@@ -153,7 +153,7 @@ export default function PetAdoptionPage() {
                                 {pet.images.map((img, i) => (
                                     <SwiperSlide key={i}>
                                         <motion.img
-                                            src={img}
+                                            src={img?.url || img}
                                             alt={`Pet ${i}`}
                                             className="h-[34rem] w-full object-contain rounded-xl"
                                             loading="lazy"

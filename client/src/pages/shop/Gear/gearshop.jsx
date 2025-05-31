@@ -61,6 +61,7 @@ export default function GearShop() {
         axios.get('http://localhost:8000/api/gears')
             .then(response => {
                 setGears(response.data);
+                console.log('Gears fetched successfully:', response.data);
                 setLoading(false);
             })
             .catch(error => {
@@ -295,7 +296,7 @@ export default function GearShop() {
                                     >
                                         <div className="w-full h-[250px] flex items-center justify-center overflow-hidden">
                                             <img
-                                                src={product.main_image}
+                                                src={typeof product.main_image === 'string' ? product.main_image : product.main_image?.url}
                                                 alt={product.name}
                                                 className="max-h-full max-w-full object-contain transition duration-500 ease-in-out transform group-hover:scale-105"
                                                 loading="lazy"

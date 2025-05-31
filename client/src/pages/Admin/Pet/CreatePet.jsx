@@ -90,7 +90,11 @@ export default function CreatePet() {
       "https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload",
       formData
     );
-    return res.data.secure_url;
+    return {
+      url: res.data.secure_url,
+      public_id: res.data.public_id,
+    };
+
   };
 
   const handleSubmit = async (e) => {
@@ -102,24 +106,25 @@ export default function CreatePet() {
       const mainFolder = `Petzone/Pets/${petId}/Main_image`;
       const galleryFolder = `Petzone/Pets/${petId}`;
 
-      let mainImageUrl = "";
+      let mainImageObj = null;
       if (mainImage) {
-        mainImageUrl = await uploadToCloudinary(mainImage, mainFolder);
+        mainImageObj = await uploadToCloudinary(mainImage, mainFolder);
       }
 
-      const galleryUrls = [];
+      const galleryObjs = [];
       for (const img of images) {
-        const url = await uploadToCloudinary(img, galleryFolder);
-        galleryUrls.push(url);
+        const imageObj = await uploadToCloudinary(img, galleryFolder);
+        galleryObjs.push(imageObj);
       }
+
 
       const tagsArray = pet.tags ? pet.tags.split(",").map((tag) => tag.trim()).filter(Boolean) : [];
 
       const payload = {
         ...pet,
         tags: tagsArray,
-        images: galleryUrls,
-        main_image: mainImageUrl,
+        images: galleryObjs,
+        main_image: mainImageObj,
       };
 
       await axios.post("http://localhost:8000/api/admin/pets", payload, {

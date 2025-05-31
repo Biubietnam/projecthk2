@@ -21,6 +21,10 @@ class Profile extends Model
         'avatar_url',
     ];
 
+    protected $casts = [
+        'avatar_url' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

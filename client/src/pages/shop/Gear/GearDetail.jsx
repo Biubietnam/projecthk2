@@ -143,7 +143,7 @@ export default function GearDetail() {
                 {gear.images.map((img, i) => (
                   <SwiperSlide key={i}>
                     <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }} className="h-[34rem] bg-white flex justify-center items-center">
-                      <img src={img} alt={`Gear ${i}`} className="object-contain max-h-full" />
+                      <img src={img?.url || img} alt={`Gear ${i}`} className="object-contain max-h-full" />
                     </motion.div>
                   </SwiperSlide>
                 ))}

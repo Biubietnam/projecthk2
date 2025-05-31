@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Gear;
 
 class ReviewController extends Controller
 {
@@ -29,13 +30,13 @@ class ReviewController extends Controller
                     ->exists();
 
                 if (!$alreadyReviewed) {
-                    $gear = DB::table('gears')->select('main_image')->where('id', $item['id'])->first();
+                    $gear = Gear::find($item['id']);
 
                     $unreviewed[] = [
                         'receipt_id'  => $receipt->transaction_id,
                         'gear_id'     => $item['id'],
                         'quantity'    => $item['quantity'],
-                        'main_image'  => $gear?->main_image, // null nếu không tìm thấy
+                        'main_image'  => $gear?->main_image,
                     ];
                 }
             }

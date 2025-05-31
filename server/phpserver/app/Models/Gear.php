@@ -30,6 +30,7 @@ class Gear extends Model
     protected $casts = [
         'highlights' => 'array',
         'images' => 'array',
+        'main_image' => 'array',
     ];
 
     public function getFinalPriceAttribute()

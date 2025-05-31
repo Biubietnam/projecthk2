@@ -198,7 +198,10 @@ export default function EditPet() {
     formData.set("upload_preset", "petzone");
     formData.set("folder", folder);
     const res = await axios.post("https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload", formData);
-    return res.data.secure_url;
+    return {
+      url: res.data.secure_url,
+      public_id: res.data.public_id,
+    };
   };
 
   return loading || !pet ? (
@@ -250,7 +253,7 @@ export default function EditPet() {
             <div key={f.name} className="flex flex-col">
               <p className="text-sm text-gray-600 mb-1">{f.label}</p>
               <input name={f.name} type={f.type || "text"} value={pet[f.name] || ""} onChange={handleChange} className="px-4 py-2 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-customPurple shadow-sm transition"
- required={f.name === "name"} />
+                required={f.name === "name"} />
             </div>
           ))}
 
@@ -290,7 +293,7 @@ export default function EditPet() {
                   <div className="flex flex-wrap gap-4 justify-center">
                     <div className="relative group">
                       <img
-                        src={mainImagePreview || existingMainImage}
+                        src={mainImagePreview || existingMainImage?.url}
                         className="h-24 w-24 object-cover rounded shadow"
                         alt="Main"
                       />
@@ -320,9 +323,9 @@ export default function EditPet() {
               <div onDrop={handleImageDrop} onDragOver={(e) => e.preventDefault()} onClick={() => fileInputRef.current.click()} className="border-dashed border-2 border-gray-300 rounded-md p-4 bg-gray-100 cursor-pointer hover:border-customPurple">
                 <input type="file" ref={fileInputRef} accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                 <div className="flex flex-wrap gap-4">
-                  {existingImages.map((url, i) => (
+                  {existingImages.map((imgObj, i) => (
                     <div key={i} className="relative group">
-                      <img src={url} alt={`Uploaded ${i + 1}`} className="h-24 w-24 object-cover rounded shadow" />
+                      <img src={imgObj.url} alt={`Uploaded ${i + 1}`} className="h-24 w-24 object-cover rounded shadow" />
                       <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveExistingImage(i); }} className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white text-gray-600">
                         ❌
                       </button>

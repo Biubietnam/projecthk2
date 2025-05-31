@@ -14,6 +14,7 @@ export default function ReviewUnreviewedProducts({ openModal }) {
         const res = await axios.get('http://localhost:8000/api/reviews/unreviewed', {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log('Unreviewed products:', res.data);
         setProducts(res.data);
       } catch (err) {
         console.error('Error fetching unreviewed products:', err);
@@ -44,13 +45,15 @@ export default function ReviewUnreviewedProducts({ openModal }) {
             key={idx}
             className="rounded-2xl border border-gray-200 bg-white p-4 flex items-start gap-4 shadow-sm hover:shadow-md transition duration-300 ease-in-out"
           >
-            {item.main_image && (
-              <img
-                src={item.main_image}
-                alt={`Product ${item.gear_id}`}
-                className="w-24 h-24 object-contain rounded-lg"
-              />
-            )}
+            <img
+              src={
+                typeof item.main_image === "string"
+                  ? item.main_image
+                  : item.main_image?.url || "https://via.placeholder.com/100"
+              }
+              alt={`Product ${item.gear_id}`}
+              className="w-24 h-24 object-contain rounded-lg"
+            />
             <div className="flex-1 space-y-2">
               <div>
                 <p className="text-sm text-gray-500">Receipt ID</p>
@@ -109,9 +112,8 @@ function ReviewForm({ gearId, receiptId }) {
               key={value}
               type="button"
               onClick={() => setRating(value)}
-              className={`text-2xl font-semibold transition-transform transform hover:scale-110 ${
-                rating >= value ? 'text-yellow-400' : 'text-gray-300'
-              }`}
+              className={`text-2xl font-semibold transition-transform transform hover:scale-110 ${rating >= value ? 'text-yellow-400' : 'text-gray-300'
+                }`}
             >
               ★
             </button>

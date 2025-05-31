@@ -157,7 +157,7 @@ export default function Cart() {
                     <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       {item.gear.main_image ? (
                         <img
-                          src={item.gear.main_image || "/placeholder.svg"}
+                          src={item.gear.main_image?.url || "/placeholder.svg"}
                           alt={item.gear.name}
                           className="w-full h-full object-cover"
                         />
