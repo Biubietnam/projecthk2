@@ -158,6 +158,8 @@ Route::get('/booked-time-slots', [BookingController::class, 'getBookedTimeSlots'
 Route::get('/user/{userId}/bookings', [BookingController::class, 'showUserBookings']);
 Route::post('/bookings', [BookingController::class, 'store']);
 Route::delete('/bookings/{id}', [BookingController::class, 'cancel']);
+Route::get('/bookings', [BookingController::class, 'index']);
+Route::put('/bookings/{id}', [BookingController::class, 'update']);
 //Hien thi day du thong tin cua pet
 Route::delete('/pets/{id}', [UserPetController::class, 'destroy']);
 Route::get('/user/{id}/userpets', [UserPetController::class, 'getUserPets']);

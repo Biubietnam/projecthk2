@@ -12,7 +12,6 @@ import ThankYou from "./pages/cart/thank-you";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
-
 //Dat: Booking page
 import Booking from "./pages/Booking";
 import PetUnLogin from "./pages/Booking/petUnLogin";
@@ -22,6 +21,7 @@ import PetVet from "./pages/Booking/petVet";
 import AddPetModal from "./pages/Booking/AddPetModal";
 import MyBooking from "./pages/Booking/MyBooking";
 import MyPets from "./pages/Booking/MyPets";
+import BookingManagement from "./pages/Admin/Booking/BookingManagement";
 
 // Part Thuc User
 import ResetPasswordFormContent from "./pages/Login/ResetPassword";
@@ -67,10 +67,21 @@ export default function App() {
   const isAdmin = pathname.startsWith("/admin");
   return (
     <div
+<<<<<<< HEAD
+      className={`App font-concert min-h-screen ${
+        isAdmin
+=======
       className={`App font-montserrat min-h-screen ${isAdmin
+<<<<<<< HEAD
+>>>>>>> f0860d28a0b39aa79d898800c761f189b11af5a6
+          ? "bg-gray-100"
+          : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
+      }`}
+=======
         ? "bg-gray-100"
         : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
         }`}
+>>>>>>> 5456ed4bcbd034435be516a5a1e66df391bbc9cb
     >
       <ScrollToTop />
       {!isAdmin && <Header />}
@@ -90,6 +101,7 @@ export default function App() {
         <Route path="/petvet" element={<PetVet />} />
         <Route path="/petUnLogin" element={<PetUnLogin />} />
         <Route path="/petlist" element={<PetListForBooking />} />
+        <Route path="/bookingmanagement" element={<BookingManagement />} />
 
         <Route path="/petlist" element={<PetListForBooking />} />
         <Route path="/petunlogin" element={<PetUnLogin />} />
@@ -114,9 +126,22 @@ export default function App() {
         <Route path="/admin/users/create" element={<CreateUser />} />
         <Route path="/admin/users/edit/profile/:id" element={<EditProfile />} />
         <Route path="/admin/ordermanagement" element={<OrderManagement />} />
-        <Route path="/admin/adoptionmanagement" element={<AdoptionManagement />} />
-        <Route path="/admin/feedbackmanagement" element={<FeedbackManagement />} />
-        <Route path="/admin/contactmanagement" element={<ContactManagement />} />
+        <Route
+          path="/admin/bookingmanagement"
+          element={<BookingManagement />}
+        />
+        <Route
+          path="/admin/adoptionmanagement"
+          element={<AdoptionManagement />}
+        />
+        <Route
+          path="/admin/feedbackmanagement"
+          element={<FeedbackManagement />}
+        />
+        <Route
+          path="/admin/contactmanagement"
+          element={<ContactManagement />}
+        />
 
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
