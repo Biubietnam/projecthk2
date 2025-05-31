@@ -4,8 +4,10 @@ import { Loader } from 'lucide-react';
 import Button from '../../components/Button';
 import { useModal } from '../../Appwrapper';
 import ContentPetDetail from '../shop/Pet/ContentPetDetail';
+import ReviewUnreviewedProducts from '../User/ReviewUnreviewedProducts';
 
-export default function Profile({ id }) {
+
+export default function Profile() {
   const [profile, setProfile] = useState({
     full_name: '', gender: '', date_of_birth: '', phone: '',
     address: '', city: '', country: '', avatar_url: '',
@@ -17,9 +19,6 @@ export default function Profile({ id }) {
   const avatarInputRef = useRef();
   const [favoritePets, setFavoritePets] = useState([]);
   const { openModal } = useModal();
-
-  const user = localStorage.getItem('user_info');
-  const userID = user ? JSON.parse(user).id : id;
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -41,11 +40,12 @@ export default function Profile({ id }) {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        if (!token || !userID) return;
-        const res = await axios.get(`http://localhost:8000/api/user/${userID}/profile`, {
+        const res = await axios.get(`http://localhost:8000/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.data && isMounted) setProfile(res.data.profile);
+        console.log('Profile data:', res.data);
+        console.log('Profile ID:', res.data.user_id);
+        if (res.data && isMounted) setProfile(res.data);
       } catch (err) {
         console.error('Error fetching profile:', err);
       } finally {
@@ -81,7 +81,7 @@ export default function Profile({ id }) {
     const formData = new FormData();
     formData.set("file", file);
     formData.set("upload_preset", "petzone");
-    formData.set("folder", `Petzone/Users/${id}/Avatar`);
+    formData.set("folder", `Petzone/Users/${profile.user_id}/Avatar`);
     const res = await axios.post("https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload", formData);
     return res.data.secure_url;
   };
@@ -95,7 +95,7 @@ export default function Profile({ id }) {
       if (avatarFile) {
         profile.avatar_url = await uploadToCloudinary(avatarFile);
       }
-      await axios.put(`http://localhost:8000/api/user/${userID}/profile`, profile, {
+      await axios.put(`http://localhost:8000/api/user/profile`, profile, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('✅ Profile updated successfully!');
@@ -180,6 +180,7 @@ export default function Profile({ id }) {
           </div>
         </div>
       )}
+      <ReviewUnreviewedProducts openModal={openModal} />
     </div>
   );
 }

@@ -6,6 +6,9 @@ import { useModal } from '../../../Appwrapper';
 import AdoptionResponseForm from "./AdoptionResponseForm";
 import ReactApexChart from "react-apexcharts";
 import dayjs from "dayjs";
+import toast, { Toaster } from "react-hot-toast";
+import { LayoutDashboard } from 'lucide-react';
+import AdoptionDetailForm from "./AdoptionDetailForm";
 
 function AdoptionAreaChart({ data }) {
   const grouped = data.reduce((acc, item) => {
@@ -84,11 +87,24 @@ function AdoptionDonutChart({ data }) {
   );
 }
 
-
 export default function AdoptionManagement() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const { openModal } = useModal();
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const filtered = requests.filter(req =>
+    (req.user?.name || '').toLowerCase().includes(search.toLowerCase()) ||
+    String(req.pet_id).includes(search)
+  );
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentItems = filtered.slice(startIdx, startIdx + itemsPerPage);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   const fetchAdoptions = async () => {
     try {
@@ -99,6 +115,7 @@ export default function AdoptionManagement() {
       });
       setRequests(response.data);
     } catch (err) {
+      toast.error("Failed to fetch adoption requests");
       console.error("Error fetching adoption requests:", err);
     } finally {
       setLoading(false);
@@ -119,6 +136,16 @@ export default function AdoptionManagement() {
     });
   };
 
+  const showDetailModal = (requestId) => {
+    const request = requests.find(r => r.id === requestId);
+    if (!request) return;
+
+    openModal({
+      title: `Adoption Request #${request.id}`,
+      body: <AdoptionDetailForm request={request} />,
+    });
+  };
+
   return loading ? (
     <div className="flex items-center justify-center min-h-screen">
       <div className="flex items-center justify-center">
@@ -130,37 +157,52 @@ export default function AdoptionManagement() {
     </div>
   ) : (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
+
+      <div className="mb-2">
+        <Link
+          to="/admin/dashboard"
+          className="inline-flex items-center rounded text-customPurple hover:underline"
+        >
+          <LayoutDashboard className="w-5 h-5 mr-2" />
+          Back to Admin Dashboard
+        </Link>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <AdoptionAreaChart data={requests} />
         <AdoptionDonutChart data={requests} />
       </div>
 
-      <div className="mb-2">
-        <Link
-          to="/admin/dashboard"
-          className="inline-flex items-center rounded text-sm text-customPurple hover:underline"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="mr-1 h-4 w-4"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-          Back to Admin Dashboard
-        </Link>
-      </div>
-
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl ">Adoption Management</h1>
+        <h1 className="text-3xl">Adoption Management</h1>
+        <input
+          type="text"
+          placeholder="Search by user or pet ID..."
+          className="px-3 py-2 border rounded-lg text-sm focus:ring-customPurple focus:outline-none"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-x-auto border border-gray-200">
@@ -173,6 +215,7 @@ export default function AdoptionManagement() {
               <th className="p-4">Note</th>
               <th className="p-4">Requested At</th>
               <th className="p-4">Approved At</th>
+              <th className="p-4">Rejected At</th>
               <th className="p-4 text-center">Actions</th>
             </tr>
           </thead>
@@ -186,7 +229,7 @@ export default function AdoptionManagement() {
                 <td colSpan="8" className="text-center py-6 text-gray-500">No adoption requests found.</td>
               </tr>
             ) : (
-              requests.map((request) => (
+              currentItems.map((request) => (
                 <tr key={request.id} className="border-t hover:bg-gray-50">
                   <td className="p-4">{request.user_id}</td>
                   <td className="p-4">{request.pet_id}</td>
@@ -199,8 +242,8 @@ export default function AdoptionManagement() {
                       {request.status}
                     </span>
                   </td>
-                  <td className="p-4 whitespace-pre-wrap max-w-sm text-xs text-gray-600">
-                    {request.note || "—"}
+                  <td className="p-4 max-w-[100px] text-xs text-gray-600">
+                    <div className="truncate">{request.note || "—"}</div>
                   </td>
                   <td className="p-4 text-xs text-gray-500">
                     {request.requested_at || "—"}
@@ -208,8 +251,17 @@ export default function AdoptionManagement() {
                   <td className="p-4 text-xs text-gray-500">
                     {request.approved_at || "—"}
                   </td>
+                  <td className="p-4 text-xs text-gray-500">
+                    {request.rejected_at || "—"}
+                  </td>
                   <td className="p-4 text-center">
                     <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() => showDetailModal(request.id)}
+                        className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition"
+                      >
+                        View
+                      </button>
                       {request.status === 'pending' && (
                         <button
                           onClick={() => showAdoptionResponseForm(request.id)}
@@ -236,6 +288,30 @@ export default function AdoptionManagement() {
           </tbody>
         </table>
       </div>
+      {filtered.length > 0 && (
+        <p className="text-sm text-gray-500 text-center mt-4">
+          Showing {startIdx + 1}–{Math.min(startIdx + itemsPerPage, filtered.length)} of {filtered.length} adoption requests
+        </p>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 gap-2">
+          <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}
+            className="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">Prev</button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(p => Math.abs(p - currentPage) <= 2)
+            .map(page => (
+              <button key={page} onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-xl border text-sm transition shadow-sm ${currentPage === page ? "bg-customPurple text-white" : "bg-white text-gray-700 hover:bg-gray-100"}`}>
+                {page}
+              </button>
+            ))}
+
+          <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">Next</button>
+        </div>
+      )}
     </div>
   );
 }

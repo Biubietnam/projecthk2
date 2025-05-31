@@ -9,6 +9,8 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/grid';
+import toast, { Toaster } from "react-hot-toast";
+import { motion } from 'framer-motion';
 
 import { Navigation, Pagination, Grid } from 'swiper/modules';
 import Button from '../../../components/Button';
@@ -56,13 +58,26 @@ export default function OurPets() {
   const topRef = useRef(null);
 
   const { openModal } = useModal();
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value.trimStart());
+  };
+
 
   useEffect(() => {
-    setLoading(true);
-    axios.get('http://localhost:8000/api/pets')
-      .then(response => setPets(response.data))
-      .catch(error => console.error('Error fetching pets:', error))
-      .finally(() => setLoading(false));
+    const fetchPets = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('http://localhost:8000/api/pets');
+        setPets(response.data);
+      } catch (error) {
+        console.error('Error fetching pets:', error);
+        toast.error("Failed to fetch pets.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPets();
   }, []);
 
   const dynamicPetTypes = useMemo(() => {
@@ -75,7 +90,15 @@ export default function OurPets() {
     if (!pet) return;
     openModal({
       title: `Details of ${pet.name}`,
-      body: <ContentPetDetail pet={pet} />,
+      body:
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ContentPetDetail pet={pet} />
+        </motion.div>,
     });
   };
 
@@ -142,6 +165,24 @@ export default function OurPets() {
     </div>
   ) : (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <Breadcrumb />
       <div ref={topRef} className="text-center mb-10">
         <h1 className="text-4xl font-semibold text-gray-900 mb-2 tracking-tight">🐾 Find Your Perfect Pet</h1>
@@ -153,7 +194,7 @@ export default function OurPets() {
           type="text"
           placeholder="Search by name or breed..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
           aria-label="Search pets by name or breed"
           className="w-full max-w-lg px-5 py-3 text-sm rounded-full bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-customPurpleDark focus:outline-none placeholder-gray-400 transition"
         />
@@ -217,7 +258,7 @@ export default function OurPets() {
             >
               {filteredPets.map((pet) => (
                 <SwiperSlide key={pet.id} className="!h-auto">
-                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col justify-between h-full">
+                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col justify-between h-full transform hover:scale-[1.015] transition duration-200">
                     <div>
                       <div className="h-48 w-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
                         {pet.main_image ? (
@@ -235,7 +276,7 @@ export default function OurPets() {
                       <div className="p-4">
                         <h2 className="text-xl  text-center truncate">{pet.name}</h2>
                         <p className="text-sm text-gray-500 text-center capitalize">{pet.breed} • {pet.age}</p>
-                        <p className="text-sm mt-2 text-gray-600 text-center line-clamp-2">{pet.description}</p>
+                        <p className="text-sm mt-2 text-gray-600 text-center line-clamp-2 min-h-[3.5rem]">{pet.description}</p>
                       </div>
                     </div>
                     <div className="px-4 pb-4 mt-auto flex justify-center gap-2">

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FeedbackReceived;
 
 class FeedbackController extends Controller
 {
@@ -28,6 +30,7 @@ class FeedbackController extends Controller
         ]);
 
         $feedback = Feedback::create($validated);
+        Mail::to($feedback->email)->send(new FeedbackReceived($feedback));
 
         return response()->json(['message' => 'Feedback created successfully.', 'data' => $feedback], 201);
     }

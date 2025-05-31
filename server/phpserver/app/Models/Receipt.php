@@ -1,5 +1,4 @@
 <?php
-// app/Models/Receipt.php
 
 namespace App\Models;
 
@@ -9,7 +8,12 @@ class Receipt extends Model
 {
     protected $table = 'receipt';
 
-    // We rely on MySQL default timestamp for date_issued
+    protected $primaryKey = 'transaction_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+    
     public $timestamps = false;
 
     protected $fillable = [

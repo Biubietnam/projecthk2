@@ -33,8 +33,6 @@ Route::get('/pets', [PetController::class, 'index']);
 
 Route::get('/gears', [GearController::class, 'index']);
 Route::get('/gears/{id}', [GearController::class, 'show']);
-Route::get('/gears/{gear}/reviews', [ReviewController::class, 'index']);
-
 
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login',    [LoginController::class, 'login']);
@@ -54,8 +52,6 @@ Route::post('email/resend', [VerificationController::class, 'resend'])
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
-
-    Route::get('user/{id}/profile',   [ProfileController::class, 'show']);
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
@@ -70,6 +66,9 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     });
 
     Route::get('/admin/orders', [ReceiptController::class, 'getorders']);
+    Route::get('/admin/order/{id}', [ReceiptController::class, 'getorderbyid']);
+    Route::patch('/admin/order/{id}', [ReceiptController::class, 'updateOrderStatus']);
+    Route::post('/admin/order/{id}/cancel', [ReceiptController::class, 'cancelOrder']);
 
     Route::get('/admin/users', function () {
         return User::with('role')->get();
@@ -86,12 +85,13 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         return $user->load('role');
     });
 
-    Route::get('/admin/users/{id}/profile', [ProfileController::class, 'show']);
-    Route::put('/admin/users/{id}/profile', [ProfileController::class, 'update']);
+    Route::get('/admin/user/profile', [ProfileController::class, 'show']);
+    Route::put('/admin/user/profile', [ProfileController::class, 'update']);
 
     Route::post('/admin/pets', [PetController::class, 'store']);
     Route::put('/admin/pets/{id}', [PetController::class, 'update']);
     Route::delete('/admin/pets/{id}', [PetController::class, 'destroy']);
+    
     Route::put('/admin/gears/{id}', [GearController::class, 'update']);
     Route::post('/admin/gears', [GearController::class, 'store']);
     Route::delete('/admin/gears/{id}', [GearController::class, 'destroy']);
@@ -100,6 +100,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin/feedbacks/{id}', [FeedbackController::class, 'show']);
     Route::put('/admin/feedbacks/{id}', [FeedbackController::class, 'update']);
     Route::delete('/admin/feedbacks/{id}', [FeedbackController::class, 'destroy']);
+    Route::post('/admin/feedbacks/{id}/reply', [FeedbackReplyController::class, 'store']);
 
     Route::get('/adoption-requests', [AdoptionRequestController::class, 'index']);
     Route::post('/adoption-requests', [AdoptionRequestController::class, 'store']);
@@ -132,6 +133,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cart/add/{gearId}', [CartController::class, 'add']);
     Route::put('/cart/update/{itemId}', [CartController::class, 'update']);
     Route::delete('/cart/remove/{itemId}', [CartController::class, 'remove']);
+    Route::post('/cart/clear', [CartController::class, 'clear']);
 
     Route::post('/favorite/{petId}', [FavoritePetController::class, 'toggle']);
     Route::get('/favorite/{petId}', [FavoritePetController::class, 'check']);
@@ -139,9 +141,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/vnpay/create-payment', [PaymentController::class, 'createPayment']);
 
+    Route::get('/user/profile', [ProfileController::class, 'show']);
+    Route::put('/user/profile', [ProfileController::class, 'update']);
 
-    Route::get('/user/{id}/profile', [ProfileController::class, 'show']);
-    Route::put('/user/{id}/profile', [ProfileController::class, 'update']);
+    Route::get('/reviews/unreviewed', [ReviewController::class, 'unreviewed']);
+    Route::post('/reviews', [ReviewController::class, 'store']);
+    
+    Route::post('/order/{id}/cancel', [ReceiptController::class, 'usercancel']);
 });
 
 // Dat Part: UserPetController
@@ -164,10 +170,14 @@ Route::put('/userpets/{id}', [UserPetController::class, 'update']);
 Route::get('/vnpay/return', [PaymentController::class, 'vnpayReturn']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post("/create-order", [StripeController::class, 'createCashOrder']);
     Route::post('/confirm-payment', [StripeController::class, 'confirmPayment']);
     Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
+    Route::get('/get-all-receipts', [ReceiptController::class, 'getall']);
+    Route::get('/get-receipts/{id}', [ReceiptController::class, 'getorderbyid']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('receipts/{transaction}', [ReceiptController::class, 'show']);
     Route::get('receipts/{transaction}', [ReceiptController::class, 'show']);
 });

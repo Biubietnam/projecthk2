@@ -8,7 +8,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/grid';
 import { Loader } from 'lucide-react';
-
+import toast, { Toaster } from "react-hot-toast";
 import { Navigation, Pagination, Grid } from 'swiper/modules';
 import Button from '../../../components/Button';
 
@@ -53,10 +53,11 @@ export default function GearShop() {
     const [categoryFilter, setCategoryFilter] = useState('All');
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
-    const [buttonLoading, setButtonLoading] = useState(false);
+    const [buttonLoadingID, setButtonLoadingID] = useState(null);
     const topRef = useRef(null);
 
     useEffect(() => {
+        setLoading(true);
         axios.get('http://localhost:8000/api/gears')
             .then(response => {
                 setGears(response.data);
@@ -64,6 +65,7 @@ export default function GearShop() {
             })
             .catch(error => {
                 console.error('Error fetching pets:', error);
+                toast.error('Failed to load gears. Please try again later.');
                 setLoading(false);
             })
     }, []);
@@ -104,7 +106,7 @@ export default function GearShop() {
     };
 
     const handleAddToCart = async (id) => {
-        setButtonLoading(true);
+        setButtonLoadingID(id);
         const token = localStorage.getItem("access_token");
         if (!token) return alert("You must be logged in to add items to the cart.");
         try {
@@ -119,12 +121,12 @@ export default function GearShop() {
                     },
                 }
             );
-            alert("Item added to cart successfully!");
+            toast.success("Item added to cart successfully!");
         } catch (error) {
             console.error("Error adding item to cart:", error);
-            alert("Failed to add item to cart. Please try again.");
+            toast.error("Failed to add item to cart. Please try again.");
         } finally {
-            setButtonLoading(false);
+            setButtonLoadingID(null);
         }
     };
 
@@ -166,6 +168,24 @@ export default function GearShop() {
         </div>
     ) : (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+            <Toaster
+                position="bottom-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: "#f9f9f9",
+                        color: "#333",
+                        borderRadius: "12px",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                    },
+                    iconTheme: {
+                        primary: "#10b981",
+                        secondary: "#ECFDF5",
+                    },
+                }}
+            />
             <Breadcrumb />
             <div ref={topRef} className="text-center">
                 <h1 className="text-4xl text-gray-900 mb-2 tracking-tight font-semibold">🛍️ Gear Shop</h1>
@@ -177,7 +197,10 @@ export default function GearShop() {
                     type="text"
                     placeholder="Search products..."
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value.trimStart();
+                        setSearch(value);
+                    }}
                     aria-label="Search products"
                     className="w-full max-w-lg px-5 py-3 text-sm rounded-full bg-white border border-gray-300 shadow-sm focus:ring-2 focus:ring-customPurpleDark focus:outline-none placeholder-gray-400 transition"
                 />
@@ -282,7 +305,20 @@ export default function GearShop() {
                                         <div className="w-full h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
 
                                         <div className="p-4 flex flex-col items-center text-center flex-grow">
-                                            <h2 className="text-lg line-clamp-2">{product.name}</h2>
+                                            <h2 className="text-lg line-clamp-2 font-semibold">{product.name}</h2>
+
+                                            <div className="mt-2 flex flex-wrap justify-center gap-2">
+                                                {product.is_new ? (
+                                                    <span className="bg-green-100 text-green-700 text-[11px] font-medium px-2 py-0.5 rounded-full">
+                                                        NEW
+                                                    </span>
+                                                ) : null}
+                                                {product.sale_percent > 0 ? (
+                                                    <span className="bg-red-100 text-red-700 text-[11px] font-medium px-2 py-0.5 rounded-full">
+                                                        -{product.sale_percent}%
+                                                    </span>
+                                                ) : null}
+                                            </div>
                                         </div>
 
                                         <div className="px-4 pb-2 mt-auto text-center">
@@ -305,13 +341,13 @@ export default function GearShop() {
                                             >
                                                 <Button
                                                     className="w-full h-[40px] relative text-sm"
-                                                    onClick={() => setButtonLoading(true)}
-                                                    disabled={buttonLoading}
+                                                    onClick={() => setButtonLoadingID(product.id)}
+                                                    disabled={buttonLoadingID === product.id}
                                                 >
-                                                    <span className={buttonLoading ? "invisible" : "visible"}>
+                                                    <span className={buttonLoadingID === product.id ? "invisible" : "visible"}>
                                                         Details
                                                     </span>
-                                                    {buttonLoading && (
+                                                    {(buttonLoadingID === product.id) && (
                                                         <span className="absolute inset-0 flex items-center justify-center gap-2">
                                                             <Loader className="animate-spin w-4 h-4" />
                                                             Loading...
@@ -326,12 +362,12 @@ export default function GearShop() {
                                                 color="#22c55e"
                                                 hoverColor="#16a34a"
                                                 type="submit"
-                                                disabled={buttonLoading}
+                                                disabled={(buttonLoadingID === product.id) || product.stock <= 0}
                                             >
-                                                <span className={buttonLoading ? "invisible" : "visible"}>
+                                                <span className={(buttonLoadingID === product.id) ? "invisible" : "visible"}>
                                                     Add to Cart
                                                 </span>
-                                                {buttonLoading && (
+                                                {(buttonLoadingID === product.id) && (
                                                     <span className="absolute inset-0 flex items-center justify-center gap-2">
                                                         <Loader className="animate-spin w-4 h-4" />
                                                         Loading...

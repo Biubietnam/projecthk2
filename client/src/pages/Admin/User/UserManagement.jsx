@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import ReactApexChart from "react-apexcharts";
+import toast, { Toaster } from "react-hot-toast";
+import { LayoutDashboard } from "lucide-react";
 
-// Biểu đồ tăng trưởng người dùng theo ngày
 function UserGrowthChart({ data }) {
   const grouped = data.reduce((acc, user) => {
     const date = new Date(user.created_at).toISOString().split("T")[0];
@@ -36,7 +37,6 @@ function UserGrowthChart({ data }) {
   );
 }
 
-// Biểu đồ phân loại theo vai trò
 function UserRoleDonutChart({ data }) {
   const grouped = data.reduce((acc, user) => {
     const role = user.role?.name || "unknown";
@@ -104,6 +104,7 @@ export default function UserManagement() {
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
+        toast.error("Failed to load users.");
       }
     };
 
@@ -120,23 +121,50 @@ export default function UserManagement() {
       setUsers(users.filter((u) => u.id !== id));
     } catch (error) {
       console.error("Error deleting user:", error);
-      alert("Failed to delete user.");
+      toast.error("Failed to delete user.");
     }
   };
 
   return (
     <div className="min-h-screen max-w-6xl mx-auto px-4 py-8 space-y-8 text-gray-700">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
+
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <Link
+          to="/admin/dashboard"
+          className="text-customPurple hover:underline flex items-center gap-1"
+        >
+          <LayoutDashboard className="w-5 h-5" />
+          <span>Back to Dashboard</span>
+        </Link>
+      </div>
+
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <UserGrowthChart data={users} />
         <UserRoleDonutChart data={users} />
       </div>
 
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <Link to="/admin/dashboard" className="text-customPurple hover:underline text-sm">
-          ← Back to Admin Dashboard
-        </Link>
+      {/* Một button nằm bên trái */}
+      <div className="flex justify-end mb-4">
         <Link to="/admin/users/create" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
           + Add New User
         </Link>
@@ -169,14 +197,13 @@ export default function UserManagement() {
                   <td className="p-4">{user.email}</td>
                   <td className="p-4">
                     <span
-                      className={`px-2 py-1 rounded text-xs capitalize inline-block ${
-                        user.role?.name === 'admin' ? 'bg-red-100 text-red-800' :
+                      className={`px-2 py-1 rounded text-xs capitalize inline-block ${user.role?.name === 'admin' ? 'bg-red-100 text-red-800' :
                         user.role?.name === 'staff' ? 'bg-blue-100 text-blue-800' :
-                        user.role?.name === 'vet' ? 'bg-green-100 text-green-800' :
-                        user.role?.name === 'seller' ? 'bg-yellow-100 text-yellow-800' :
-                        user.role?.name === 'user' ? 'bg-purple-100 text-purple-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}
+                          user.role?.name === 'vet' ? 'bg-green-100 text-green-800' :
+                            user.role?.name === 'seller' ? 'bg-yellow-100 text-yellow-800' :
+                              user.role?.name === 'user' ? 'bg-purple-100 text-purple-800' :
+                                'bg-gray-100 text-gray-800'
+                        }`}
                     >
                       {user.role?.name}
                     </span>

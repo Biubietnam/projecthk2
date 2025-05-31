@@ -23,12 +23,19 @@ class Gear extends Model
         'rating',
         'reviews_count',
         'is_featured',
+        'is_new',
+        'sale_percent',
     ];
 
     protected $casts = [
         'highlights' => 'array',
         'images' => 'array',
     ];
+
+    public function getFinalPriceAttribute()
+    {
+        return round($this->price * (1 - $this->sale_percent / 100), 2);
+    }
 
     public function reviews()
     {

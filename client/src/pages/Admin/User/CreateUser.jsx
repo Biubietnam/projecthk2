@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { UserPlus } from "lucide-react";
 import Button from "../../../components/Button";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function CreateUser() {
-    const navigate = useNavigate();
 
     const [user, setUser] = useState({
         name: "",
@@ -29,15 +29,33 @@ export default function CreateUser() {
                 },
             });
 
-            alert("User created successfully!");
-            navigate("/admin/user-management");
+            toast.success("User created successfully!");
         } catch (err) {
-            alert("Failed to create user.");
+            toast.error("Failed to create user.");
+            console.error("Error creating user:", err);
         }
     };
 
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+            <Toaster
+                position="bottom-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: "#f9f9f9",
+                        color: "#333",
+                        borderRadius: "12px",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                    },
+                    iconTheme: {
+                        primary: "#10b981",
+                        secondary: "#ECFDF5",
+                    },
+                }}
+            />
             <div className="mb-2">
                 <Link
                     to="/admin/usermanagement"

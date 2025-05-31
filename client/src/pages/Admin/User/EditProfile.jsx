@@ -1,36 +1,39 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Button from "../../../components/Button";
-import { UserCog, Edit3, Trash2 } from "lucide-react";
+import { UserCog, Edit3, Trash2, Loader } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EditProfile() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingPage, setLoadingPage] = useState(true);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const fileInputRef = useRef();
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback( async () => {
+    setLoadingPage(true);
     try {
       const token = localStorage.getItem("access_token");
-      const res = await axios.get(`http://localhost:8000/api/admin/users/${id}/profile`, {
+      const res = await axios.get(`http://localhost:8000/api/admin/user/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProfile(res.data.profile);
-      setAvatarPreview(res.data.profile.avatar_url);
+      console.log(res.data);
+      setProfile(res.data);
+      setAvatarPreview(res.data.avatar_url);
     } catch (err) {
-      alert("Failed to load profile.");
+      toast.error("Failed to load profile.");
     } finally {
-      setLoading(false);
+      setLoadingPage(false);
     }
-  };
+  }, []);
+
+    useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -69,6 +72,7 @@ export default function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const token = localStorage.getItem("access_token");
       let avatarUrl = profile.avatar_url;
@@ -78,23 +82,50 @@ export default function EditProfile() {
 
       const payload = { ...profile, avatar_url: avatarUrl };
 
-      await axios.put(`http://localhost:8000/api/admin/users/${id}/profile`, payload, {
+      await axios.put(`http://localhost:8000/api/admin/user/profile`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      alert("Profile updated successfully!");
-      navigate(`/admin/usermanagement`);
+      toast.success("Profile updated successfully!");
     } catch (err) {
-      alert("Failed to update profile.");
+      toast.error("Failed to update profile.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+      fetchProfile();
     }
   };
 
-  if (loading || !profile) return <div className="text-center py-20 text-gray-500">Loading...</div>;
+  if (loadingPage) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader className="animate-spin w-8 h-8 text-customPurple" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full px-4 max-w-screen-lg mx-auto text-gray-700 py-10 mt-10">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <div className="mb-2">
         <Link to="/admin/usermanagement" className="inline-flex items-center text-sm text-customPurple hover:underline">
           ← Back to User Management
@@ -153,8 +184,8 @@ export default function EditProfile() {
         </div>
 
         <div className="text-center mt-4">
-          <Button type="submit" className="w-full">
-            Update Profile
+          <Button type="submit" className="bg-customPurple text-white hover:bg-purple-700 transition-colors">
+            {loading ? <Loader className="animate-spin w-5 h-5" /> : "Update Profile"}
           </Button>
         </div>
       </form>

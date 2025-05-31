@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { UserCog } from "lucide-react";
 import Button from "../../../components/Button";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EditUser() {
     const { id } = useParams();
@@ -10,7 +11,7 @@ export default function EditUser() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const fetchUser = async () => {
+    const fetchUser = useCallback( async () => {
         try {
             const token = localStorage.getItem("access_token");
             const res = await axios.get(`http://localhost:8000/api/admin/users/${id}`, {
@@ -18,11 +19,16 @@ export default function EditUser() {
             });
             setUser(res.data);
         } catch (err) {
-            alert("Failed to load user.");
+            toast.error("Failed to load user.");
+            console.error("Error fetching user:", err);
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        fetchUser();
+    }, [fetchUser]);
 
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
@@ -44,14 +50,28 @@ export default function EditUser() {
         }
     };
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
-
     if (loading || !user) return <div className="text-center py-20 text-gray-500">Loading...</div>;
 
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+            <Toaster
+                position="bottom-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: "#f9f9f9",
+                        color: "#333",
+                        borderRadius: "12px",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                    },
+                    iconTheme: {
+                        primary: "#10b981",
+                        secondary: "#ECFDF5",
+                    },
+                }}
+            />
             <div className="mb-2">
                 <Link
                     to="/admin/usermanagement"

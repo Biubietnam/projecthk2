@@ -4,7 +4,8 @@ import axios from "axios";
 import { Wrench, Trash2 } from "lucide-react";
 import Button from "../../../components/Button";
 import { Loader } from "lucide-react";
-
+import toast, { Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function CreateGear() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export default function CreateGear() {
   const handleImages = (files) => {
     const fileArr = Array.from(files);
     const total = images.length + fileArr.length;
-    if (total > 5) return alert("Only up to 5 images are allowed.");
+    if (total > 5) return toast.error("Only up to 5 images are allowed.");
 
     const allowed = fileArr.slice(0, 5 - images.length);
     const previews = allowed.map((file) => URL.createObjectURL(file));
@@ -96,6 +97,47 @@ export default function CreateGear() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!gear.name || !gear.price || !gear.category || !mainImage) {
+      toast.error("Please fill out all required fields and upload a main image.");
+      return;
+    }
+
+    if (gear.rating && (gear.rating < 0 || gear.rating > 5)) {
+      toast.error("Rating must be between 0 and 5.");
+      return;
+    }
+
+    if (mainImage.size > 10 * 1024 * 1024 || images.some(img => img.size > 10 * 1024 * 1024)) {
+      toast.error("Each image must be under 10MB.");
+      return;
+    }
+
+    toast((t) => (
+      <div className="text-sm">
+        <p>Are you sure you want to create this gear?</p>
+        <div className="flex gap-2 mt-3">
+          <button
+            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+            onClick={() => {
+              toast.dismiss(t.id);
+              submitCreate();
+            }}
+          >
+            Yes
+          </button>
+          <button
+            className="px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), { duration: 10000 });
+  };
+
+  const submitCreate = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("access_token");
@@ -118,8 +160,12 @@ export default function CreateGear() {
         ? gear.highlights.split(",").map((h) => h.trim()).filter(Boolean)
         : [];
 
+      const slugify = (text) =>
+        text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+
       const payload = {
         ...gear,
+        slug: gear.slug || slugify(gear.name),
         highlights: highlightsArray,
         images: galleryUrls,
         main_image: mainImageUrl,
@@ -132,11 +178,11 @@ export default function CreateGear() {
         },
       });
 
-      alert("Gear created successfully!");
+      toast.success("Gear created successfully!");
       navigate("/admin/gearmanagement");
     } catch (err) {
       console.error(err);
-      alert("Failed to create gear: " + err.message);
+      toast.error("Failed to create gear: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -160,6 +206,24 @@ export default function CreateGear() {
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10 mt-10">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <div className="mb-2">
         <Link to="/admin/gearmanagement" className="inline-flex items-center text-sm text-customPurple hover:underline">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -173,8 +237,12 @@ export default function CreateGear() {
         <h1 className="text-3xl ">Create New Gear</h1>
         <Wrench className="text-customPurple w-6 h-6" />
       </div>
-
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white shadow-md rounded-lg p-6"
+      >
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6" encType="multipart/form-data">
           {inputFields.map((field) => (
             <div key={field.name} className="flex flex-col">
@@ -189,7 +257,7 @@ export default function CreateGear() {
                 onChange={handleChange}
                 placeholder={field.placeholder}
                 required={field.required}
-                className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+                className="px-4 py-2 border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-customPurple transition"
               />
             </div>
           ))}
@@ -229,7 +297,7 @@ export default function CreateGear() {
               value={gear.highlights}
               onChange={handleChange}
               placeholder="e.g. Water-resistant, Lightweight"
-              className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+              className="px-4 py-2 border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-customPurple transition"
             />
           </div>
 
@@ -242,7 +310,7 @@ export default function CreateGear() {
                 value={gear[field.name]}
                 onChange={handleChange}
                 placeholder={`Enter ${field.label.toLowerCase()}`}
-                className="px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customPurple"
+                className="px-4 py-2 border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-customPurple transition"
               />
             </div>
           ))}
@@ -309,7 +377,11 @@ export default function CreateGear() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
                   {imagePreviews.map((src, idx) => (
                     <div key={idx} className="relative group">
-                      <img src={src} className="h-24 w-24 object-cover rounded shadow" />
+                      <img
+                        src={src}
+                        alt={`Gallery ${idx + 1}`}
+                        className="h-24 w-full object-cover rounded shadow"
+                      />
                       <button
                         type="button"
                         onClick={(e) => {
@@ -340,7 +412,7 @@ export default function CreateGear() {
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </div >
   );
 }

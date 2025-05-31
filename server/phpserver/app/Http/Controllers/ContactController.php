@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contact;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactReceivedMail;
 
 class ContactController extends Controller
 {
@@ -31,14 +34,19 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'subject' => 'required|string|in:General Inquiry,Technical Issue,Custom Request,Emergency,Others',
-            'message' => 'required|string',
+            'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]*$/'],
+            'subject' => [
+                'required',
+                'string',
+                Rule::in(['General Inquiry', 'Technical Issue', 'Custom Request', 'Emergency', 'Others']),
+            ],
+            'message' => ['required', 'string', 'min:10'],
         ]);
 
         $contact = Contact::create($validatedData);
+        Mail::to($contact->email)->send(new ContactReceivedMail($contact));
         return response()->json($contact, 201);
     }
 
@@ -50,12 +58,17 @@ class ContactController extends Controller
         }
 
         $validatedData = $request->validate([
-            'full_name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'subject' => 'sometimes|required|string|in:General Inquiry,Technical Issue,Custom Request,Emergency,Others',
-            'message' => 'sometimes|required|string',
+            'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]*$/'],
+            'subject' => [
+                'required',
+                'string',
+                Rule::in(['General Inquiry', 'Technical Issue', 'Custom Request', 'Emergency', 'Others']),
+            ],
+            'message' => ['required', 'string', 'min:10'],
         ]);
+
 
         $contact->update($validatedData);
         return response()->json($contact);

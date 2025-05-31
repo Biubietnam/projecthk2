@@ -44,12 +44,13 @@ function Breadcrumb() {
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: "",
+    full_name: "",
     email: "",
     phone: "",
     subject: "General Inquiry",
     message: "",
   });
+
   const [loading, setLoading] = useState(false);
   const isMobile = useBreakpoint();
 
@@ -61,8 +62,24 @@ export default function Contact() {
     });
   }
 
+  const validateForm = () => {
+    if (!formData.full_name.trim()) return "Full Name is required";
+    if (!formData.email.trim()) return "Email is required";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) return "Invalid email format";
+    if (!formData.message.trim()) return "Message is required";
+    return null;
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const error = validateForm();
+    if (error) {
+      toast.error(error);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const response = await axios.post("http://localhost:8000/api/contacts", formData);
@@ -103,7 +120,7 @@ export default function Contact() {
             fontWeight: '500',
           },
           iconTheme: {
-            primary: '#10b981', // Emerald
+            primary: '#10b981',
             secondary: '#ECFDF5',
           },
         }}
@@ -131,7 +148,7 @@ export default function Contact() {
                 name="full_name"
                 value={formData.full_name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-customPurple placeholder-gray-400 transition"
                 placeholder="John Smith"
               />
             </div>
@@ -143,7 +160,8 @@ export default function Contact() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
+                  pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-customPurple placeholder-gray-400 transition"
                   placeholder="john@example.com"
                 />
               </div>
@@ -154,8 +172,10 @@ export default function Contact() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
-                  placeholder="(555) 123-4567"
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-customPurple placeholder-gray-400 transition"
+                  pattern="^\+?[1-9]\d{1,14}$"
+                  placeholder="+1234567890"
+                  required
                 />
               </div>
             </div>
@@ -165,7 +185,7 @@ export default function Contact() {
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-customPurple placeholder-gray-400 transition"
               >
                 <option value="General Inquiry">General Inquiry</option>
                 <option value="Technical Issue">Technical Issue</option>
@@ -180,8 +200,9 @@ export default function Contact() {
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400 transition"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-customPurple placeholder-gray-400 transition"
                 placeholder="How can we help you?"
+                required
               ></textarea>
             </div>
             <Button
@@ -236,9 +257,10 @@ export default function Contact() {
             <h2 className="text-lg font-semibold text-gray-800 mb-2">Emergency Services</h2>
             <p className="text-sm text-gray-500 leading-relaxed">
               Emergency Phone: (555) 987-6543<br />
-              Our emergency line is available 24/7 for urgent pet care needs.
+              Emergency Email: <strong>emergency@petcare.com</strong><br />
+              <strong>Available 24/7</strong><br />
+              If your pet is experiencing a medical emergency, please call our emergency line immediately. Our team is ready to assist you with urgent care needs.
             </p>
-            <Button className="mt-4 text-sm">Emergency Instructions</Button>
           </div>
 
           <div className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
