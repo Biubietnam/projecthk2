@@ -132,6 +132,7 @@ class BookingController extends Controller
 
         $booking->status = 'Cancelled';
         $booking->save();
+        
 
         return response()->json(['message' => 'Booking cancelled successfully']);
     }
