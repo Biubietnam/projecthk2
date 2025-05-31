@@ -68,6 +68,7 @@ export default function Contact() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(formData.email)) return "Invalid email format";
     if (!formData.message.trim()) return "Message is required";
+    if (formData.message.trim().length < 10) return "Message must be at least 10 characters long";
     return null;
   };
 
@@ -200,6 +201,7 @@ export default function Contact() {
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
+                minLength={10}
                 className="w-full px-4 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-customPurple placeholder-gray-400 transition"
                 placeholder="How can we help you?"
                 required

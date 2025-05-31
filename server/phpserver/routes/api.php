@@ -170,6 +170,7 @@ Route::put('/userpets/{id}', [UserPetController::class, 'update']);
 Route::get('/vnpay/return', [PaymentController::class, 'vnpayReturn']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/user/avatar/delete', [ProfileController::class, 'deleteAvatar']);
     Route::post("/create-order", [StripeController::class, 'createCashOrder']);
     Route::post('/confirm-payment', [StripeController::class, 'confirmPayment']);
     Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent']);

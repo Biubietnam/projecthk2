@@ -155,7 +155,7 @@ export default function PetManagement() {
         <div className="mt-2 flex gap-2 justify-end">
           <button onClick={() => {
             toast.dismiss(t.id);
-            performDelete(id); // tách riêng
+            performDelete(id);
           }} className="px-2 py-1 bg-red-500 text-white rounded">Yes</button>
           <button onClick={() => toast.dismiss(t.id)} className="px-2 py-1 bg-gray-300 rounded">No</button>
         </div>

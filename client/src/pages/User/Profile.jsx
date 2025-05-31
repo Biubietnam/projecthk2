@@ -10,7 +10,7 @@ import ReviewUnreviewedProducts from '../User/ReviewUnreviewedProducts';
 export default function Profile() {
   const [profile, setProfile] = useState({
     full_name: '', gender: '', date_of_birth: '', phone: '',
-    address: '', city: '', country: '', avatar_url: '',
+    address: '', city: '', country: '', avatar_url: '', avatar_public_id: '',
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -83,7 +83,10 @@ export default function Profile() {
     formData.set("upload_preset", "petzone");
     formData.set("folder", `Petzone/Users/${profile.user_id}/Avatar`);
     const res = await axios.post("https://api.cloudinary.com/v1_1/dpwlgnop6/image/upload", formData);
-    return res.data.secure_url;
+    return {
+      secure_url: res.data.secure_url,
+      public_id: res.data.public_id
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -92,12 +95,25 @@ export default function Profile() {
     setSubmitting(true);
     try {
       const token = localStorage.getItem('access_token');
+
       if (avatarFile) {
-        profile.avatar_url = await uploadToCloudinary(avatarFile);
+        if (profile.avatar_public_id) {
+          await axios.post(`http://localhost:8000/api/user/avatar/delete`, {
+            public_id: profile.avatar_public_id
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        }
+
+        const uploaded = await uploadToCloudinary(avatarFile);
+        profile.avatar_url = uploaded.secure_url;
+        profile.avatar_public_id = uploaded.public_id;
       }
+
       await axios.put(`http://localhost:8000/api/user/profile`, profile, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       alert('✅ Profile updated successfully!');
     } catch (err) {
       console.error('Error updating profile:', err);
@@ -107,6 +123,7 @@ export default function Profile() {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col items-center py-10 px-4 sm:px-6 lg:px-8">
@@ -146,9 +163,8 @@ export default function Profile() {
           <Button
             onClick={handleSubmit}
             type="submit"
-            className={`mt-4 px-6 py-2 rounded-xl text-white text-sm shadow-sm transition ${
-              submitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-800'
-            }`}
+            className={`mt-4 px-6 py-2 rounded-xl text-white text-sm shadow-sm transition ${submitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-800'
+              }`}
             disabled={submitting}
           >
             {loading ? <Loader className="animate-spin w-5 h-5" /> : 'Update Profile'}

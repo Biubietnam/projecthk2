@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProfileController extends Controller
 {
@@ -46,6 +45,7 @@ class ProfileController extends Controller
             'country'       => 'nullable|string|max:100',
             'avatar'        => 'nullable|image|max:2048',
             'avatar_url'    => 'nullable|url',
+            'public_id'     => 'nullable|string|max:255',
         ]);
 
         if ($request->hasFile('avatar')) {
@@ -56,5 +56,19 @@ class ProfileController extends Controller
         $profile->update($validated);
 
         return response()->json(['message' => '✅ Profile updated successfully.']);
+    }
+
+    public function deleteAvatar(Request $request)
+    {
+        $request->validate([
+            'public_id' => 'required|string'
+        ]);
+
+        try {
+            Cloudinary::destroy($request->public_id);
+            return response()->json(['message' => 'Deleted']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete avatar'], 500);
+        }
     }
 }

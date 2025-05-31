@@ -67,21 +67,11 @@ export default function App() {
   const isAdmin = pathname.startsWith("/admin");
   return (
     <div
-<<<<<<< HEAD
-      className={`App font-concert min-h-screen ${
+      className={`App font-montserrat min-h-screen ${
         isAdmin
-=======
-      className={`App font-montserrat min-h-screen ${isAdmin
-<<<<<<< HEAD
->>>>>>> f0860d28a0b39aa79d898800c761f189b11af5a6
           ? "bg-gray-100"
           : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
       }`}
-=======
-        ? "bg-gray-100"
-        : "bg-gray-100 bg-pet-pattern bg-repeat bg-[length:50px_auto]"
-        }`}
->>>>>>> 5456ed4bcbd034435be516a5a1e66df391bbc9cb
     >
       <ScrollToTop />
       {!isAdmin && <Header />}
