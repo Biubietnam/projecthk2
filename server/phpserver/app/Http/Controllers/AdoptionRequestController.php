@@ -109,7 +109,7 @@ class AdoptionRequestController extends Controller
     public function reject(Request $request, $id)
     {
         $validated = $request->validate([
-            'note' => 'nullable|string',
+            'note' => 'nullable|string|max:500',
         ]);
 
         $adoptionRequest = AdoptionRequest::findOrFail($id);
@@ -119,7 +119,7 @@ class AdoptionRequestController extends Controller
             'rejected_at' => now(),
         ]);
 
-        AdoptionResponse::create([
+        $response = AdoptionResponse::create([
             'adoption_request_id' => $adoptionRequest->id,
             'responder_id' => Auth::id(),
             'action' => 'rejected',
@@ -128,9 +128,8 @@ class AdoptionRequestController extends Controller
         ]);
 
         Mail::to($adoptionRequest->user->email)->send(
-            new \App\Mail\AdoptionRequestRejected($adoptionRequest, new AdoptionResponse()) 
+            new \App\Mail\AdoptionRequestRejected($adoptionRequest, $response)
         );
-
         return response()->json(['message' => 'Adoption request rejected.']);
     }
 

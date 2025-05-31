@@ -10,6 +10,11 @@ export default function AdoptionResponseForm({ request }) {
     const [mode, setMode] = useState(null);
 
     const onSubmit = async (action, data) => {
+        if (new Date(approveDateTime) < new Date()) {
+            toast.error("Approval date & time cannot be in the past.");
+            setLoading(false);
+            return;
+        }
         const token = localStorage.getItem("access_token");
         try {
             await axios.patch(
@@ -111,6 +116,7 @@ export default function AdoptionResponseForm({ request }) {
                     <input
                         type="datetime-local"
                         value={approveDateTime}
+                        min={new Date().toISOString().slice(0, 16)}
                         onChange={(e) => setApproveDateTime(e.target.value)}
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -135,8 +141,8 @@ export default function AdoptionResponseForm({ request }) {
                             onClick={handleApprove}
                             disabled={loading || !approveDateTime}
                             className={`flex-1 py-2 rounded-lg text-sm font-medium text-white transition ${loading || !approveDateTime
-                                    ? "bg-gray-300 cursor-not-allowed"
-                                    : "bg-blue-600 hover:bg-blue-700"
+                                ? "bg-gray-300 cursor-not-allowed"
+                                : "bg-blue-600 hover:bg-blue-700"
                                 }`}
                         >
                             {loading ? "Processing..." : "Approve"}
@@ -169,8 +175,8 @@ export default function AdoptionResponseForm({ request }) {
                             onClick={handleReject}
                             disabled={loading}
                             className={`flex-1 py-2 rounded-lg text-sm font-medium text-white transition ${loading
-                                    ? "bg-gray-300 cursor-not-allowed"
-                                    : "bg-red-600 hover:bg-red-700"
+                                ? "bg-gray-300 cursor-not-allowed"
+                                : "bg-red-600 hover:bg-red-700"
                                 }`}
                         >
                             {loading ? "Processing..." : "Reject"}

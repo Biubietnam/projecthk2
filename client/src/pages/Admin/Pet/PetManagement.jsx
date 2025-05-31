@@ -120,7 +120,7 @@ export default function PetManagement() {
         p.type?.toLowerCase().includes(keyword)
       );
     });
-    
+
   const startIdx = (currentPage - 1) * itemsPerPage;
   const currentItems = filtered.slice(startIdx, startIdx + itemsPerPage);
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
@@ -208,11 +208,6 @@ export default function PetManagement() {
           },
         }}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PetDonutChart data={pets} />
-        <PetBarChart data={pets} />
-      </div>
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <Link
@@ -222,6 +217,7 @@ export default function PetManagement() {
           <LayoutDashboard className="w-5 h-5" />
           <span>Back to Dashboard</span>
         </Link>
+        <h1 className="text-3xl font-bold">Pet Management</h1>
         <div className="relative">
           <input
             type="text"
@@ -232,12 +228,16 @@ export default function PetManagement() {
           />
         </div>
       </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PetDonutChart data={pets} />
+        <PetBarChart data={pets} />
+      </div>
 
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Pet Management</h1>
+      {/* Add New Pet Button */}
+      <div className="flex items-center">
         <Link
           to="/admin/pets/create"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="ml-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
           + Add New Pet
         </Link>

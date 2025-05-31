@@ -55,13 +55,6 @@ export default function AdminDashboard() {
     return (
         <div className="min-h-screen w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 max-w-[1280px] mx-auto text-gray-700 py-10">
             <div className="flex flex-col sm:flex-row items-center justify-between mb-8">
-                <Link
-                    to="/"
-                    className="inline-flex items-center text-customPurpleDark hover:underline text-sm transition"
-                >
-                    <Home className="w-6 h-6 mr-2" />
-                    Back to Home
-                </Link>
                 <h1 className="text-3xl text-gray-900 tracking-tight">Admin Dashboard</h1>
             </div>
 

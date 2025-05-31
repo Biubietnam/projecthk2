@@ -85,8 +85,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         return $user->load('role');
     });
 
-    Route::get('/admin/users/{id}/profile', [ProfileController::class, 'show']);
-    Route::put('/admin/users/{id}/profile', [ProfileController::class, 'update']);
+    Route::get('/admin/user/profile', [ProfileController::class, 'show']);
+    Route::put('/admin/user/profile', [ProfileController::class, 'update']);
 
     Route::post('/admin/pets', [PetController::class, 'store']);
     Route::put('/admin/pets/{id}', [PetController::class, 'update']);

@@ -4,6 +4,7 @@ import Button from "./Button";
 import axios from "axios";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function FeedbackFormContent() {
   const [formData, setFormData] = useState({
@@ -28,14 +29,18 @@ export default function FeedbackFormContent() {
     try {
       const response = await axios.post("http://localhost:8000/api/feedback", formData);
       if (response.status === 201) {
-        alert("Feedback submitted successfully!");
+        toast.success("Feedback submitted successfully!");
         setFormData({ name: "", email: "", message: "" });
       } else {
-        alert("Failed to submit feedback. Please try again.");
+        toast.error("Failed to submit feedback. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert("An error occurred while submitting your feedback.");
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message || "Failed to submit feedback.");
+      } else {
+        toast.error("An unexpected error occurred. Please try again later.");
+      }
     } finally {
       setLoading(false);
     }
@@ -44,6 +49,24 @@ export default function FeedbackFormContent() {
 
   return (
     <div className="w-full max-w-md rounded-2xl p-6 sm:p-8">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#f9f9f9",
+            color: "#333",
+            borderRadius: "12px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+            fontSize: "14px",
+            fontWeight: "500",
+          },
+          iconTheme: {
+            primary: "#10b981",
+            secondary: "#ECFDF5",
+          },
+        }}
+      />
       <h1 className="text-2xl font-semibold text-gray-800 text-center mb-2">Feedback</h1>
       <p className="text-sm text-gray-500 text-center mb-6">We'd love to hear from you</p>
 

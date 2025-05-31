@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import ReactApexChart from "react-apexcharts";
 import toast, { Toaster } from "react-hot-toast";
+import { LayoutDashboard } from "lucide-react";
 
 function UserGrowthChart({ data }) {
   const grouped = data.reduce((acc, user) => {
@@ -144,17 +145,26 @@ export default function UserManagement() {
           },
         }}
       />
+
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <Link
+          to="/admin/dashboard"
+          className="text-customPurple hover:underline flex items-center gap-1"
+        >
+          <LayoutDashboard className="w-5 h-5" />
+          <span>Back to Dashboard</span>
+        </Link>
+      </div>
+
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <UserGrowthChart data={users} />
         <UserRoleDonutChart data={users} />
       </div>
 
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <Link to="/admin/dashboard" className="text-customPurple hover:underline text-sm">
-          ← Back to Admin Dashboard
-        </Link>
+      {/* Một button nằm bên trái */}
+      <div className="flex justify-end mb-4">
         <Link to="/admin/users/create" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
           + Add New User
         </Link>
@@ -188,11 +198,11 @@ export default function UserManagement() {
                   <td className="p-4">
                     <span
                       className={`px-2 py-1 rounded text-xs capitalize inline-block ${user.role?.name === 'admin' ? 'bg-red-100 text-red-800' :
-                          user.role?.name === 'staff' ? 'bg-blue-100 text-blue-800' :
-                            user.role?.name === 'vet' ? 'bg-green-100 text-green-800' :
-                              user.role?.name === 'seller' ? 'bg-yellow-100 text-yellow-800' :
-                                user.role?.name === 'user' ? 'bg-purple-100 text-purple-800' :
-                                  'bg-gray-100 text-gray-800'
+                        user.role?.name === 'staff' ? 'bg-blue-100 text-blue-800' :
+                          user.role?.name === 'vet' ? 'bg-green-100 text-green-800' :
+                            user.role?.name === 'seller' ? 'bg-yellow-100 text-yellow-800' :
+                              user.role?.name === 'user' ? 'bg-purple-100 text-purple-800' :
+                                'bg-gray-100 text-gray-800'
                         }`}
                     >
                       {user.role?.name}

@@ -96,9 +96,7 @@ export default function CreateGear() {
   };
 
   const handleSubmit = async (e) => {
-    if (!window.confirm("Are you sure you want to create this gear?")) {
-      return;
-    }
+    e.preventDefault();
 
     if (!gear.name || !gear.price || !gear.category || !mainImage) {
       toast.error("Please fill out all required fields and upload a main image.");
@@ -110,12 +108,36 @@ export default function CreateGear() {
       return;
     }
 
-    if (mainImage.size > 5 * 1024 * 1024 || images.some(img => img.size > 5 * 1024 * 1024)) {
-      toast.error("Each image must be under 5MB.");
+    if (mainImage.size > 10 * 1024 * 1024 || images.some(img => img.size > 10 * 1024 * 1024)) {
+      toast.error("Each image must be under 10MB.");
       return;
     }
 
-    e.preventDefault();
+    toast((t) => (
+      <div className="text-sm">
+        <p>Are you sure you want to create this gear?</p>
+        <div className="flex gap-2 mt-3">
+          <button
+            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+            onClick={() => {
+              toast.dismiss(t.id);
+              submitCreate();
+            }}
+          >
+            Yes
+          </button>
+          <button
+            className="px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), { duration: 10000 });
+  };
+
+  const submitCreate = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("access_token");

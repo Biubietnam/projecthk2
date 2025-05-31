@@ -167,11 +167,6 @@ export default function GearManagement() {
                     },
                 }}
             />
-            {/* Charts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <GearAreaChart data={gears} />
-                <GearDonutChart data={gears} />
-            </div>
 
             {/* Header */}
             <div className="flex items-center justify-between">
@@ -179,6 +174,7 @@ export default function GearManagement() {
                     <LayoutDashboard className="w-5 h-5" />
                     <span>Back to Dashboard</span>
                 </Link>
+                <h1 className="text-3xl font-bold">Gear Management</h1>
                 <div className="relative">
                     <input
                         type="text"
@@ -190,9 +186,14 @@ export default function GearManagement() {
                 </div>
             </div>
 
+            {/* Charts */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <GearAreaChart data={gears} />
+                <GearDonutChart data={gears} />
+            </div>
+
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl">Gear Management</h1>
-                <Link to="/admin/gears/create" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                <Link to="/admin/gears/create" className="ml-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                     + Add New Gear
                 </Link>
             </div>

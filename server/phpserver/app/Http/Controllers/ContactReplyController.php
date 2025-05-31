@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\ContactReply;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactReplySent;
 
 class ContactReplyController extends Controller
 {
@@ -33,6 +35,7 @@ class ContactReplyController extends Controller
             'message'      => $request->message,
         ]);
 
+        Mail::to($contact->email)->send(new ContactReplySent($contact, $reply));
         return response()->json([
             'message' => 'Reply sent successfully',
             'reply'   => $reply->load('responder')
